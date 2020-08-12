@@ -15,14 +15,24 @@ export default new Vuex.Store({
     answer: {}
   },
   mutations: {
-    setUser(state, user) {
-      state.user = user
+    setUser(state, profileObject) {
+      state.profile = profileObject
     },
-    setBoards(state, boards) {
-      state.boards = boards
+    setsetExercise(state, exerciseObject) {
+      state.exercise = exerciseObject
     }
   },
   actions: {
+    async getExercise({ commit, dispatch }) {
+      try {
+        let res = await api.get("/exercises/random")
+        console.log("got an exercise", res.data)
+        commit("setExercise", res.data)
+      } catch (err) {
+        console.error(err)
+      }
+    },
+
     //#region -- AUTH STUFF --
     setBearer({ }, bearer) {
       api.defaults.headers.authorization = bearer;
@@ -33,12 +43,14 @@ export default new Vuex.Store({
     async getProfile({ commit }) {
       try {
         let res = await api.get("/profile")
-        commit("setUser", res.data)
+        commit("setProfile", res.data)
       } catch (err) {
         console.error(err)
       }
     },
     //#endregion
+
+
     // getQuiz({},id){
     //   api.get( `https://opentdb.com/api.php?amount=1&category=${id}&difficulty=medium&type=multiple`)
     //   .then(res=>{
@@ -46,26 +58,5 @@ export default new Vuex.Store({
     //   })
     // },
 
-    //#region -- BOARDS --
-    getBoards({ commit, dispatch }) {
-      api.get('boards')
-        .then(res => {
-          commit('setBoards', res.data)
-        })
-    },
-    addBoard({ commit, dispatch }, boardData) {
-      api.post('boards', boardData)
-        .then(serverBoard => {
-          dispatch('getBoards')
-        })
-    }
-    //#endregion
-
-
-    //#region -- LISTS --
-
-
-
-    //#endregion
   }
 })
