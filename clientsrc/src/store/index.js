@@ -9,9 +9,10 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    user: {},
-    boards: [],
-    activeBoard: {}
+    question: {},
+    exercise: {},
+    profile: {},
+    answer: {}
   },
   mutations: {
     setUser(state, user) {
