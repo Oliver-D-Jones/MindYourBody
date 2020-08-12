@@ -1,11 +1,11 @@
 import mongoose from "mongoose";
-import ValueSchema from "../models/Value";
+import TriviaSchema from "../models/Trivia";
 import ProfileSchema from "../models/Profile";
-import BoardSchema from '../models/Board'
+import ExerciseSchema from '../models/Exercise'
 class DbContext {
-  Values = mongoose.model("Value", ValueSchema);
+  Trivia = mongoose.model("Trivia", TriviaSchema);
   Profile = mongoose.model("Profile", ProfileSchema);
-  Boards = mongoose.model("Board", BoardSchema)
+  Exercises = mongoose.model("Exercise", ExerciseSchema)
 }
 
 export const dbContext = new DbContext();

@@ -1,11 +1,11 @@
 import express from "express";
 import BaseController from "../utils/BaseController";
-import { valuesService } from "../services/ValuesService";
+import { triviaService } from "../services/TriviaService";
 import auth0provider from "@bcwdev/auth0provider";
 
-export class ValuesController extends BaseController {
+export class TriviaController extends BaseController {
   constructor() {
-    super("api/values");
+    super("api/trivia");
     this.router
       .get("", this.getAll)
       // NOTE: Beyond this point all routes require Authorization tokens (the user must be logged in)
@@ -14,7 +14,7 @@ export class ValuesController extends BaseController {
   }
   async getAll(req, res, next) {
     try {
-      return res.send(["value1", "value2"]);
+      return res.send(["trivia1", "trivia2"]);
     } catch (error) {
       next(error);
     }
