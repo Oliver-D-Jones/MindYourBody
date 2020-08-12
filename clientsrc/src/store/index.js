@@ -18,7 +18,7 @@ export default new Vuex.Store({
     setUser(state, profileObject) {
       state.profile = profileObject
     },
-    setsetExercise(state, exerciseObject) {
+    setExercise(state, exerciseObject) {
       state.exercise = exerciseObject
     }
   },
