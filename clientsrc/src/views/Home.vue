@@ -58,7 +58,7 @@
           <label class="custom-control-label" :for="'toggle-'+answer">{{ answer }}</label>
         </div>
       </div>
-    </div> -->
+    </div>-->
   </div>
 </template>
 <script>
@@ -117,12 +117,10 @@ export default {
     toggleAnswer(choice) {
       // option.value = !option.value;
       if (choice == this.trivia.correct_answer) {
-        console.log(choice);
       }
     },
     search() {
       this.searchResult = [];
-      console.log(this.searchTerm);
       let result = this.SUBJECTS.filter((item) =>
         item.subject.toLowerCase().includes(this.searchTerm.toLowerCase())
       );
@@ -130,20 +128,26 @@ export default {
       result.forEach((obj) => {
         this.searchResult.push(obj);
       });
-      console.log(this.searchResult);
     },
 
     async getQuiz(val) {
       const res = await fetch(
-        `https://opentdb.com/api.php?amount=1&category=${val}&difficulty=medium&type=multiple`
+        `https://opentdb.com/api.php?amount=1&category=${val}&type=multiple&encode=base64`
       );
-      // const res = await this.$store.dispatch("getQuiz",val)
-      const data = await res.json();
-      // document.getElementById("output").innerHTML = data.results[0];
-      console.log(data);
-      this.trivia = data.results[0];
-      this.answers = data.results[0].incorrect_answers;
-      this.answers.push(data.results[0].correct_answer);
+      let data = await res.json();
+      data = data.results[0];
+      for (let property in data) {
+        if (Array.isArray(data[property])) {
+          data[property].forEach((prop, i, a) => {
+            a[i] = atob(prop);
+          });
+        } else {
+          data[property] = atob(data[property]);
+        }
+      }
+      this.trivia = data;
+      this.answers = data.incorrect_answers;
+      this.answers.push(data.correct_answer);
       this.answers.forEach((v, i, a) => {
         let swap_index = Math.floor(a.length * Math.random());
         let temp = a[swap_index];
@@ -152,17 +156,13 @@ export default {
       });
 
       swal(this.trivia.question, {
-        // content:`<p>${this.trivia.question}</p>`,
-        //  text:  "<home :user=\"user\" inline-template><ul id=\"adr\" class=\"list-group\" v-for=\"adr in newADR\"><li class=\"list-group-item\">MRN: {{ adr.mrn }}</li></ul></home>",
-        //  text: `<p>{{trivia.question}}</p>`,
-
         className: "red-bg",
         closeOnClickOutside: false,
         buttons: {
-          one: { text: this.answers[0], value: this.answers[0] },
-          two: { text: this.answers[2], value: this.answers[2] },
-          three: { text: this.answers[3], value: this.answers[3] },
-          four: { text: this.answers[1], value: this.answers[1] },
+          zero: { text: this.answers[0], value: this.answers[0] },
+          two: { text: this.answers[1], value: this.answers[1] },
+          three: { text: this.answers[2], value: this.answers[2] },
+          four: { text: this.answers[3], value: this.answers[3] },
         },
       }).then((value) => {
         if (value == this.trivia.correct_answer) {
@@ -171,13 +171,9 @@ export default {
           swal("Incorrect.", "Try Again.", "error");
         }
       });
-
-      console.log(data.results);
     },
   },
   mounted() {
-    console.log("mounted", this, this.$);
-
     this.ready = true;
   },
   components: {},
