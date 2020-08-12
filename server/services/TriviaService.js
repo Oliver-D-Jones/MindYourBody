@@ -15,4 +15,4 @@ class TriviaService {
   }
 }
 
-export const triviasService = new TriviaService();
+export const triviaService = new TriviaService();
