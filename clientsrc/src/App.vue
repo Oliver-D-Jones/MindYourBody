@@ -20,9 +20,10 @@ export default {
     }
   },
   components: {
-    Navbar
-  }
+    Navbar,
+  },
 };
+import swal from "sweetalert";
 </script>
 
 

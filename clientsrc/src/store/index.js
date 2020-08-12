@@ -38,7 +38,12 @@ export default new Vuex.Store({
       }
     },
     //#endregion
-
+    // getQuiz({},id){
+    //   api.get( `https://opentdb.com/api.php?amount=1&category=${id}&difficulty=medium&type=multiple`)
+    //   .then(res=>{
+    //     return res;
+    //   })
+    // },
 
     //#region -- BOARDS --
     getBoards({ commit, dispatch }) {
