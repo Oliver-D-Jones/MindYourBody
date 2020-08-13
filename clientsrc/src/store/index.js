@@ -77,7 +77,6 @@ export default new Vuex.Store({
     },
 
     setSubject({ commit, dispatch, state }, data) {
-      debugger
       commit("setSubject", data)
       console.log(state.subject)
     },

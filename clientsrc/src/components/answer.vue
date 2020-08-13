@@ -38,13 +38,13 @@ export default {
     }).then((value) => {
       if (value == correct_answer) {
         swal(`${correct_answer}`, "Is Correct!", "success").then(() => {
-          swal.close();
           this.$emit("init", true);
+          swal.close();
         });
       } else {
         swal("Incorrect.", "Try Again.", "error").then(() => {
-          swal.close();
           this.$emit("init", true);
+          swal.close();
         });
       }
 

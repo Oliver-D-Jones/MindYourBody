@@ -3,8 +3,6 @@
     <div class="row" v-if="show">{{swalShow()}}</div>
   </div>
 </template>
-
-
 <script>
 export default {
   name: "question",
@@ -16,11 +14,20 @@ export default {
   computed: {},
   methods: {
     swalShow: function () {
-      let q = this.question;
-      console.log("swalShow");
+      let html_inject = document.createElement("div");
+      html_inject.className = "col-12";
+
+      let img = document.createElement("img");
+      img.className = "img-fluid img-sm";
+      img.src = "https://media.giphy.com/media/LJH5l2g4cOEjm/giphy.gif"
+      img.id = "brain";
+
+      let title = document.createElement("h4");
+      title.textContent=`${this.question}`
+      html_inject.appendChild(img);
+      html_inject.appendChild(title);
       swal({
-        title: "Question",
-        text: q,
+        content: html_inject,
         className: "red-bg",
         closeOnClickOutside: false,
         buttons: {
@@ -43,12 +50,14 @@ export default {
   components: {},
   props: ["question"],
   mounted() {
-      this.show = true;
-      console.log("question");
+    this.show = true;
   },
 };
 </script>
 
 
 <style scoped>
+#brain {
+border-radius: 50%
+}
 </style>

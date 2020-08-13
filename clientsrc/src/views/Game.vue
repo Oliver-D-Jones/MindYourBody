@@ -1,6 +1,6 @@
 <template>
   <div class="game">
-    <div class="container-fluid">
+    <div class="container-fluid bg-info" style="min-height:100vh">
       <div class="row" style="display:none;">
         <div class="col-12" v-if="start">
           <Question
@@ -71,7 +71,8 @@ export default {
     //Get trivia data from api call and store
     //NOTE get personal pref. from store.state
     console.log("in mounted");
-    let cat = 19;
+    // let cat = this.$store.state.subject;
+    let cat = Math.floor(Math.random()*23) + 9;
     let answers = [];
     const res = await fetch(
       `https://opentdb.com/api.php?amount=1&category=${cat}&type=multiple&encode=base64`
@@ -88,6 +89,7 @@ export default {
       }
     }
     this.$store.commit("setTrivia", data);
+    console.log(data);
     this.question = data.question;
     this.trivia = data;
     console.log(this.trivia);
@@ -100,6 +102,12 @@ export default {
       a[i] = temp;
     });
     this.start = true;
+  },
+  beforeDestroy() {
+    swal.close();
+    start = false;
+    answer = false;
+    exercise = false;
   },
   components: {
     Exercise,
@@ -115,6 +123,7 @@ export default {
   background-color: rgba(63, 255, 106, 0.69);
   border: 3px solid white;
   min-width: 60%;
+  min-height: 50%;
   text-align: center;
   justify-content: center;
   align-content: center;
