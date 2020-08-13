@@ -10,36 +10,36 @@
       >
         <option value hidden>Select Subject</option>
         <option>--- Select Subject ---</option>
-        <option value="9">Random</option>
-        <option value="10">general knowledge</option>
-        <option value="11">Books</option>
-        <option value="12">Film</option>
-        <option value="13">Music</option>
-        <option value="14">Musicals & Theatre</option>
-        <option value="15">Telvision</option>
-        <option value="16">Video Games</option>
-        <option value="17">Board Games</option>
-        <option value="18">Science & Nature</option>
-        <option value="19">Computers</option>
-        <option value="20">Mathematics</option>
-        <option value="21">Mythology</option>
-        <option value="22">Sports</option>
-        <option value="23">Geography</option>
-        <option value="24">History</option>
-        <option value="25">Politics</option>
-        <option value="26">Art</option>
-        <option value="27">Celebrities</option>
-        <option value="28">Animals</option>
-        <option value="29">Vehicles</option>
-        <option value="30">Entertainment</option>
-        <option value="31">Gadgets</option>
-        <option value="32">Japanese Anime & Manga</option>
-        <option value="33">Cartoon & Animations</option>
+        <option value="any">Random</option>
+        <option value="9">general knowledge</option>
+        <option value="10">Books</option>
+        <option value="11">Film</option>
+        <option value="12">Music</option>
+        <option value="13">Musicals & Theatre</option>
+        <option value="14">Telvision</option>
+        <option value="15">Video Games</option>
+        <option value="16">Board Games</option>
+        <option value="17">Science & Nature</option>
+        <option value="18">Computers</option>
+        <option value="19">Mathematics</option>
+        <option value="20">Mythology</option>
+        <option value="21">Sports</option>
+        <option value="22">Geography</option>
+        <option value="23">History</option>
+        <option value="24">Politics</option>
+        <option value="25">Art</option>
+        <option value="26">Celebrities</option>
+        <option value="27">Animals</option>
+        <option value="28">Vehicles</option>
+        <option value="29">Entertainment</option>
+        <option value="30">Gadgets</option>
+        <option value="31">Japanese Anime & Manga</option>
+        <option value="32">Cartoon & Animations</option>
       </select>
       <select
         name="category_id"
-        @change="selectSubject()"
-        v-model="subject"
+        @change="selectLevel()"
+        v-model="level"
         class="form-control"
         style="max-width: 35%"
       >
@@ -60,6 +60,7 @@
   </div>
 </template>
 <script>
+import router from "../router";
 export default {
   name: "home",
   data() {
@@ -71,10 +72,14 @@ export default {
   computed: {},
   methods: {
     startPlay() {
-      this.$store.dispatch("getQuestion");
+      router.push({ name: "game" });
     },
-    selectSubject() {},
-    selectLevel() {},
+    selectSubject() {
+      this.$store.dispatch("setSubject", this.subject);
+    },
+    selectLevel() {
+      this.$store.dispatch("setLevel", this.level);
+    },
   },
   mounted() {},
   components: {},

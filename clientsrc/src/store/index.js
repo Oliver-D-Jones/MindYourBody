@@ -9,10 +9,13 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    trivia:{},
+    trivia: {},
     exercise: {},
     profile: {},
-    user:{},
+    user: {},
+    level: {},
+    subject: {},
+    answer: null
   },
   mutations: {
     setUser(state, profileObject) {
@@ -20,6 +23,12 @@ export default new Vuex.Store({
     },
     setExercise(state, exerciseObject) {
       state.exercise = exerciseObject
+    },
+    setSubject(state, subject) {
+      state.subject = subject
+    },
+    setLevel(state, level) {
+      state.level = level
     }
 
   },
@@ -49,12 +58,29 @@ export default new Vuex.Store({
         console.error(err)
       }
     },
+
+    getAnswer({ commit, dispatch, state }) {
+      return state.answer
+    },
+    getTrivia({ commit, dispatch, state }) {
+      return state.trivia
+    },
     //#region -- BOARDS --
     getBoards({ commit, dispatch }) {
       api.get('boards')
         .then(res => {
           commit('setBoards', res.data)
         })
+    },
+
+    setSubject({ commit, dispatch, state }, data) {
+      debugger
+      commit("setSubject", data)
+      console.log(state.subject)
+    },
+    setLevel({ commit, dispatch, state }, data) {
+      commit("setLevel", data)
+      console.log(state.level)
     },
     addBoard({ commit, dispatch }, boardData) {
       api.post('boards', boardData)

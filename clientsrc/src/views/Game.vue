@@ -30,11 +30,10 @@ export default {
   methods: {
     init(play) {
       console.log("in start at game");
-      if (play){
+      if (play) {
         this.start = true;
-      }
-      else{
-        this.start=false;
+      } else {
+        this.start = false;
       }
     },
     //Get trivia data from api call and store
