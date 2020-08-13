@@ -1,14 +1,8 @@
 <template class="home">
   <div class="container-fluid">
     <div class="row m-4" style="justify-content: space-evenly">
-      <select
-        name="category_id"
-        @change="selectSubject()"
-        v-model="subject"
-        class="form-control"
-        style="max-width: 35%"
-      >
-        <option value hidden>Select Subject</option>
+      <select name="category_id" v-model="subject" class="form-control" style="max-width: 35%">
+        <option value hidden>Subject</option>
         <option>--- Select Subject ---</option>
         <option value="any">Random</option>
         <option value="9">general knowledge</option>
@@ -36,14 +30,8 @@
         <option value="31">Japanese Anime & Manga</option>
         <option value="32">Cartoon & Animations</option>
       </select>
-      <select
-        name="category_id"
-        @change="selectLevel()"
-        v-model="level"
-        class="form-control"
-        style="max-width: 35%"
-      >
-        <option value hidden>Select Level</option>
+      <select name="category_id" v-model="level" class="form-control" style="max-width: 35%">
+        <option value hidden>Level</option>
         <option>--- Select Level ---</option>
         <option value="easy">easy</option>
         <option value="medium">medium</option>
@@ -72,13 +60,19 @@ export default {
   computed: {},
   methods: {
     startPlay() {
-      router.push({ name: "game" });
-    },
-    selectSubject() {
+      if (this.subject == "") {
+        this.subject = "any";
+      }
+      if (this.level == "") {
+        this.level = "any";
+      }
       this.$store.dispatch("setSubject", this.subject);
-    },
-    selectLevel() {
       this.$store.dispatch("setLevel", this.level);
+      console.log(this.subject);
+      console.log(this.level);
+      this.subject = "";
+      this.level = "";
+      router.push({ name: "game" });
     },
   },
   mounted() {},
