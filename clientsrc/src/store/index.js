@@ -9,18 +9,19 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    question: {},
+    trivia:{},
     exercise: {},
     profile: {},
-    answer: {}
+    user:{},
   },
   mutations: {
     setUser(state, user) {
       state.user = user
     },
-    setBoards(state, boards) {
-      state.boards = boards
+    setTrivia(state,trivia){
+      state.trivia = trivia;
     }
+
   },
   actions: {
     //#region -- AUTH STUFF --
@@ -38,14 +39,6 @@ export default new Vuex.Store({
         console.error(err)
       }
     },
-    //#endregion
-    // getQuiz({},id){
-    //   api.get( `https://opentdb.com/api.php?amount=1&category=${id}&difficulty=medium&type=multiple`)
-    //   .then(res=>{
-    //     return res;
-    //   })
-    // },
-
     //#region -- BOARDS --
     getBoards({ commit, dispatch }) {
       api.get('boards')
@@ -60,9 +53,6 @@ export default new Vuex.Store({
         })
     }
     //#endregion
-
-
-    //#region -- LISTS --
 
 
 
