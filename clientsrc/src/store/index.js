@@ -30,7 +30,7 @@ export default new Vuex.Store({
     setLevel(state, level) {
       state.level = level
     },
-    setTrivia(state,trivia){
+    setTrivia(state, trivia) {
       state.trivia = trivia;
     }
 
@@ -78,11 +78,9 @@ export default new Vuex.Store({
 
     setSubject({ commit, dispatch, state }, data) {
       commit("setSubject", data)
-      console.log(state.subject)
     },
     setLevel({ commit, dispatch, state }, data) {
       commit("setLevel", data)
-      console.log(state.level)
     },
     addBoard({ commit, dispatch }, boardData) {
       api.post('boards', boardData)

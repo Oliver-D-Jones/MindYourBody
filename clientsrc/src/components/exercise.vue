@@ -1,33 +1,30 @@
 <template>
   <div class="exercise container-fluid">
     <div class="row justify-content-center" v-if="show">
-      <div class="card" style="width: auto">
-        <img
-          class="card-img-top img-fluid"
-          :src="exercise.example"
-          alt="Exercise Example"
-          style="height: 300px;
-          width: auto"
-        />
+      <div class="card col-12">
+        <div>
+          <img
+            class="card-img-top"
+            :src="exercise.example"
+            alt="Exercise Example"
+            style=" max-width: 100%; max-height:350px; width: auto; height: auto"
+          />
+        </div>
         <div class="card-body">
-          <h2 class="card-title">{{exercise.exercise}}</h2>
+          <h2 class="card-title">{{exercise.title}}</h2>
         </div>
         <ul class="list-group list-item">
-          <li class="list-group-item" v-if="exercise.major_muscle">
-            <b>Major Muscle:</b>
-            {{exercise.major_muscle}}
+          <li class="list-group-item" v-if="exercise.reps">
+            <b>Repetitions:</b>
+            {{exercise.reps}}
           </li>
-          <li class="list-group-item" v-if="exercise.minor_muscle">
-            <b>Minor Muscle:</b>
-            {{exercise.minor_muscle}}
+          <li class="list-group-item" v-if="exercise.time">
+            <b>Time:</b>
+            {{exercise.time}} seconds
           </li>
           <li class="list-group-item" v-if="exercise.notes">
-            <b>Notes:</b>
+            <b>Instructions:</b>
             {{exercise.notes}}
-          </li>
-          <li class="list-group-item" v-if="exercise.modifications">
-            <b>Modifications:</b>
-            {{exercise.modifications}}
           </li>
         </ul>
         <div class="card-body">
@@ -43,11 +40,10 @@
 <script>
 export default {
   name: "exercise",
-  data: function(){
-    return{
-      show :false
-    }
- 
+  data: function () {
+    return {
+      show: false,
+    };
   },
 
   mounted() {
