@@ -1,6 +1,6 @@
 <template>
   <div class="exercise container-fluid">
-    <div class="row justify-content-center">
+    <div class="row justify-content-center" v-if="show">
       <div class="card" style="width: auto">
         <img
           class="card-img-top img-fluid"
@@ -43,12 +43,16 @@
 <script>
 export default {
   name: "exercise",
-  data() {
-    return {};
+  data: function(){
+    return{
+      show :false
+    }
+ 
   },
 
   mounted() {
     this.$store.dispatch("getExercise");
+    this.show = true;
   },
 
   computed: {
@@ -64,6 +68,7 @@ export default {
       this.$store.dispatch("getExercise");
     },
     popQuestionSWAL() {
+      this.show = false;
       this.$emit("workoutcomplete", true);
     },
   },

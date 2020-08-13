@@ -18,7 +18,7 @@ export default new Vuex.Store({
     answer: null
   },
   mutations: {
-    setUser(state, profileObject) {
+    setProfile(state, profileObject) {
       state.profile = profileObject
     },
     setExercise(state, exerciseObject) {
@@ -29,6 +29,9 @@ export default new Vuex.Store({
     },
     setLevel(state, level) {
       state.level = level
+    },
+    setTrivia(state,trivia){
+      state.trivia = trivia;
     }
 
   },

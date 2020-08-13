@@ -45,9 +45,11 @@ export default {
     workoutcomplete(complete) {
       if (complete) {
         this.answer = true;
+        this.exercise = false;
       } else {
         this.answer = false;
       }
+      console.log(complete);
     },
     workout(work) {
       if (work) {
