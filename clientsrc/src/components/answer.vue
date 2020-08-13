@@ -11,6 +11,7 @@
 export default {
   name: "answer",
   data: function () {
+    
     let answers = this.$store.state.trivia.incorrect_answers;
     let correct_answer = this.$store.state.trivia.correct_answer;
     swal(this.$store.state.trivia.question, {
