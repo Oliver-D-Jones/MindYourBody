@@ -1,0 +1,65 @@
+<template>
+  <div class="answer">
+    <div class="row" v-if="show">
+      <div>{{data()}}</div>
+    </div>
+  </div>
+</template>
+
+
+<script>
+export default {
+  name: "answer",
+  data: function () {
+    let answers = this.$store.state.trivia.incorrect_answers;
+    let correct_answer = this.$store.state.trivia.correct_answer;
+    swal(this.$store.state.trivia.question, {
+      className: "red-bg",
+      closeOnClickOutside: false,
+      buttons: {
+        zero: {
+          text: answers[0],
+          value: answers[0],
+        },
+        two: {
+          text: answers[1],
+          value: answers[1],
+        },
+        three: {
+          text: answers[2],
+          value: answers[2],
+        },
+        four: {
+          text: answers[3],
+          value: answers[3],
+        },
+      },
+    }).then((value) => {
+      if (value == correct_answer) {
+        swal(`${correct_answer}`, "Is Correct!", "success").then(() => {
+          swal.close();
+          this.$emit("init", true);
+        });
+      } else {
+        swal("Incorrect.", "Try Again.", "error").then(() => {
+          swal.close();
+          this.$emit("init", true);
+        });
+      }
+
+      this.show = false;
+    });
+    return {};
+    //trigger next to display 'Next Round' Modal component
+  },
+  mounted() {
+    this.show = true;
+  },
+  computed: {},
+  methods: {},
+  components: {},
+};
+</script>
+
+
+<style scoped></style>
