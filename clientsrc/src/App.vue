@@ -22,6 +22,7 @@ export default {
   components: {
     Navbar,
   },
+  methods: {},
 };
 import swal from "sweetalert";
 </script>
