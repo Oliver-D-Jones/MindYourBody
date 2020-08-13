@@ -3,14 +3,11 @@ let Schema = mongoose.Schema
 let ObjectId = Schema.Types.ObjectId
 
 const Exercise = new Schema({
-  exercise: { type: String, required: false },
-  equipment: { type: String, required: false },
-  type: { type: String, required: false },
-  major_muscle: { type: String, required: false },
-  minor_muscle: { type: String, required: false },
+  title: { type: String, required: false },
   example: { type: String, required: false },
   notes: { type: String, required: false },
-  modifications: { type: String, required: false },
+  reps: { type: Number, required: false },
+  time: { type: Number, required: false }
 }, { timestamps: true, toJSON: { virtuals: true } })
 
 
