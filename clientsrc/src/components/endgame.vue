@@ -67,11 +67,13 @@ export default {
       subject: this.$store.state.subject,
       level: this.$store.state.level,
       answer: this.$store.state.answer,
+      profile: this.$store.state.profile,
       show: false,
     };
   },
   mounted() {
     this.$store.dispatch("getTrivia");
+    this.$store.dispatch("getProfile");
     this.show = true;
   },
 
@@ -101,12 +103,19 @@ export default {
       if (this.level != this.$store.state.level) {
         this.$store.dispatch("setLevel", this.level);
       }
+      this.$store.dispatch("addPoints", {
+        id: this.profile.id,
+        points: this.points,
+      });
       this.subject = "";
       this.level = "";
       this.$emit("init", true);
     },
     quit() {
-
+      this.$store.dispatch("addPoints", {
+        id: this.profile.id,
+        points: this.points,
+      });
       router.push({ name: "home" });
     },
   },

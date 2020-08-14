@@ -12,6 +12,7 @@ export default new Vuex.Store({
     trivia: {},
     exercise: {},
     profile: {},
+    leaders: [],
     user: {},
     level: null,
     subject: null,
@@ -32,6 +33,9 @@ export default new Vuex.Store({
     },
     setTrivia(state, trivia) {
       state.trivia = trivia;
+    },
+    setLeaders(state, leaders) {
+      state.leaders = leaders
     }
 
   },
@@ -69,6 +73,31 @@ export default new Vuex.Store({
     },
     setSubject({ commit, dispatch, state }, data) {
       commit("setSubject", data)
+    },
+    setLeaders({ commit, dispatch, state }, data) {
+      if (state.leaders.length < 10) {
+        api.post("leaders", data).then(res => {
+          commit("setLeaders", res.data)
+          state.leaders.sort((p1, p2) => p2.points - p1.points)
+        })
+      } else {
+        if (data.points > state.leaders[9].points) {
+          api.post("leaders", data).then(res => {
+            commit("setLeaders", res.data)
+          })
+        }
+      }
+    },
+    async addPoints({ commit, dispatch, state }, data) {
+      try {
+        let res = await api.put('/profile/' + data.id, data).then(res => {
+          dispatch("getProfile", data.id)
+        })
+        commit("setProfile")
+        dispatch("setLeaders", data)
+      } catch (error) {
+        console.error(error)
+      }
     },
     setLevel({ commit, dispatch, state }, data) {
       commit("setLevel", data)
