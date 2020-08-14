@@ -21,6 +21,11 @@
           <li class="list-group-item" v-if="exercise.time">
             <b>Time:</b>
             {{exercise.time}} seconds
+            <button
+              class="btn btn-warning"
+              v-if="exercise.time"
+              @click="exerciseTimer"
+            >Start Timer</button>
           </li>
           <li class="list-group-item" v-if="exercise.notes">
             <b>Instructions:</b>
@@ -28,8 +33,9 @@
           </li>
         </ul>
         <div class="card-body">
-          <button class="btn btn-primary" @click="getExercise">Get a Different Exercise</button>
-          <button class="btn btn-success" @click="workOutComplete">Finished!</button>
+          <button class="btn btn-primary" @click="getExercise" v>Get a Different Exercise</button>
+          <button class="btn btn-success" @click="workOutComplete" :disabled="isDisabled">Finished!</button>
+          <span v-if="cheatTimer">Cheat Guard: {{cheatTimer}}</span>
         </div>
       </div>
     </div>
@@ -42,12 +48,15 @@ export default {
   name: "exercise",
   data: function () {
     return {
-      show:false,
+      cheatTimer: 15,
+      show: false,
+      isDisabled: true,
     };
   },
   mounted() {
     this.$store.dispatch("getExercise");
-    this.show=true;
+    this.show = true;
+    this.cheatInterval();
   },
   computed: {
     exercise() {
@@ -60,10 +69,36 @@ export default {
   methods: {
     getExercise() {
       this.$store.dispatch("getExercise");
+      this.isDisabled = true;
+      if (this.cheatTimer === 0) {
+        this.cheatTimer = 15;
+        this.cheatInterval();
+      } else {
+        this.cheatTimer = 15;
+      }
     },
     workOutComplete() {
       this.$emit("workoutcomplete", true);
       this.show = false;
+    },
+
+    cheatInterval() {
+      let timesUp = setInterval((interval) => {
+        this.cheatTimer--;
+        if (this.cheatTimer === 0) {
+          clearInterval(timesUp);
+          this.isDisabled = false;
+        }
+      }, 1000);
+    },
+
+    exerciseTimer() {
+      let exerciseInterval = setInterval((interval) => {
+        this.exercise.time--;
+        if (this.exercise.time === 0) {
+          clearInterval(exerciseInterval);
+        }
+      }, 1000);
     },
   },
   components: {},
