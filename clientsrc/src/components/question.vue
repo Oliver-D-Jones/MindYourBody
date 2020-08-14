@@ -4,6 +4,7 @@
   </div>
 </template>
 <script>
+import utils from "../assets/utils"
 export default {
   name: "question",
   data: function () {
@@ -16,19 +17,14 @@ export default {
     swalShow: function () {
       let html_inject = document.createElement("div");
       html_inject.className = "col-12";
-
-      let img = document.createElement("img");
-      img.className = "img-fluid img-sm";
-      img.src = "https://media.giphy.com/media/LJH5l2g4cOEjm/giphy.gif"
-      img.id = "brain";
-
       let title = document.createElement("h4");
-      title.textContent=`${this.question}`
-      html_inject.appendChild(img);
+      title.innerHTML = `${this.question}`;
       html_inject.appendChild(title);
+      let img = utils.getGif();
       swal({
         content: html_inject,
         className: "red-bg",
+        icon: img,
         closeOnClickOutside: false,
         buttons: {
           zero: { text: "Start Exercise", value: true },
@@ -39,9 +35,11 @@ export default {
           // display close and display excercise
           this.$emit("workout", true);
           this.show = false;
+          swal.close();
         } else {
           this.$emit("init", false);
           this.show = false;
+          swal.close();
           this.$router.push({ name: "home" });
         }
       });
@@ -56,8 +54,11 @@ export default {
 </script>
 
 
-<style scoped>
-#brain {
-border-radius: 50%
+<style>
+.swal-icon {
+  max-width: 16%;
+  border-radius: 10%;
+  border: aliceblue 2px inset;
+  background-color: black;
 }
 </style>

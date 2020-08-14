@@ -1,26 +1,31 @@
 <template>
   <div class="game">
-    <div class="container-fluid bg-info" style="min-height:100vh">
-      <div class="row" style="display:none;">
-        <div class="col-12" v-if="start">
-          <Question
-            :question="trivia.question"
-            v-on:workout="exercise = $event"
-            :key="trivia.question"
-          />
-        </div>
-      </div>
-
+    <div class="container-fluid bg-info" style="min-height:99vh">
       <div class="row">
         <div class="col-12" v-if="exercise">
-          <Exercise :key="'workout'" v-on:workoutcomplete="answer = $event" />
+          <Exercise :key="'workout'" v-on:workoutcomplete="workoutcomplete()" />
         </div>
       </div>
-
       <div class="row">
-        <div class="col-12" v-if="answer">
-          <Answer :key="trivia.correct_answer" v-on:init="start = $event" />
+        <div class="col-12" v-if="end">
+          <Endgame v-on:init="init()" />
         </div>
+      </div>
+      <div class="row">
+        <div class="col-12" v-if="start" style="display:none">{{begin()}}</div>
+
+        <Question
+          :question="trivia.question"
+          v-on:workout="workout()"
+          :key="trivia.question"
+          v-if="getQuestion"
+        />
+      </div>
+    </div>
+
+    <div class="row" style="display:none;">
+      <div class="col-12" v-if="answer">
+        <Answer :key="trivia.correct_answer" v-on:endgame="endgame()" />
       </div>
     </div>
   </div>
@@ -30,6 +35,7 @@
 import Exercise from "../components/exercise";
 import Answer from "../components/answer";
 import Question from "../components/question";
+import Endgame from "../components/endgame";
 export default {
   name: "game",
   data() {
@@ -38,81 +44,76 @@ export default {
       start: false,
       answer: false,
       exercise: false,
+      end: false,
+      getQuestion: false,
     };
   },
   computed: {},
   methods: {
     workoutcomplete(complete) {
-      if (complete) {
-        this.answer = true;
-        this.exercise = false;
-      } else {
-        this.answer = false;
-      }
-      console.log(complete);
+      this.exercise = false;
+      this.answer = true;
     },
     workout(work) {
-      if (work) {
-        this.exercise = true;
-      } else {
-        this.exercise = false;
-      }
+      this.start = false;
+      this.exercise = true;
     },
     init(play) {
-      console.log("in start at game");
-      if (play) {
-        this.start = true;
-      } else {
-        this.start = false;
+      this.start = true;
+      this.end = false;
+      this.getQuestion = false;
+      this.exercise = false;
+    },
+    endgame(correct) {
+      this.answer = false;
+      this.end = true;
+    },
+    async begin() {
+      //Get trivia data from api call and store
+      //NOTE get personal pref. from store.state
+      let cat = this.$store.state.subject;
+      let level = this.$store.state.level;
+      let answers = [];
+      const res = await fetch(
+        `https://opentdb.com/api.php?amount=1&category=${cat}&difficulty=${level}&type=multiple&encode=base64`
+      );
+      let data = await res.json();
+      data = data.results[0];
+      for (let property in data) {
+        if (Array.isArray(data[property])) {
+          data[property].forEach((prop, i, a) => {
+            a[i] = atob(prop);
+          });
+        } else {
+          data[property] = atob(data[property]);
+        }
       }
+      this.$store.commit("setTrivia", data);
+      this.question = data.question;
+      this.trivia = data;
+      answers = data.incorrect_answers;
+      answers.push(data.correct_answer);
+      answers.forEach((v, i, a) => {
+        let swap_index = Math.floor(a.length * Math.random());
+        let temp = a[swap_index];
+        a[swap_index] = v;
+        a[i] = temp;
+      });
+      this.getQuestion = true;
+      this.start = false;
     },
   },
-  async mounted() {
-    //Get trivia data from api call and store
-    //NOTE get personal pref. from store.state
-    console.log("in mounted");
-    // let cat = this.$store.state.subject;
-    let cat = Math.floor(Math.random()*23) + 9;
-    let answers = [];
-    const res = await fetch(
-      `https://opentdb.com/api.php?amount=1&category=${cat}&type=multiple&encode=base64`
-    );
-    let data = await res.json();
-    data = data.results[0];
-    for (let property in data) {
-      if (Array.isArray(data[property])) {
-        data[property].forEach((prop, i, a) => {
-          a[i] = atob(prop);
-        });
-      } else {
-        data[property] = atob(data[property]);
-      }
-    }
-    this.$store.commit("setTrivia", data);
-    console.log(data);
-    this.question = data.question;
-    this.trivia = data;
-    console.log(this.trivia);
-    answers = data.incorrect_answers;
-    answers.push(data.correct_answer);
-    answers.forEach((v, i, a) => {
-      let swap_index = Math.floor(a.length * Math.random());
-      let temp = a[swap_index];
-      a[swap_index] = v;
-      a[i] = temp;
-    });
+  mounted() {
     this.start = true;
   },
   beforeDestroy() {
     swal.close();
-    start = false;
-    answer = false;
-    exercise = false;
   },
   components: {
     Exercise,
     Answer,
     Question,
+    Endgame,
   },
 };
 </script>

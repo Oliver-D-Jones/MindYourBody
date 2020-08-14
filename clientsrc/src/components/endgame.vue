@@ -1,18 +1,20 @@
 <template>
-  <div>
+  <div v-if="show">
     <h1>End of Round</h1>
     <h3 v-if="answer">
       You just earned {{points}} points!
       <img src="../assets/coin.gif" style="width: 15rem;" />
     </h3>
-    <h3 v-else>No points this round.</h3>
-    <img src="../assets/frown.png" style="width: 15rem;" />
-    <h3>Play Again?</h3>
+    <div v-else>
+      <h3>No points this round.</h3>
+      <img src="../assets/frown.png" style="width: 15rem;" />
+      <h3>Play Again?</h3>
+    </div>
     <div class="row m-4" style="justify-content: space-evenly">
       <select name="category_id" v-model="subject" class="form-control" style="max-width: 35%">
         <option value hidden>Subject</option>
         <option>--- Select Subject ---</option>
-        <option value="any">Random</option>
+        <option value="false">Random</option>
         <option value="9">general knowledge</option>
         <option value="10">Books</option>
         <option value="11">Film</option>
@@ -62,20 +64,18 @@ export default {
   name: "endgame",
   data() {
     return {
-      subject: "",
-      level: "",
+      subject: this.$store.state.subject,
+      level: this.$store.state.level,
+      answer: this.$store.state.answer,
+      show: false,
     };
-    //trigger next to display 'Next Round' Modal component
   },
   mounted() {
-    this.$store.dispatch("getAnswer");
     this.$store.dispatch("getTrivia");
+    this.show = true;
   },
 
   computed: {
-    answer() {
-      return this.$store.state.answer;
-    },
     points() {
       let pts = 0;
       let level = this.$store.state.trivia.difficulty;
@@ -91,27 +91,26 @@ export default {
   },
   methods: {
     startPlay() {
-      if (this.subject == "") {
-        this.subject = "any";
+      this.show = false;
+      if (!this.subject) {
+        this.$store.dispatch("setSubject", Math.floor(Math.random() * 23) + 9);
       }
-      if (this.level == "") {
-        this.level = "any";
+      if (this.subject != this.$store.state.subject) {
+        this.$store.dispatch("setSubject", this.subject);
       }
-      this.$store.dispatch("setSubject", this.subject);
-      this.$store.dispatch("setLevel", this.level);
-      console.log(this.subject);
-      console.log(this.level);
+      if (this.level != this.$store.state.level) {
+        this.$store.dispatch("setLevel", this.level);
+      }
       this.subject = "";
       this.level = "";
-      router.push({ name: "game" });
+      this.$emit("init", true);
     },
     quit() {
+
       router.push({ name: "home" });
     },
   },
   components: {},
 };
 </script>
-
-
 <style scoped></style>

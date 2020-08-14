@@ -13,8 +13,8 @@ export default new Vuex.Store({
     exercise: {},
     profile: {},
     user: {},
-    level: {},
-    subject: {},
+    level: null,
+    subject: null,
     answer: null
   },
   mutations: {
@@ -39,7 +39,6 @@ export default new Vuex.Store({
     async getExercise({ commit, dispatch }) {
       try {
         let res = await api.get("/exercises/random")
-        console.log("got an exercise", res.data)
         commit("setExercise", res.data)
       } catch (err) {
         console.error(err)
@@ -68,40 +67,11 @@ export default new Vuex.Store({
     getTrivia({ commit, dispatch, state }) {
       return state.trivia
     },
-    //#region -- BOARDS --
-    getBoards({ commit, dispatch }) {
-      api.get('boards')
-        .then(res => {
-          commit('setBoards', res.data)
-        })
-    },
-
     setSubject({ commit, dispatch, state }, data) {
       commit("setSubject", data)
     },
     setLevel({ commit, dispatch, state }, data) {
       commit("setLevel", data)
     },
-    addBoard({ commit, dispatch }, boardData) {
-      api.post('boards', boardData)
-        .then(serverBoard => {
-          dispatch('getBoards')
-        })
-    }
-    //#endregion
-
-
-
-    //#endregion
-    //#endregion
-
-
-    // getQuiz({},id){
-    //   api.get( `https://opentdb.com/api.php?amount=1&category=${id}&difficulty=medium&type=multiple`)
-    //   .then(res=>{
-    //     return res;
-    //   })
-    // },
-
   }
 })

@@ -4,7 +4,7 @@
       <select name="category_id" v-model="subject" class="form-control" style="max-width: 35%">
         <option value hidden>Subject</option>
         <option>--- Select Subject ---</option>
-        <option value="any">Random</option>
+        <option :value="false">Random</option>
         <option value="9">general knowledge</option>
         <option value="10">Books</option>
         <option value="11">Film</option>
@@ -53,25 +53,35 @@ export default {
   name: "home",
   data() {
     return {
-      subject: "",
-      level: "",
+      subject: false,
+      level: false,
     };
   },
   computed: {},
   methods: {
     startPlay() {
-      if (this.subject == "") {
-        this.subject = "any";
+      if (!this.subject) {
+        this.$store.dispatch("setSubject", Math.floor(Math.random() * 23) + 9);
       }
-      if (this.level == "") {
-        this.level = "any";
+      if (!this.level) {
+        let level = Math.floor(Math.random() * 3);
+        switch (level) {
+          case 0:
+            level = "easy";
+            break;
+          case 1:
+            level = "medium";
+            break;
+          case 2:
+            level = "hard";
+            break;
+          default:
+            level = "medium";
+        }
+        this.$store.dispatch("setLevel", level);
       }
-      this.$store.dispatch("setSubject", this.subject);
-      this.$store.dispatch("setLevel", this.level);
-      console.log(this.subject);
-      console.log(this.level);
-      this.subject = "";
-      this.level = "";
+      this.subject = false;
+      this.level = false;
       router.push({ name: "game" });
     },
   },

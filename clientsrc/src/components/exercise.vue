@@ -1,10 +1,10 @@
 <template>
   <div class="exercise container-fluid">
     <div class="row justify-content-center" v-if="show">
-      <div class="card col-12">
+      <div class="card col-12 bg-info">
         <div>
           <img
-            class="card-img-top"
+            class="card-img-top mt-3 border shadow"
             :src="exercise.example"
             alt="Exercise Example"
             style=" max-width: 100%; max-height:350px; width: auto; height: auto"
@@ -29,7 +29,7 @@
         </ul>
         <div class="card-body">
           <button class="btn btn-primary" @click="getExercise">Get a Different Exercise</button>
-          <button class="btn btn-success" @click="popQuestionSWAL">Finished!</button>
+          <button class="btn btn-success" @click="workOutComplete">Finished!</button>
         </div>
       </div>
     </div>
@@ -42,15 +42,13 @@ export default {
   name: "exercise",
   data: function () {
     return {
-      show: false,
+      show:false,
     };
   },
-
   mounted() {
     this.$store.dispatch("getExercise");
-    this.show = true;
+    this.show=true;
   },
-
   computed: {
     exercise() {
       return this.$store.state.exercise[0];
@@ -63,9 +61,9 @@ export default {
     getExercise() {
       this.$store.dispatch("getExercise");
     },
-    popQuestionSWAL() {
-      this.show = false;
+    workOutComplete() {
       this.$emit("workoutcomplete", true);
+      this.show = false;
     },
   },
   components: {},
