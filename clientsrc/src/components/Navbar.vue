@@ -23,7 +23,11 @@
         <li class="nav-item">
           <a class="nav-link" data-toggle="modal" href="#aboutmodal">About</a>
         </li>
-        <li class="nav-item ml-3 mr-3" :class="{ active: $route.name == 'home' }">
+        <li
+          class="nav-item ml-3 mr-3"
+          v-if="$route.path != '/'"
+          :class="{ active: $route.name == 'home' }"
+        >
           <router-link :to="{ name: 'home' }" class="nav-link">Quit</router-link>
         </li>
       </ul>
