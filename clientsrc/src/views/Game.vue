@@ -1,6 +1,9 @@
 <template>
   <div class="game">
     <div class="container-fluid bg-info" style="min-height:99vh">
+      <div class v-if="video">
+        <Video :key="runningvideo" />
+      </div>
       <div class="row">
         <div class="col-12" v-if="exercise">
           <Exercise :key="'workout'" v-on:workoutcomplete="workoutcomplete()" />
@@ -22,7 +25,6 @@
         />
       </div>
     </div>
-
     <div class="row" style="display:none;">
       <div class="col-12" v-if="answer">
         <Answer :key="trivia.correct_answer" v-on:endgame="endgame()" />
@@ -36,6 +38,7 @@ import Exercise from "../components/exercise";
 import Answer from "../components/answer";
 import Question from "../components/question";
 import Endgame from "../components/endgame";
+import Video from "../components/endgame";
 export default {
   name: "game",
   data() {
@@ -46,6 +49,7 @@ export default {
       exercise: false,
       end: false,
       getQuestion: false,
+      video: null,
     };
   },
   computed: {},
@@ -114,15 +118,17 @@ export default {
     Answer,
     Question,
     Endgame,
+    Video,
   },
 };
 </script>
 
 
-<style>
+<style lang="scss">
 .swal-modal {
-  background-color: rgba(63, 255, 106, 0.69);
-  border: 3px solid white;
+  background-color: rgba(11, 52, 90, 0.69);
+  border: 6px inset gold;
+  color: white;
   min-width: 60%;
   min-height: 50%;
   text-align: center;

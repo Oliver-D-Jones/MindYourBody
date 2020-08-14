@@ -12,7 +12,6 @@ export default {
       show: false,
     };
   },
-  computed: {},
   methods: {
     swalShow: function () {
       let html_inject = document.createElement("div");
@@ -32,7 +31,6 @@ export default {
         },
       }).then((value) => {
         if (value) {
-          // display close and display excercise
           this.$emit("workout", true);
           this.show = false;
           swal.close();
@@ -45,15 +43,12 @@ export default {
       });
     },
   },
-  components: {},
   props: ["question"],
   mounted() {
     this.show = true;
   },
 };
 </script>
-
-
 <style>
 .swal-icon {
   max-width: 16%;

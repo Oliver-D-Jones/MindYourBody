@@ -11,7 +11,8 @@ export default {
         "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fmedia.giphy.com%2Fmedia%2Fl0HU5526qfCzI25Q4%2Fgiphy.gif&f=1&nofb=1",
         "https://upload.wikimedia.org/wikipedia/commons/a/ae/Inferior_frontal_gyrus_animation_small.gif",
     ],
-    getGif: function(){
-        return this.gifs[Math.floor(Math.random()*this.gifs.length)]
-    }
+    getGif: function () {
+        return this.gifs[Math.floor(Math.random() * this.gifs.length)]
+    },
+
 }
