@@ -53,6 +53,11 @@ export default {
       isDisabled: true,
     };
   },
+
+  beforeDestroy: function () {
+    this.$store.state.exercise[0] = {};
+  },
+
   mounted() {
     this.$store.dispatch("getExercise");
     this.show = true;
@@ -69,13 +74,15 @@ export default {
   methods: {
     getExercise() {
       this.$store.dispatch("getExercise");
-      this.isDisabled = true;
-      if (this.cheatTimer === 0) {
-        this.cheatTimer = 15;
-        this.cheatInterval();
-      } else {
-        this.cheatTimer = 15;
-      }
+
+      // NOTE enable code below to restart Cheat Gaurd when getting new exercise
+      // this.isDisabled = true;
+      // if (this.cheatTimer === 0) {
+      //   this.cheatTimer = 15;
+      //   this.cheatInterval();
+      // } else {
+      //   this.cheatTimer = 15;
+      // }
     },
     workOutComplete() {
       this.$emit("workoutcomplete", true);
