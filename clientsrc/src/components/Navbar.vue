@@ -42,17 +42,20 @@
       aria-hidden="true"
     >
       <div class="modal-dialog" role="document">
-        <div class="modal-content">
+        <div class="modal-content bg-primary">
           <div class="modal-header">
-            <h5 class="modal-title" id="leaderboardmodal">Leader Board</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
+            <h5 class="modal-title" id="leaderboardmodal"></h5>
           </div>
-          <div class="modal-body">TOP SCORES</div>
+          <div class="modal-body">
+            <b>TOP POINT EARNERS</b>
+          </div>
+          <h3>
+            <ol>
+              <leader v-for="leader in leaders" :leader="leader" :key="leader.id"></leader>
+            </ol>
+          </h3>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary">Save changes</button>
           </div>
         </div>
       </div>
@@ -85,8 +88,8 @@
 </template>
 
 <script>
+import Leader from "../components/Leader";
 import axios from "axios";
-
 let _api = axios.create({
   baseURL: "https://localhost:3000",
   withCredentials: true,
@@ -94,12 +97,12 @@ let _api = axios.create({
 export default {
   name: "Navbar",
   mounted() {
-    //this.$store.dispatch("getQuestion");
+    this.$store.dispatch("getLeaders");
   },
   computed: {
-    /*question() {
-      return this.$store.state.question;
-    },*/
+    leaders() {
+      return this.$store.state.leaders;
+    },
   },
   methods: {
     async login() {
@@ -112,6 +115,9 @@ export default {
     async logout() {
       await this.$auth.logout({ returnTo: window.location.origin });
     },
+  },
+  components: {
+    Leader,
   },
 };
 </script>

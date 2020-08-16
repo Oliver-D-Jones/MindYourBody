@@ -74,6 +74,10 @@ export default {
   mounted() {
     this.$store.dispatch("getTrivia");
     this.$store.dispatch("getProfile");
+    this.$store.dispatch("checkPlayer", {
+      data: this.profile,
+      points: this.points,
+    });
     this.show = true;
   },
 
@@ -81,12 +85,15 @@ export default {
     points() {
       let pts = 0;
       let level = this.$store.state.trivia.difficulty;
-      if (level == "easy") {
+      let answer = this.$store.state.answer;
+      if (level == "easy" && answer) {
         pts = 5;
-      } else if (level == "medium") {
+      } else if (level == "medium" && answer) {
         pts = 10;
-      } else {
+      } else if (level == "hard" && answer) {
         pts = 20;
+      } else {
+        pts = 0;
       }
       return pts;
     },
@@ -103,19 +110,11 @@ export default {
       if (this.level != this.$store.state.level) {
         this.$store.dispatch("setLevel", this.level);
       }
-      this.$store.dispatch("addPoints", {
-        id: this.profile.id,
-        points: this.points,
-      });
       this.subject = "";
       this.level = "";
       this.$emit("init", true);
     },
     quit() {
-      this.$store.dispatch("addPoints", {
-        id: this.profile.id,
-        points: this.points,
-      });
       router.push({ name: "home" });
     },
   },

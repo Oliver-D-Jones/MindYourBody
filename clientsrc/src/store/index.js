@@ -35,7 +35,7 @@ export default new Vuex.Store({
       state.trivia = trivia;
     },
     setLeaders(state, leaders) {
-      state.leaders = leaders
+      state.leaders = leaders;
     }
 
   },
@@ -56,7 +56,7 @@ export default new Vuex.Store({
     resetBearer() {
       api.defaults.headers.authorization = "";
     },
-    async getProfile({ commit }) {
+    async getProfile({ commit, state }) {
       try {
         let res = await api.get("/profile")
         commit("setProfile", res.data)
@@ -71,32 +71,65 @@ export default new Vuex.Store({
     getTrivia({ commit, dispatch, state }) {
       return state.trivia
     },
+    getLeaders({ commit, dispatch, state }) {
+      return state.leaders
+    },
+    async loadLeaders({ commit, dispatch, state }) {
+      let res = await api.get("players/" + "gettop")
+      console.log("hello from loadLeaders")
+      commit("setLeaders", res.data)
+    },
+
     setSubject({ commit, dispatch, state }, data) {
       commit("setSubject", data)
     },
-    setLeaders({ commit, dispatch, state }, data) {
-      if (state.leaders.length < 10) {
-        api.post("leaders", data).then(res => {
-          commit("setLeaders", res.data)
-          state.leaders.sort((p1, p2) => p2.points - p1.points)
-        })
-      } else {
-        if (data.points > state.leaders[9].points) {
-          api.post("leaders", data).then(res => {
-            commit("setLeaders", res.data)
-          })
-        }
+
+    async checkPlayer({ commit, dispatch, state }, data) {
+      try {
+        let res = await api.get("players/" + data.data.id)
+        dispatch('getPoints', data)
+      } catch (err) {
+        dispatch("newPlayer", data)
+        console.error(err)
       }
     },
-    async addPoints({ commit, dispatch, state }, data) {
+
+    async newPlayer({ commit, dispatch, state }, data) {
+      console.log("hello from newPlayer")
       try {
-        let res = await api.put('/profile/' + data.id, data).then(res => {
-          dispatch("getProfile", data.id)
+        let res = await api.post("players", {
+          name: data.data.name,
+          points: 0,
+          profileId: data.data.id
         })
-        commit("setProfile")
-        dispatch("setLeaders", data)
-      } catch (error) {
-        console.error(error)
+        dispatch('getPoints', data)
+      } catch (err) {
+        console.error(err)
+      }
+    },
+
+    async getPoints({ commit, dispatch, state }, data) {
+      console.log("hello from getPoints")
+      try {
+        let res = await api.get("players/" + data.data.id)
+        dispatch("updatePoints", {
+          id: data.data.id,
+          oldPoints: res.data.points,
+          newPoints: data.points
+        })
+      } catch (err) {
+        console.error(err)
+      }
+    },
+    async updatePoints({ commit, dispatch, state }, data) {
+      console.log("hello from updatePoints")
+      try {
+        let res = await api.put("players/" + data.id, {
+          points: (data.oldPoints + data.newPoints)
+        })
+        dispatch("loadLeaders")
+      } catch (err) {
+        console.error(err)
       }
     },
     setLevel({ commit, dispatch, state }, data) {
