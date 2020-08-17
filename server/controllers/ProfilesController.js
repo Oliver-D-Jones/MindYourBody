@@ -19,6 +19,7 @@ export class ProfilesController extends BaseController {
       next(error);
     }
   }
+
   async edit(req, res, next) {
     try {
       req.body.creatorId = req.user.sub;

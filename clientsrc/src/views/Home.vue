@@ -10,7 +10,7 @@
         <option value="11">Film</option>
         <option value="12">Music</option>
         <option value="13">Musicals & Theatre</option>
-        <option value="14">Telvision</option>
+        <option value="14">Television</option>
         <option value="15">Video Games</option>
         <option value="16">Board Games</option>
         <option value="17">Science & Nature</option>
@@ -85,7 +85,9 @@ export default {
       router.push({ name: "game" });
     },
   },
-  mounted() {},
+  mounted() {
+    this.$store.dispatch("loadLeaders");
+  },
   components: {},
 };
 </script>

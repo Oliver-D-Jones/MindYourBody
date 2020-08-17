@@ -48,7 +48,7 @@ export default {
   name: "exercise",
   data: function () {
     return {
-      cheatTimer: 15,
+      cheatTimer: 1,
       show: false,
       isDisabled: true,
     };
