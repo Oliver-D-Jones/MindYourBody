@@ -24,7 +24,8 @@
             <button
               class="btn btn-warning"
               v-if="exercise.time"
-              @click="exerciseTimer"
+              :disabled="exerciseTimerDisabled"
+              @click="exerciseTimer(), exerciseTimerDisabled = true"
             >Start Timer</button>
           </li>
           <li class="list-group-item" v-if="exercise.notes">
@@ -51,10 +52,12 @@ export default {
       cheatTimer: 1,
       show: false,
       isDisabled: true,
+      exerciseTimerDisabled: false,
+      exerciseInterval: null,
     };
   },
 
-  beforeDestroy: function () {
+  beforeDestroy() {
     this.$store.state.exercise[0] = {};
   },
 
@@ -74,6 +77,8 @@ export default {
   methods: {
     getExercise() {
       this.$store.dispatch("getExercise");
+      clearInterval(this.exerciseInterval);
+      this.exerciseTimerDisabled = false;
 
       // NOTE enable code below to restart Cheat Gaurd when getting new exercise
       // this.isDisabled = true;
@@ -100,12 +105,13 @@ export default {
     },
 
     exerciseTimer() {
-      let exerciseInterval = setInterval((interval) => {
+      let exerciseCountDown = setInterval((interval) => {
         this.exercise.time--;
         if (this.exercise.time === 0) {
-          clearInterval(exerciseInterval);
+          clearInterval(exerciseCountDown);
         }
       }, 1000);
+      this.exerciseInterval = exerciseCountDown;
     },
   },
   components: {},
