@@ -1,3 +1,21 @@
 .btn-primary{
   color: $light;
 }
+
+.gameFont {
+  font-family: 'Passion One', cursive;
+  color: darkred;
+  text-shadow:
+    -0.5px -0.5px 0 #fff,
+    0.5px -0.5px 0 #fff,
+    -0.5px 0.5px 0 #fff,
+    0.5px 0.5px 0 #fff; 
+}
+
+.leaderFont {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.dropDown {
+  border: 0.1rem solid black;
+}

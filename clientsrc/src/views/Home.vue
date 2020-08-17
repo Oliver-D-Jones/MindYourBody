@@ -1,7 +1,12 @@
 <template class="home">
-  <div class="container-fluid">
-    <div class="row m-4" style="justify-content: space-evenly">
-      <select name="category_id" v-model="subject" class="form-control" style="max-width: 35%">
+  <div class="container-fluid gameFont bg-info" style="min-height: 100vh">
+    <div class="row p-4" style="justify-content: space-evenly">
+      <select
+        name="category_id"
+        v-model="subject"
+        class="form-control dropDown"
+        style="max-width: 35%; margin-top: 5rem"
+      >
         <option value hidden>Subject</option>
         <option>--- Select Subject ---</option>
         <option :value="false">Random</option>
@@ -30,7 +35,12 @@
         <option value="31">Japanese Anime & Manga</option>
         <option value="32">Cartoon & Animations</option>
       </select>
-      <select name="category_id" v-model="level" class="form-control" style="max-width: 35%">
+      <select
+        name="category_id"
+        v-model="level"
+        class="form-control dropDown"
+        style="max-width: 35%; margin-top: 5rem"
+      >
         <option value hidden>Level</option>
         <option>--- Select Level ---</option>
         <option value="easy">easy</option>
@@ -38,12 +48,12 @@
         <option value="hard">hard</option>
       </select>
     </div>
-    <div>
+    <div style="margin-top: 5rem">
       <h1>MIND YOUR BODY</h1>
       <img src="../assets/logo.png" style="width: 20rem;" />
     </div>
     <div>
-      <button @click="startPlay()" class="btn btn-danger btn-lg border">START</button>
+      <button @click="startPlay()" class="btn btn-danger btn-lg border mb-4 mt-4">START</button>
     </div>
   </div>
 </template>

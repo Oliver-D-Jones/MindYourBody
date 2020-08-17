@@ -1,6 +1,6 @@
 <template>
-  <div v-if="show">
-    <h1>End of Round</h1>
+  <div v-if="show" class="gameFont">
+    <h1 class="mt-4">End of Round</h1>
     <h3 v-if="answer">
       You just earned {{points}} points!
       <img src="../assets/coin.gif" style="width: 15rem;" />
@@ -11,7 +11,12 @@
       <h3>Play Again?</h3>
     </div>
     <div class="row m-4" style="justify-content: space-evenly">
-      <select name="category_id" v-model="subject" class="form-control" style="max-width: 35%">
+      <select
+        name="category_id"
+        v-model="subject"
+        class="form-control dropDown"
+        style="max-width: 35%"
+      >
         <option value hidden>Subject</option>
         <option>--- Select Subject ---</option>
         <option value="false">Random</option>
@@ -40,7 +45,12 @@
         <option value="31">Japanese Anime & Manga</option>
         <option value="32">Cartoon & Animations</option>
       </select>
-      <select name="category_id" v-model="level" class="form-control" style="max-width: 35%">
+      <select
+        name="category_id"
+        v-model="level"
+        class="form-control dropDown"
+        style="max-width: 35%"
+      >
         <option value hidden>Level</option>
         <option>--- Select Level ---</option>
         <option value="easy">easy</option>
