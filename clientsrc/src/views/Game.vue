@@ -91,7 +91,6 @@ export default {
       const res = await fetch(
         `https://opentdb.com/api.php?amount=1&category=${cat}&difficulty=${level}&type=multiple`
       );
-      // `https://opentdb.com/api.php?amount=1&category=${cat}&difficulty=${level}&type=multiple&encode=base64`
       let data = await res.json();
       data = data.results[0];
       for (let property in data) {
@@ -119,10 +118,11 @@ export default {
     },
   },
   mounted() {
+
     // if (this.$store.state.stream.invitee || this.$store.state.stream.inviter ) {
-    // this.inviter = true;
+    this.inviter = true;
     // this.invitee = true;
-    this.start = true;
+    // this.start = true;
     // } else {
     //   this.start = true;
     // }
@@ -161,6 +161,13 @@ export default {
 .swal-footer {
   text-align: center;
 }
+.swal-icon img {
+  max-width: 25%;
+  border-radius: 5%;
+  border: antiquewhite solid 2px;
+  background-color: blue;
+}
+
 .search:hover {
   color: blue;
   background-color: antiquewhite;
