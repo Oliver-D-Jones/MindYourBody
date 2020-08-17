@@ -89,17 +89,18 @@ export default {
       let level = this.$store.state.level;
       let answers = [];
       const res = await fetch(
-        `https://opentdb.com/api.php?amount=1&category=${cat}&difficulty=${level}&type=multiple&encode=base64`
+        `https://opentdb.com/api.php?amount=1&category=${cat}&difficulty=${level}&type=multiple`
       );
+      // `https://opentdb.com/api.php?amount=1&category=${cat}&difficulty=${level}&type=multiple&encode=base64`
       let data = await res.json();
       data = data.results[0];
       for (let property in data) {
         if (Array.isArray(data[property])) {
           data[property].forEach((prop, i, a) => {
-            a[i] = atob(prop);
+            a[i] = prop;
           });
         } else {
-          data[property] = atob(data[property]);
+          data[property] = data[property];
         }
       }
       this.$store.commit("setTrivia", data);
@@ -119,15 +120,15 @@ export default {
   },
   mounted() {
     // if (this.$store.state.stream.invitee || this.$store.state.stream.inviter ) {
-    this.inviter = true;
+    // this.inviter = true;
     // this.invitee = true;
-    this.start = false;
+    this.start = true;
     // } else {
     //   this.start = true;
     // }
   },
   beforeDestroy() {
-    if (Swal.isVisible()) {
+    if (swal.isVisible()) {
       swal.close();
     }
   },

@@ -61,7 +61,6 @@ export default {
           className: "wrong",
           icon: img,
           closeOnClickOutside: false,
-          timer: 2700,
         }).then(() => {
           this.$emit("endgame", true);
           this.$store.state.answer = false;

@@ -5,18 +5,14 @@
         My Id:
         <span id="myId"></span>
       </p>
-      <p>
-        Mesage:
-        <span id="msgIn"></span>
-      </p>
       <!-- <button class="btn btn-sm btn-success" @click="connect">Connect</button>
       <button class="btn btn-sm btn-warning" @click="call">Call</button>-->
-      <button @click="getStream">IJSDBVI</button>
+      <button @click="getStream">Get Stream</button>
       <video
         autoplay="true"
         id="myVideo_1"
         class="border"
-        style=" display:none;max-width: -webkit-fill-available;max-height: -webkit-fill-available;
+        style=" max-width: -webkit-fill-available;max-height: -webkit-fill-available;
         width: 120px;height: 100px;"
         muted
       ></video>
@@ -26,15 +22,20 @@
         class="border"
         style="max-width: -webkit-fill-available;max-height: -webkit-fill-available;
         width: 120px;height: 100px;"
-        muted
       ></video>
       <!-- <button class="btn btn-sm rounded bg-dark text-light" @click="play">></button>
       <button class="btn btn-sm rounded bg-dark text-light" @click="pause">O</button>
       <button class="btn btn-sm rounded bg-dark text-light" @click="stop">X</button>-->
       <p class="border">
-        Your Id:
+        Peer Id:
         <br />
-        <span class="text-warning" id="myId_1"></span>
+        <span class="text-warning" id="peerId"></span>
+        <br />
+        <span id="msgIn"></span>
+      </p>
+      <p>
+        Mesage:
+        <span id="msgIn"></span>
       </p>
     </div>
   </div>
@@ -48,13 +49,13 @@ export default {
     return {
       localStream: null,
       localPeer: null,
-      myVideo_1: null,
+      // myVideo_1: null,
     };
   },
   computed: {},
   methods: {
     getStream() {
-      console.log(this.myVideo.srcObject, this.localPeer.id);
+      console.log(this.localPeer.id);
     },
   },
   components: {},
@@ -76,6 +77,7 @@ export default {
       navigator.mediaDevices
         .getUserMedia({ video: true, audio: true })
         .then(function (stream) {
+          console.log(stream, mediaStream);
           mediaStream = stream;
           document.getElementById("myVideo_1").srcObject = stream;
         });
@@ -93,6 +95,7 @@ export default {
         peer.id = lastPeerId;
       } else {
         console.log("receieved peer.id");
+        // document.getElementById("peerId").textContent =
         lastPeerId = peer.id;
       }
       document.getElementById("myId").textContent = peer.id;
@@ -114,6 +117,8 @@ export default {
 
       conn = c;
       console.log("Connected to: " + conn.peer);
+      document.getElementById("peerId").textContent = conn.peer;
+
       // status.innerHTML = "Connected";
       ready();
     });
@@ -138,10 +143,9 @@ export default {
     function ready() {
       conn.on("data", function (data) {
         console.log("Data recieved");
-        // document.getElementById("msgIn").textContent = data;
-        console.log(data,typeof(data));
-        document.getElementById("myPeer").srcObject = data;
-
+        document.getElementById("msgIn").textContent = data;
+        console.log(data, typeof data);
+        // document.getElementById("myPeer").srcObject = data;
       });
       conn.on("close", function () {
         // status.innerHTML = "Connection reset<br>Awaiting connection...";
