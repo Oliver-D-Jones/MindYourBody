@@ -1,6 +1,6 @@
 <template>
-  <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <router-link class="navbar-brand" :to="{ name: 'home' }">MYB</router-link>
+  <nav class="navbar gameFont navbar-expand-lg navbar-light bg-light">
+    <router-link class="navbar-brand" style="font-size: 3rem" :to="{ name: 'home' }">MYB</router-link>
     <button
       class="navbar-toggler"
       type="button"
@@ -30,6 +30,9 @@
         >
           <router-link :to="{ name: 'home' }" class="nav-link">Quit</router-link>
         </li>
+        <li class="nav-item ml-5">
+          <h2>TOTAL POINTS: {{points}}</h2>
+        </li>
       </ul>
       <span class="navbar-text">
         <button class="btn btn-success" @click="login" v-if="!$auth.isAuthenticated">Login</button>
@@ -46,7 +49,7 @@
       aria-hidden="true"
     >
       <div class="modal-dialog" role="document">
-        <div class="modal-content bg-primary">
+        <div class="modal-content bg-primary leaderFont">
           <div class="modal-header">
             <h5 class="modal-title" id="leaderboardmodal"></h5>
           </div>
@@ -107,12 +110,16 @@ export default {
     leaders() {
       return this.$store.state.leaders;
     },
+    points() {
+      return this.$store.state.currentPlayer.points;
+    },
   },
   methods: {
     async login() {
       await this.$auth.loginWithPopup();
       this.$store.dispatch("setBearer", this.$auth.bearer);
       this.$store.dispatch("getProfile");
+      //this.$store.dispatch("getCurrentPlayer");
       console.log("this.$auth.user: ");
       console.log(this.$auth.user);
     },

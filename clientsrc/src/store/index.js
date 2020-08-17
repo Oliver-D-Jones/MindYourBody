@@ -14,6 +14,7 @@ export default new Vuex.Store({
     profile: {},
     leaders: [],
     user: {},
+    currentPlayer: {},
     level: null,
     subject: null,
     answer: null
@@ -36,6 +37,9 @@ export default new Vuex.Store({
     },
     setLeaders(state, leaders) {
       state.leaders = leaders;
+    },
+    setCurrentPlayer(state, currentPlayer) {
+      state.currentPlayer = currentPlayer;
     }
 
   },
@@ -56,15 +60,26 @@ export default new Vuex.Store({
     resetBearer() {
       api.defaults.headers.authorization = "";
     },
-    async getProfile({ commit, state }) {
+    async getProfile({ commit, dispatch, state }) {
       try {
         let res = await api.get("/profile")
-        commit("setProfile", res.data)
+        console.log(state.profile.id)
+        await commit("setProfile", res.data)
+        dispatch("getCurrentPlayer")
+        console.log(state.profile.id)
       } catch (err) {
         console.error(err)
       }
     },
-
+    async getCurrentPlayer({ commit, dispatch, state }) {
+      try {
+        console.log("zippee", state.profile.id)
+        let res = await api.get("players/" + state.profile.id)
+        commit("setCurrentPlayer", res.data)
+      } catch (err) {
+        console.error(err)
+      }
+    },
     getAnswer({ commit, dispatch, state }) {
       return state.answer
     },
