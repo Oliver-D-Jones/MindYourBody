@@ -1,8 +1,12 @@
 <template class="home">
-  <div class="container-fluid gameFont bg-info" style="min-height: 100vh">
-    <div class="row justify-content-center">
-      <div class="col-2 btn btn-sm btn-warning" @click="invite">Invite</div>
-      <div class="col-2 btn btn-sm btn-info" @click="join">Join</div>
+  <div class="container-fluid gameFont" style="min-height: 100vh">
+    <div class="row justify-content-center mt-2">
+      <div class="col-sm-6 col-md-2">
+        <button class="btn btn-block btn-warning" @click="invite">Invite</button>
+      </div>
+      <div class="col-sm-6 col-md-2">
+        <button class="btn btn-block btn-success" @click="join">Join</button>
+      </div>
     </div>
     <div class="row p-4" style="justify-content: space-evenly">
       <select
@@ -173,10 +177,15 @@ export default {
 
 
 <style>
+.swal-overlay {
+  background-color: transparent;
+}
 .swal-modal {
-  background-color: rgba(63, 255, 106, 0.69);
-  border: 3px solid white;
+  background-color: black;
+  border: 6px inset gold;
+  color: white;
   min-width: 60%;
+  min-height: 50%;
   text-align: center;
   justify-content: center;
   align-content: center;
@@ -187,5 +196,15 @@ export default {
 .search:hover {
   color: blue;
   background-color: antiquewhite;
+}
+.swal-title,
+.swal-text {
+  color: white;
+}
+.swal-icon img {
+  max-width: 10%;
+  border-radius: 5%;
+  border: antiquewhite solid 2px;
+  background-color: rgba(63, 255, 106, 0.69);
 }
 </style>
