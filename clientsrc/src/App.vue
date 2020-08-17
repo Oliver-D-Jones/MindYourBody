@@ -8,6 +8,8 @@
 <script>
 import Navbar from "./components/Navbar";
 import { onAuth } from "@bcwdev/auth0-vue";
+import swal from "sweetalert";
+import Peer from 'peerjs';
 export default {
   name: "App",
   async beforeCreate() {
@@ -24,7 +26,6 @@ export default {
   },
   methods: {},
 };
-import swal from "sweetalert";
 </script>
 
 

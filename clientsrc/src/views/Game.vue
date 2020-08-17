@@ -1,9 +1,15 @@
 <template>
   <div class="game">
     <div class="container-fluid bg-info" style="min-height:99vh">
-      <div class v-if="video">
-        <Video :key="runningvideo" />
+      <div class="row">
+        <div class="col-md-2" v-if="inviter">
+          <Inviter :key="'inviterVideo'" />
+        </div>
+        <div class="col-md-2" v-if="invitee">
+          <Invitee :key="'inviteeVideo'" />
+        </div>
       </div>
+
       <div class="row">
         <div class="col-12" v-if="exercise">
           <Exercise :key="'workout'" v-on:workoutcomplete="workoutcomplete()" />
@@ -38,7 +44,9 @@ import Exercise from "../components/exercise";
 import Answer from "../components/answer";
 import Question from "../components/question";
 import Endgame from "../components/endgame";
-import Video from "../components/endgame";
+import Inviter from "../components/inviter";
+import Invitee from "../components/invitee";
+
 export default {
   name: "game",
   data() {
@@ -49,7 +57,8 @@ export default {
       exercise: false,
       end: false,
       getQuestion: false,
-      video: null,
+      invitee: false,
+      inviter: false,
     };
   },
   computed: {},
@@ -75,6 +84,7 @@ export default {
     async begin() {
       //Get trivia data from api call and store
       //NOTE get personal pref. from store.state
+      console.log("in Begin of game");
       let cat = this.$store.state.subject;
       let level = this.$store.state.level;
       let answers = [];
@@ -108,23 +118,35 @@ export default {
     },
   },
   mounted() {
-    this.start = true;
+    // if (this.$store.state.stream.invitee || this.$store.state.stream.inviter ) {
+    this.inviter = true;
+    // this.invitee = true;
+    this.start = false;
+    // } else {
+    //   this.start = true;
+    // }
   },
   beforeDestroy() {
-    swal.close();
+    if (Swal.isVisible()) {
+      swal.close();
+    }
   },
   components: {
     Exercise,
     Answer,
     Question,
     Endgame,
-    Video,
+    Inviter,
+    Invitee,
   },
 };
 </script>
 
 
 <style lang="scss">
+.swal-overlay {
+  background-color: transparent;
+}
 .swal-modal {
   background-color: rgba(11, 52, 90, 0.69);
   border: 6px inset gold;

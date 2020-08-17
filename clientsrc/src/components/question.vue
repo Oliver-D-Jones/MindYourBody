@@ -50,10 +50,5 @@ export default {
 };
 </script>
 <style>
-.swal-icon {
-  max-width: 16%;
-  border-radius: 10%;
-  border: aliceblue 2px inset;
-  background-color: black;
-}
+
 </style>
