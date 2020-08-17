@@ -1,5 +1,9 @@
 <template class="home">
   <div class="container-fluid gameFont bg-info" style="min-height: 100vh">
+    <div class="row justify-content-center">
+      <div class="col-2 btn btn-sm btn-warning" @click="invite">Invite</div>
+      <div class="col-2 btn btn-sm btn-info" @click="join">Join</div>
+    </div>
     <div class="row p-4" style="justify-content: space-evenly">
       <select
         name="category_id"
@@ -69,6 +73,71 @@ export default {
   },
   computed: {},
   methods: {
+    invite() {
+      console.log(this.$store.state.profile);
+      let id = (Math.random().toString(36) + "0000000000000000000").substr(
+        2,
+        16
+      );
+      let html_inject = document.createElement("div");
+      html_inject.className = "col-12";
+      let title = document.createElement("h4");
+      title.textContent = `Your Room ID Is:`;
+
+      let p_id = document.createElement("p");
+      p_id.textContent = id;
+
+      let warning = document.createElement("p");
+      warning.textContent =
+        "Make Sure To Notify Your Friend Of Your Room's ID.";
+
+      html_inject.appendChild(title);
+      html_inject.appendChild(p_id);
+      html_inject.appendChild(warning);
+
+      this.$store.state.stream.user.id = id;
+      swal({
+        icon:
+          "https://external-content.duckduckgo.com/iu/?u=http%3A%2F%2Ficons.iconarchive.com%2Ficons%2Foxygen-icons.org%2Foxygen%2F256%2FApps-preferences-desktop-notification-icon.png&f=1&nofb=1",
+        closeOnClickOutside: false,
+        content: html_inject,
+        buttons: {
+          zero: { text: "Confirm", value: true },
+          one: { text: "Cancel", value: false },
+        },
+      }).then((value) => {
+        if (value) {
+          swal.close();
+        } else {
+          this.$store.state.stream.user.id;
+          swal.close();
+        }
+      });
+    },
+    join() {
+      let inputValue = "";
+      let html_inject = document.createElement("input");
+
+      swal({
+        title: "Enter The Id Of The Peer You Want To Join",
+        content: html_inject,
+        buttons: true,
+      }).then((content) => {
+        this.$store.state.stream.peer.id = html_inject.value;
+        // this.$store.state.stream.peer.id
+        console.log(html_inject.value);
+      });
+
+      // if (roomId) {
+      //   roomId = roomId.trim();
+      //   console.log(roomId);
+      //   swal({
+      //     title: `The Peer ID You Entered is: `,
+      //     text: roomId,
+      //   });
+      // }
+    },
+
     startPlay() {
       if (!this.subject) {
         this.$store.dispatch("setSubject", Math.floor(Math.random() * 23) + 9);

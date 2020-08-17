@@ -15,6 +15,7 @@ export default new Vuex.Store({
     leaders: [],
     user: {},
     currentPlayer: {},
+    stream: { user: { id: null }, peer: { id: null } },
     level: null,
     subject: null,
     answer: null
