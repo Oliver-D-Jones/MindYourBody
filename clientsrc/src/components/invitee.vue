@@ -1,7 +1,7 @@
 <template>
   <div class="invitee">
-    <div class="row">
-      <div class="col-12">
+    <div class="row border">
+      <div class="col-12 border" >
         <h4>
           Invitee
           <span id="myId"></span>
@@ -34,10 +34,15 @@ export default {
     // Call a peer, providing our mediaStream
     let lastPeerId = null;
     let conn = null;
+    let peer = null;
     let peer_id = this.$store.state.stream.peer.id;
-    let peer = new Peer(null, {
+    let myId = this.$store.state.stream.user.id;
+
+  
+    peer = new Peer(myId, {
       debug: 2,
     });
+    
 
     peer.on("open", function (id) {
       // Workaround for peer.reconnect deleting previous id
@@ -49,22 +54,60 @@ export default {
         lastPeerId = peer.id;
       }
       document.getElementById("myId").textContent = `My Id: ${peer.id}`;
-      console.log("Peer ID: " + peer.id);
 
-      console.log("before conn", peer_id);
+      peer.on("connection", function (c) {
+        // Disallow incoming connections
+        c.on("open", function () {
+          c.send("Sender does not accept incoming connections");
+          setTimeout(function () {
+            c.close();
+          }, 500);
+        });
+      });
+      peer.on("disconnected", function () {
+        swal("Connection lost. Please reconnect").then((res)=>{
+
+          peer.id = this.$store.state.stream.user.id;
+          peer._lastServerId = this.$store.state.stream.user.id;
+          peer.reconnect();
+          swal.close();
+        })
+        // Workaround for peer.reconnect deleting previous id
+      });
+      peer.on("close", function () {
+        conn = null;
+        swal("Connection destroyed. Please refresh");
+        console.log("Connection destroyed");
+      });
+      peer.on("error", function (err) {
+        console.log(err);
+        swal("" + err);
+      });
+
       conn = peer.connect(peer_id, {
         reliable: true,
+      });
+
+      conn.on("open", function () {
+        // swal("Connected to: " + conn.peer);
+        console.log("Connected to: " + conn.peer);
+        document.getElementById(
+          "peerId"
+        ).textContent = `Connected To: ${conn.peer}`;
+      });
+
+      conn.on("data", function (data) {
+        //add functionality for sending data;
+        swal(data);
+      });
+      conn.on("close", function () {
+        swal("Connection closed");
       });
 
       let call = peer.call(peer_id, window.localStream);
       call.on("stream", function (stream) {
         // `stream` is the MediaStream of the remote peer.
         // Here you'd add it to an HTML video/canvas element.
-        console.log("in on stream", stream);
-        console.log("conn Id", conn.peer);
-        document.getElementById(
-          "peerId"
-        ).textContent = `Connected To: ${conn.peer}`;
         document.getElementById("peerVideo").srcObject = stream;
       });
     });

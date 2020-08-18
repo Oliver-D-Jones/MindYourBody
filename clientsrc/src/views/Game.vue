@@ -128,7 +128,7 @@ export default {
       this.inviter = false;
       this.invitee = true;
     }
-    // this.start = true;
+    this.start = true;
   },
   beforeDestroy() {
     // if (swal.isVisible()) {
