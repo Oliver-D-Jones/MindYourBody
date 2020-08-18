@@ -124,7 +124,8 @@ export default new Vuex.Store({
           points: 0,
           profileId: data.data.id,
           timeStreak: data.timeStreak,
-          timeStreakCount: 1
+          timeStreakCount: 1,
+          streak: data.streak
         })
         dispatch('getPoints', data)
       } catch (err) {
@@ -139,7 +140,8 @@ export default new Vuex.Store({
         dispatch("updatePoints", {
           id: data.data.id,
           oldPoints: res.data.points,
-          newPoints: data.points
+          newPoints: data.points,
+          streak: data.streak
         })
       } catch (err) {
         console.error(err)

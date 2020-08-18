@@ -162,6 +162,17 @@ export default {
       }
       return pts;
     },
+    streak() {
+      let streak = this.$store.currentPlayer.streak;
+      if (this.points > 0) {
+        streak++;
+        console.log("streak increased");
+      }
+      if (streak == 2) {
+        this.points += 20;
+        console.log("Five in a row. You got a streak!");
+      }
+    },
   },
   methods: {
     startPlay() {

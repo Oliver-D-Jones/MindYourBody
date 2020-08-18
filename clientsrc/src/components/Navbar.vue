@@ -24,7 +24,7 @@
           <a class="nav-link" data-toggle="modal" href="#aboutmodal">About</a>
         </li>
         <li class="nav-item">
-          <Profile />
+          <Profile v-if="$auth.isAuthenticated" />
         </li>
         <li
           class="nav-item mr-3"
@@ -33,7 +33,7 @@
         >
           <router-link :to="{ name: 'home' }" class="nav-link">Quit</router-link>
         </li>
-        <li class="nav-item ml-5">
+        <li class="nav-item ml-5" v-if="$auth.isAuthenticated">
           <h2 v-if="points">TOTAL POINTS: {{points}}</h2>
           <h2 v-else>TOTAL POINTS: 0</h2>
         </li>
