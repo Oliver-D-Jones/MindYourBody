@@ -1,7 +1,7 @@
 <template>
   <div class="invitee">
     <div class="row border">
-      <div class="col-12 border" >
+      <div class="col-12 border">
         <h4>
           Invitee
           <span id="myId"></span>
@@ -38,11 +38,9 @@ export default {
     let peer_id = this.$store.state.stream.peer.id;
     let myId = this.$store.state.stream.user.id;
 
-  
     peer = new Peer(myId, {
       debug: 2,
     });
-    
 
     peer.on("open", function (id) {
       // Workaround for peer.reconnect deleting previous id
@@ -65,13 +63,12 @@ export default {
         });
       });
       peer.on("disconnected", function () {
-        swal("Connection lost. Please reconnect").then((res)=>{
-
+        swal("Connection lost. Please reconnect").then((res) => {
           peer.id = this.$store.state.stream.user.id;
           peer._lastServerId = this.$store.state.stream.user.id;
           peer.reconnect();
           swal.close();
-        })
+        });
         // Workaround for peer.reconnect deleting previous id
       });
       peer.on("close", function () {
@@ -104,22 +101,23 @@ export default {
         swal("Connection closed");
       });
 
-      let call = peer.call(peer_id, window.localStream);
-      call.on("stream", function (stream) {
-        // `stream` is the MediaStream of the remote peer.
-        // Here you'd add it to an HTML video/canvas element.
-        document.getElementById("peerVideo").srcObject = stream;
+      let getUserMedia =
+        navigator.getUserMedia ||
+        navigator.webkitGetUserMedia ||
+        navigator.mozGetUserMedia;
+
+      getUserMedia({ video: true, audio: true }, function (stream) {
+        window.localStream = stream;
+        document.getElementById("myVideo").srcObject = stream;
+
+        let call = peer.call(peer_id, window.localStream);
+        call.on("stream", function (remoteStream) {
+          // `stream` is the MediaStream of the remote peer.
+          // Here you'd add it to an HTML video/canvas element.
+          document.getElementById("peerVideo").srcObject = remoteStream;
+        });
       });
     });
-
-    if (navigator.mediaDevices.getUserMedia) {
-      navigator.mediaDevices
-        .getUserMedia({ video: true, audio: true })
-        .then(function (stream) {
-          window.localStream = stream;
-          document.getElementById("myVideo").srcObject = stream;
-        });
-    }
   },
 };
 </script>
