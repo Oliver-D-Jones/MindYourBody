@@ -23,8 +23,11 @@
         <li class="nav-item">
           <a class="nav-link" data-toggle="modal" href="#aboutmodal">About</a>
         </li>
+        <li class="nav-item">
+          <Profile />
+        </li>
         <li
-          class="nav-item ml-3 mr-3"
+          class="nav-item mr-3"
           v-if="$route.path != '/'"
           :class="{ active: $route.name == 'home' }"
         >
@@ -85,7 +88,6 @@
 
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-              <button type="button" class="btn btn-primary">Save changes</button>
             </div>
           </div>
         </div>
@@ -95,6 +97,7 @@
 </template>
 
 <script>
+import Profile from "../components/profile";
 import Leader from "../components/Leader";
 import axios from "axios";
 let _api = axios.create({
@@ -129,6 +132,7 @@ export default {
   },
   components: {
     Leader,
+    Profile,
   },
 };
 </script>
