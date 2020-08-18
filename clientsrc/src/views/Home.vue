@@ -13,7 +13,7 @@
         name="category_id"
         v-model="subject"
         class="form-control dropDown"
-        style="max-width: 35%; margin-top: 5rem"
+        style="max-width: 35%; margin-top: 3rem"
       >
         <option value hidden>Subject</option>
         <option>--- Select Subject ---</option>
@@ -47,7 +47,7 @@
         name="category_id"
         v-model="level"
         class="form-control dropDown"
-        style="max-width: 35%; margin-top: 5rem"
+        style="max-width: 35%; margin-top: 3rem"
       >
         <option value hidden>Level</option>
         <option>--- Select Level ---</option>
@@ -56,12 +56,12 @@
         <option value="hard">hard</option>
       </select>
     </div>
-    <div style="margin-top: 5rem">
+    <div style="margin-top: 3rem">
       <h1>MIND YOUR BODY</h1>
       <img src="../assets/logo.png" style="width: 20rem;" />
     </div>
     <div>
-      <button @click="startPlay()" class="btn btn-danger btn-lg border mb-4 mt-4">START</button>
+      <button @click="startPlay()" class="btn btn-danger btn-lg border mb-4 mt-3">START</button>
     </div>
   </div>
 </template>
@@ -135,9 +135,8 @@ export default {
           //NOTE set peer to join ID
           this.$store.state.stream.class = "invitee";
           this.$store.state.stream.peer.id = id;
-          console.log("invitee",id);
-        }
-        else{
+          console.log("invitee", id);
+        } else {
           //NOTE set peer to join ID
           this.$store.state.stream.class = false;
           this.$store.state.stream.peer.id = null;
@@ -171,13 +170,12 @@ export default {
       router.push({ name: "game" });
     },
   },
-  beforeCreate(){
+  beforeCreate() {
     console.log("in BC home");
-    this.$store.commit("clearStream")
+    this.$store.commit("clearStream");
   },
   mounted() {
     this.$store.dispatch("loadLeaders");
-
   },
   components: {},
 };
