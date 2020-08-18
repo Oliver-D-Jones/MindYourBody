@@ -4,7 +4,7 @@
   </div>
 </template>
 <script>
-import utils from "../assets/utils"
+import utils from "../assets/utils";
 export default {
   name: "question",
   data: function () {
@@ -14,6 +14,7 @@ export default {
   },
   methods: {
     swalShow: function () {
+      this.$store.dispatch("getExercise");
       let html_inject = document.createElement("div");
       html_inject.className = "col-12";
       let title = document.createElement("h4");
@@ -73,5 +74,4 @@ export default {
   border: antiquewhite solid 2px;
   background-color: rgb(0, 0, 0);
 }
-
 </style>

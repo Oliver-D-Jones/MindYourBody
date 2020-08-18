@@ -62,7 +62,6 @@ export default {
   },
 
   mounted() {
-    this.$store.dispatch("getExercise");
     this.show = true;
     this.cheatInterval();
   },
