@@ -15,13 +15,13 @@ export default new Vuex.Store({
     leaders: [],
     user: {},
     currentPlayer: {},
-    stream: {class:false, user: { id: null }, peer: { id: null } },
+    stream: { class: false, user: { id: null }, peer: { id: null } },
     level: null,
     subject: null,
     answer: null
   },
   mutations: {
-    clearStream(state){
+    clearStream(state) {
       state.stream.class = false;
       state.stream.user.id = null;
       state.stream.peer.id = null;
@@ -122,7 +122,9 @@ export default new Vuex.Store({
         let res = await api.post("players", {
           name: data.data.name,
           points: 0,
-          profileId: data.data.id
+          profileId: data.data.id,
+          timeStreak: data.timeStreak,
+          timeStreakCount: 1
         })
         dispatch('getPoints', data)
       } catch (err) {
@@ -150,6 +152,17 @@ export default new Vuex.Store({
           points: (data.oldPoints + data.newPoints)
         })
         dispatch("loadLeaders")
+      } catch (err) {
+        console.error(err)
+      }
+    },
+    async updateTime({ commit, dispatch, state }, data) {
+      try {
+        debugger
+        let res = await api.put("players/" + data.id, data)
+        commit("getCurrentPlayer")
+        //dispatch("checkTimeStreak", data)
+        console.log(state.currentPlayer)
       } catch (err) {
         console.error(err)
       }

@@ -10,6 +10,14 @@
       <img src="../assets/frown.png" style="width: 10%;" />
       <h3>Play Again?</h3>
     </div>
+    <h3 v-if="gotStreak">
+      You earned 20 points for a 5-day streak!
+      You have played for {{days}} days straight!
+      <img
+        src="../assets/coin.gif"
+        style="width: 15rem;"
+      />
+    </h3>
     <div class="row m-4" style="justify-content: space-evenly">
       <div class="col-sm-12 col-md-4">
         <select name="category_id" v-model="subject" class="form-control dropDown">
@@ -75,19 +83,70 @@ export default {
       answer: this.$store.state.answer,
       profile: this.$store.state.profile,
       show: false,
+      time: new Date(),
     };
   },
   mounted() {
     this.$store.dispatch("getTrivia");
     this.$store.dispatch("getProfile");
+    this.$store.dispatch("getCurrentPlayer");
     this.$store.dispatch("checkPlayer", {
       data: this.profile,
       points: this.points,
+      timeStreak: { previousDate: null, recentDate: null },
+    });
+    this.$store.dispatch("updateTime,", {
+      streakCount: this.addStreak,
     });
     this.show = true;
   },
 
   computed: {
+    addStreak() {
+      let oldYear = this.player.recentDate.slice(0, 4);
+      let rawNewYear = this.time.toString();
+      let newYear = rawNewYear.slice(0, 4);
+      let oldDate =
+        this.player.recentDate.slice(5, 2) + this.player.recentDate.slice(8, 2);
+      let newDate = rawNewYear.slice(5, 2) + rawNewYear.slice(8, 2);
+      let oldYearNum = parseInt(oldYear);
+      let newYearNum = parseInt(newYear);
+      let leapYear =
+        oldYear == newYear &&
+        oldYearNum % 4 == 0 &&
+        !(oldYearNum % 100 == 0 && oldYearNum % 400 == 0) &&
+        oldDate == "0229" &&
+        newDate == "0301";
+      if (
+        (newYearNum == oldYearNum + 1 &&
+          oldDate == "1231" &&
+          newDate == "0101") ||
+        leapYear ||
+        (oldDate == "0228" && newDate == "0301" && !leapYear) ||
+        (oldDate == "0131" && newDate == "0201") ||
+        (oldDate == "0331" && newDate == "0401") ||
+        (oldDate == "0430" && newDate == "0501") ||
+        (oldDate == "0630" && newDate == "0701") ||
+        (oldDate == "0731" && newDate == "0801") ||
+        (oldDate == "0831" && newDate == "0901") ||
+        (oldDate == "0930" && newDate == "1001") ||
+        (oldDate == "1031" && newDate == "1101") ||
+        (oldDate == "1130" && newDate == "1201")
+      ) {
+        return this.player.streakCount + 1;
+      }
+      return 0;
+    },
+    gotStreak() {
+      if (this.player.streakCount % 5 == 0) {
+        this.points += 20;
+        return true;
+      }
+      return false;
+    },
+    days() {
+      return this.player.streakCount;
+    },
     points() {
       let pts = 0;
       let level = this.$store.state.trivia.difficulty;
@@ -119,9 +178,21 @@ export default {
       this.subject = "";
       this.level = "";
       this.$emit("init", true);
+      this.$store.dispatch("switchTimes", {
+        timeStreak: {
+          previousDate: this.player.timeStreak.recentDate,
+          recentDate: this.time.toString(),
+        },
+      });
     },
     quit() {
       router.push({ name: "home" });
+      this.$store.dispatch("switchTimes", {
+        timeStreak: {
+          previousDate: this.player.timeStreak.recentDate,
+          recentDate: this.time.toString(),
+        },
+      });
     },
   },
   components: {},

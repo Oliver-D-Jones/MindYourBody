@@ -34,7 +34,8 @@
           <router-link :to="{ name: 'home' }" class="nav-link">Quit</router-link>
         </li>
         <li class="nav-item ml-5">
-          <h2>TOTAL POINTS: {{points}}</h2>
+          <h2 v-if="points">TOTAL POINTS: {{points}}</h2>
+          <h2 v-else>TOTAL POINTS: 0</h2>
         </li>
       </ul>
       <span class="navbar-text">
