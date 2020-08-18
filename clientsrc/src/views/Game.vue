@@ -1,10 +1,12 @@
 <template>
   <div class="game">
     <div class="container-fluid bg-info" style="min-height:99vh">
+      
+      <div v-if="inviter">
+        <Inviter :key="'videostream'" />
+      </div>
+
       <div class="row">
-        <div class="col-md-2" v-if="inviter">
-          <Inviter :key="'videostream'" />
-        </div>
         <div class="col-md-2" v-if="invitee">
           <Invitee :key="'videostream'" />
         </div>
@@ -127,9 +129,8 @@ export default {
       console.log("in invitee");
       this.inviter = false;
       this.invitee = true;
-    } else {
-      this.start = true;
     }
+    this.start = true;
   },
   beforeDestroy() {
     if (swal.isVisible()) {

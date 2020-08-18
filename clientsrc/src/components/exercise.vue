@@ -1,5 +1,5 @@
 <template>
-  <div class="exercise container-fluid">
+  <div class="exercise container">
     <div class="row justify-content-center" v-if="show">
       <div class="card col-12 bg-info">
         <div>

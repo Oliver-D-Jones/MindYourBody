@@ -1,39 +1,20 @@
 <template>
-  <div class="inviter mt-2">
-    <div class="border shadow">
-      <p>
-        My Id:
-        <span id="myId"></span>
-        <br />
-        <!-- <button class="btn btn-sm btn-success" @click="connect">Connect</button>
-        <button class="btn btn-sm btn-warning" @click="call">Call</button>-->
-        <button class="btn btn-sm rounded bg-dark text-light" @click="play">></button>
-        <button class="btn btn-sm rounded bg-dark text-light" @click="stop">X</button>
-      </p>
+  <div class="inviter">
+    <div class="row">
       <video
         autoplay="true"
         id="myVideo"
-        class="border"
-        style=" max-width: -webkit-fill-available;max-height: -webkit-fill-available;
-        width: 120px;height: 100px;"
+        class="col-2"
         muted
+        controls
       ></video>
-      <br />
       <video
         autoplay="true"
         id="peerVideo"
-        class="border"
-        style="max-width: -webkit-fill-available;max-height: -webkit-fill-available;
-        width: 120px;height: 100px;"
+        class="col-2"
+        poster="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fmedia.giphy.com%2Fmedia%2Fi3pHUtmHiLd28%2Fgiphy.gif&f=1&nofb=1"
+        controls
       ></video>
-      <!-- <button class="btn btn-sm rounded bg-dark text-light" @click="play">></button>
-      <button class="btn btn-sm rounded bg-dark text-light" @click="pause">O</button>
-      <button class="btn btn-sm rounded bg-dark text-light" @click="stop">X</button>-->
-      <p class="border">
-        Peer Id:
-        <br />
-        <span class="text-warning" id="peerId"></span>
-      </p>
     </div>
   </div>
 </template>
@@ -49,29 +30,7 @@ export default {
     };
   },
   computed: {},
-  methods: {
-    play() {
-      if (navigator.mediaDevices.getUserMedia) {
-        navigator.mediaDevices
-          .getUserMedia({ video: true, audio: true })
-          .then(function (stream) {
-            window.localStream = stream;
-            document.getElementById("myVideo").srcObject = stream;
-          });
-      }
-    },
-    pause() {},
-    stop() {
-      console.log("in stop");
-      localStream.getTracks().forEach((track) => {
-        track.stop();
-      });
-      // document.getElementById("myVideo").src = "https://cdn.dribbble.com/users/706471/screenshots/3660298/brain-workout-2.gif";
-    },
-    getStream() {
-      console.log(localStream);
-    },
-  },
+  methods: {},
   components: {},
   created() {
     let video = document.getElementById("myVideo");
