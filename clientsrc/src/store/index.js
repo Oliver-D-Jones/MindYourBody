@@ -15,12 +15,18 @@ export default new Vuex.Store({
     leaders: [],
     user: {},
     currentPlayer: {},
-    stream: { user: { id: null }, peer: { id: null } },
+    stream: {class:false, user: { id: null }, peer: { id: null } },
     level: null,
     subject: null,
     answer: null
   },
   mutations: {
+    clearStream(state){
+      state.stream.class = false;
+      state.stream.user.id = null;
+      state.stream.peer.id = null;
+    }
+    ,
     setProfile(state, profileObject) {
       state.profile = profileObject
     },

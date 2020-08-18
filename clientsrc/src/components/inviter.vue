@@ -1,27 +1,27 @@
 <template>
-  <div class="invter">
+  <div class="inviter mt-2">
     <div class="border shadow">
       <p>
         My Id:
         <span id="myId"></span>
+        <br />
+        <!-- <button class="btn btn-sm btn-success" @click="connect">Connect</button>
+        <button class="btn btn-sm btn-warning" @click="call">Call</button>-->
+        <button class="btn btn-sm rounded bg-dark text-light" @click="play">></button>
+        <button class="btn btn-sm rounded bg-dark text-light" @click="stop">X</button>
       </p>
-      <!-- <button class="btn btn-sm btn-success" @click="connect">Connect</button>
-      <button class="btn btn-sm btn-warning" @click="call">Call</button>-->
-      <button @click="getStream">Show</button>
-      <button class="btn btn-sm rounded bg-dark text-light" @click="play">></button>
-      <!--<button class="btn btn-sm rounded bg-dark text-light" @click="pause">O</button>-->
-      <button class="btn btn-sm rounded bg-dark text-light" @click="stop">X</button>
       <video
         autoplay="true"
-        id="myVideo_1"
+        id="myVideo"
         class="border"
         style=" max-width: -webkit-fill-available;max-height: -webkit-fill-available;
         width: 120px;height: 100px;"
         muted
       ></video>
+      <br />
       <video
         autoplay="true"
-        id="myPeer"
+        id="peerVideo"
         class="border"
         style="max-width: -webkit-fill-available;max-height: -webkit-fill-available;
         width: 120px;height: 100px;"
@@ -33,12 +33,6 @@
         Peer Id:
         <br />
         <span class="text-warning" id="peerId"></span>
-        <br />
-        <span id="msgIn"></span>
-      </p>
-      <p>
-        Mesage:
-        <span id="msgIn"></span>
       </p>
     </div>
   </div>
@@ -47,12 +41,11 @@
 
 <script>
 export default {
-  name: "invter",
+  name: "inviter",
   data() {
     return {
       localStream: window.localStream,
       localPeer: null,
-      // myVideo_1: null,
     };
   },
   computed: {},
@@ -63,7 +56,7 @@ export default {
           .getUserMedia({ video: true, audio: true })
           .then(function (stream) {
             window.localStream = stream;
-            document.getElementById("myVideo_1").srcObject = stream;
+            document.getElementById("myVideo").srcObject = stream;
           });
       }
     },
@@ -73,7 +66,7 @@ export default {
       localStream.getTracks().forEach((track) => {
         track.stop();
       });
-      // document.getElementById("myVideo_1").src = "https://cdn.dribbble.com/users/706471/screenshots/3660298/brain-workout-2.gif";
+      // document.getElementById("myVideo").src = "https://cdn.dribbble.com/users/706471/screenshots/3660298/brain-workout-2.gif";
     },
     getStream() {
       console.log(localStream);
@@ -81,30 +74,29 @@ export default {
   },
   components: {},
   created() {
-    // console.log(this.$store.state.stream.localStream);
-
-    let video = document.getElementById("myVideo_1");
-    this.myVideo = video;
-
+    let video = document.getElementById("myVideo");
     let peer = {};
     this.localPeer = peer;
-
     let conn = {};
 
-    // if (navigator.mediaDevices.getUserMedia) {
-    //   navigator.mediaDevices
-    //     .getUserMedia({ video: true, audio: true })
-    //     .then(function (stream) {
-    //       window.localStream = stream;
-    //       document.getElementById("myVideo_1").srcObject = stream;
-    //     });
-    // }
+    if (navigator.mediaDevices.getUserMedia) {
+      navigator.mediaDevices
+        .getUserMedia({ video: true, audio: true })
+        .then(function (stream) {
+          window.localStream = stream;
+          document.getElementById("myVideo").srcObject = stream;
+        });
+    }
 
     // Create own peer object with connection to shared PeerJS server
     let lastPeerId = null;
-    peer = new Peer(null, {
+
+    let user = this.$store.state.stream.user.id;
+    console.log(user);
+    peer = new Peer(user, {
       debug: 2,
     });
+
     peer.on("open", function (id) {
       // Workaround for peer.reconnect deleting previous id
       if (peer.id === null) {
@@ -116,8 +108,7 @@ export default {
         lastPeerId = peer.id;
       }
       document.getElementById("myId").textContent = peer.id;
-
-      console.log("ID: " + peer.id);
+      console.log("Peer ID: " + peer.id);
     });
 
     peer.on("connection", function (c) {
@@ -139,7 +130,7 @@ export default {
       // status.innerHTML = "Connected";
       ready();
     });
-    var getUserMedia =
+    let getUserMedia =
       navigator.getUserMedia ||
       navigator.webkitGetUserMedia ||
       navigator.mozGetUserMedia;
@@ -148,10 +139,11 @@ export default {
       getUserMedia(
         { video: true, audio: true },
         function (stream) {
+          console.log(stream);
           call.answer(stream); // Answer the call with an A/V stream.
           call.on("stream", function (remoteStream) {
             // Show stream in some video/canvas element.
-            document.getElementById("myVideo_1").srcObject = remoteStream;
+            document.getElementById("peerVideo").srcObject = remoteStream;
           });
         },
         function (err) {
@@ -176,7 +168,12 @@ export default {
     });
     peer.on("error", function (err) {
       console.log(err);
-      alert("" + err);
+      // alert("" + err);
+      let error = "" + err;
+      swal({
+        title: error,
+      });
+      peer.close();
     });
     function ready() {
       conn.on("data", function (data) {

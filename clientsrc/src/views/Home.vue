@@ -92,54 +92,57 @@ export default {
       p_id.textContent = id;
 
       let warning = document.createElement("p");
-      warning.textContent =
-        "Make Sure To Notify Your Friend Of Your Room's ID.";
+      warning.textContent = "Make Sure To Notify Your Friend Of Your ID.";
 
       html_inject.appendChild(title);
       html_inject.appendChild(p_id);
       html_inject.appendChild(warning);
 
-      this.$store.state.stream.user.id = id;
       swal({
         icon:
           "https://external-content.duckduckgo.com/iu/?u=http%3A%2F%2Ficons.iconarchive.com%2Ficons%2Foxygen-icons.org%2Foxygen%2F256%2FApps-preferences-desktop-notification-icon.png&f=1&nofb=1",
         closeOnClickOutside: false,
         content: html_inject,
+        className: "home-swal",
         buttons: {
           zero: { text: "Confirm", value: true },
           one: { text: "Cancel", value: false },
         },
       }).then((value) => {
         if (value) {
+          this.$store.state.stream.class = "inviter";
+          this.$store.state.stream.user.id = id;
           swal.close();
         } else {
-          this.$store.state.stream.user.id;
+          this.$store.state.stream.class = false;
+          this.$store.state.stream.user.id = null;
           swal.close();
         }
       });
     },
     join() {
-      let inputValue = "";
       let html_inject = document.createElement("input");
+      html_inject.id = "peerId";
 
       swal({
         title: "Enter The Id Of The Peer You Want To Join",
         content: html_inject,
+        className: "home-swal",
         buttons: true,
-      }).then((content) => {
-        this.$store.state.stream.peer.id = html_inject.value;
-        // this.$store.state.stream.peer.id
-        console.log(html_inject.value);
+      }).then((html_inject) => {
+        let id = document.getElementById("peerId").value;
+        if (id) {
+          //NOTE set peer to join ID
+          this.$store.state.stream.class = "invitee";
+          this.$store.state.stream.peer.id = id;
+          console.log("invitee",id);
+        }
+        else{
+          //NOTE set peer to join ID
+          this.$store.state.stream.class = false;
+          this.$store.state.stream.peer.id = null;
+        }
       });
-
-      // if (roomId) {
-      //   roomId = roomId.trim();
-      //   console.log(roomId);
-      //   swal({
-      //     title: `The Peer ID You Entered is: `,
-      //     text: roomId,
-      //   });
-      // }
     },
 
     startPlay() {
@@ -168,8 +171,13 @@ export default {
       router.push({ name: "game" });
     },
   },
+  beforeCreate(){
+    console.log("in BC home");
+    this.$store.commit("clearStream")
+  },
   mounted() {
     this.$store.dispatch("loadLeaders");
+
   },
   components: {},
 };
@@ -179,6 +187,9 @@ export default {
 <style>
 .swal-overlay {
   background-color: transparent;
+}
+.swal-title {
+  color: antiquewhite;
 }
 .swal-modal {
   background-color: black;
@@ -193,11 +204,7 @@ export default {
 .swal-footer {
   text-align: center;
 }
-.search:hover {
-  color: blue;
-  background-color: antiquewhite;
-}
-.swal-title,
+
 .swal-text {
   color: white;
 }

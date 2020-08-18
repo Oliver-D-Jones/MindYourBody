@@ -49,6 +49,29 @@ export default {
   },
 };
 </script>
-<style>
+
+<style scoped>
+.swal-overlay {
+  background-color: transparent;
+}
+.swal-modal {
+  background-color: rgba(100, 100, 255, 0.69);
+  border: 6px inset gold;
+  color: white;
+  min-width: 60%;
+  min-height: 50%;
+  text-align: center;
+  justify-content: center;
+  align-content: center;
+}
+.swal-footer {
+  text-align: center;
+}
+.swal-icon img {
+  max-width: 25%;
+  border-radius: 5%;
+  border: antiquewhite solid 2px;
+  background-color: rgb(0, 0, 0);
+}
 
 </style>

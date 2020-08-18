@@ -3,10 +3,10 @@
     <div class="container-fluid bg-info" style="min-height:99vh">
       <div class="row">
         <div class="col-md-2" v-if="inviter">
-          <Inviter :key="'inviterVideo'" />
+          <Inviter :key="'videostream'" />
         </div>
         <div class="col-md-2" v-if="invitee">
-          <Invitee :key="'inviteeVideo'" />
+          <Invitee :key="'videostream'" />
         </div>
       </div>
 
@@ -57,8 +57,8 @@ export default {
       exercise: false,
       end: false,
       getQuestion: false,
-      invitee: false,
       inviter: false,
+      invitee: false,
     };
   },
   computed: {},
@@ -117,15 +117,19 @@ export default {
       this.start = false;
     },
   },
-  mounted() {
-
-    // if (this.$store.state.stream.invitee || this.$store.state.stream.inviter ) {
-    this.inviter = true;
-    // this.invitee = true;
-    // this.start = true;
-    // } else {
-    //   this.start = true;
-    // }
+  beforeMount() {
+    console.log(this.$store.state.stream.class);
+    if (this.$store.state.stream.class == "inviter") {
+      console.log("in inviter");
+      this.invitee = false;
+      this.inviter = true;
+    } else if (this.$store.state.stream.class == "invitee") {
+      console.log("in invitee");
+      this.inviter = false;
+      this.invitee = true;
+    } else {
+      this.start = true;
+    }
   },
   beforeDestroy() {
     if (swal.isVisible()) {
@@ -144,32 +148,5 @@ export default {
 </script>
 
 
-<style lang="scss">
-.swal-overlay {
-  background-color: transparent;
-}
-.swal-modal {
-  background-color: rgba(11, 52, 90, 0.69);
-  border: 6px inset gold;
-  color: white;
-  min-width: 60%;
-  min-height: 50%;
-  text-align: center;
-  justify-content: center;
-  align-content: center;
-}
-.swal-footer {
-  text-align: center;
-}
-.swal-icon img {
-  max-width: 25%;
-  border-radius: 5%;
-  border: antiquewhite solid 2px;
-  background-color: blue;
-}
-
-.search:hover {
-  color: blue;
-  background-color: antiquewhite;
-}
+<style scoped>
 </style>
