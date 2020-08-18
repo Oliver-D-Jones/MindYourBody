@@ -1,13 +1,14 @@
 <template>
   <div class="inviter">
     <div class="row">
-      <video
-        autoplay="true"
-        id="myVideo"
-        class="col-2"
-        muted
-        controls
-      ></video>
+      <div class="col-12">
+        <h4>
+          Inviter
+          <span id="myId"></span>
+          <span id="peerId"></span>
+        </h4>
+      </div>
+      <video autoplay="true" id="myVideo" class="col-2" muted controls></video>
       <video
         autoplay="true"
         id="peerVideo"
@@ -63,10 +64,9 @@ export default {
         peer.id = lastPeerId;
       } else {
         console.log("receieved peer.id");
-        // document.getElementById("peerId").textContent =
         lastPeerId = peer.id;
       }
-      document.getElementById("myId").textContent = peer.id;
+      document.getElementById("myId").textContent = `My ID: ${peer.id}`;
       console.log("Peer ID: " + peer.id);
     });
 
@@ -84,7 +84,9 @@ export default {
 
       conn = c;
       console.log("Connected to: " + conn.peer);
-      document.getElementById("peerId").textContent = conn.peer;
+      document.getElementById(
+        "peerId"
+      ).textContent = `Connected To: ${conn.peer}`;
 
       // status.innerHTML = "Connected";
       ready();
@@ -98,7 +100,7 @@ export default {
       getUserMedia(
         { video: true, audio: true },
         function (stream) {
-          console.log(stream);
+          console.log("received call-->", stream);
           call.answer(stream); // Answer the call with an A/V stream.
           call.on("stream", function (remoteStream) {
             // Show stream in some video/canvas element.

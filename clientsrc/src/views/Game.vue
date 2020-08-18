@@ -6,11 +6,9 @@
         <Inviter :key="'videostream'" />
       </div>
 
-      <div class="row">
-        <div class="col-md-2" v-if="invitee">
+        <div v-if="invitee">
           <Invitee :key="'videostream'" />
         </div>
-      </div>
 
       <div class="row">
         <div class="col-12" v-if="exercise">
@@ -130,12 +128,12 @@ export default {
       this.inviter = false;
       this.invitee = true;
     }
-    this.start = true;
+    // this.start = true;
   },
   beforeDestroy() {
-    if (swal.isVisible()) {
-      swal.close();
-    }
+    // if (swal.isVisible()) {
+    //   swal.close();
+    // }
   },
   components: {
     Exercise,

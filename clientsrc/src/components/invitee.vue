@@ -1,39 +1,21 @@
 <template>
   <div class="invitee">
-    <div class="border shadow">
-      <p>
-        My Id:
-        <span id="myId"></span>
-        <br />
-        <!-- <button class="btn btn-sm btn-success" @click="connect">Connect</button>
-        <button class="btn btn-sm btn-warning" @click="call">Call</button>-->
-        <!-- <button class="btn btn-sm rounded bg-dark text-light" @click="play">></button>
-        <button class="btn btn-sm rounded bg-dark text-light" @click="stop">X</button>-->
-      </p>
-      <video
-        autoplay="true"
-        id="myVideo"
-        class="border"
-        style=" max-width: -webkit-fill-available;max-height: -webkit-fill-available;
-        width: 120px;height: 100px;"
-        muted
-      ></video>
-      <br />
+    <div class="row">
+      <div class="col-12">
+        <h4>
+          Invitee
+          <span id="myId"></span>
+          <span id="peerId"></span>
+        </h4>
+      </div>
+      <video autoplay="true" id="myVideo" class="col-2" muted controls></video>
       <video
         autoplay="true"
         id="peerVideo"
-        class="border"
-        style="max-width: -webkit-fill-available;max-height: -webkit-fill-available;
-        width: 120px;height: 100px;"
+        class="col-2"
+        poster="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fmedia.giphy.com%2Fmedia%2Fi3pHUtmHiLd28%2Fgiphy.gif&f=1&nofb=1"
+        controls
       ></video>
-      <!-- <button class="btn btn-sm rounded bg-dark text-light" @click="play">></button>
-      <button class="btn btn-sm rounded bg-dark text-light" @click="pause">O</button>
-      <button class="btn btn-sm rounded bg-dark text-light" @click="stop">X</button>-->
-      <p class="border">
-        Peer Id:
-        <br />
-        <span class="text-warning" id="peerId"></span>
-      </p>
     </div>
   </div>
 </template>
@@ -64,15 +46,26 @@ export default {
         peer.id = lastPeerId;
       } else {
         console.log("receieved peer.id");
-        // document.getElementById("peerId").textContent =
         lastPeerId = peer.id;
       }
-      document.getElementById("myId").textContent = peer.id;
+      document.getElementById("myId").textContent = `My Id: ${peer.id}`;
       console.log("Peer ID: " + peer.id);
 
       console.log("before conn", peer_id);
       conn = peer.connect(peer_id, {
         reliable: true,
+      });
+
+      let call = peer.call(peer_id, window.localStream);
+      call.on("stream", function (stream) {
+        // `stream` is the MediaStream of the remote peer.
+        // Here you'd add it to an HTML video/canvas element.
+        console.log("in on stream", stream);
+        console.log("conn Id", conn.peer);
+        document.getElementById(
+          "peerId"
+        ).textContent = `Connected To: ${conn.peer}`;
+        document.getElementById("peerVideo").srcObject = stream;
       });
     });
 
@@ -84,31 +77,6 @@ export default {
           document.getElementById("myVideo").srcObject = stream;
         });
     }
-
-    let call = peer.call(peer_id, window.localStream);
-    call.on("stream", function (stream) {
-      // `stream` is the MediaStream of the remote peer.
-      // Here you'd add it to an HTML video/canvas element.
-      console.log("in on stream", stream);
-      document.getElementById("peerVideo").srcObject = stream;
-    });
-
-    // peer.on("call", function (call) {
-    //   getUserMedia(
-    //     { video: true, audio: true },
-    //     function (stream) {
-    //       console.log(stream);
-    //       call.answer(stream); // Answer the call with an A/V stream.
-    //       call.on("stream", function (remoteStream) {
-    //         // Show stream in some video/canvas element.
-    //         document.getElementById("peerVideo").srcObject = remoteStream;
-    //       });
-    //     },
-    //     function (err) {
-    //       console.log("Failed to get local stream", err);
-    //     }
-    //   );
-    // });
   },
 };
 </script>
