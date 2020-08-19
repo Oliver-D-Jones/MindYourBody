@@ -1,22 +1,22 @@
 <template>
-  <div class="inviter">
-    <div class="row">
-      <div class="col-12">
-        <h4>
-          Inviter
-          <span id="myId"></span>
-          <span id="peerId"></span>
-        </h4>
-      </div>
-      <video autoplay="true" id="myVideo" class="col-2" muted controls></video>
+  <div class="inviter text-light mt-2">
+    <!-- <div class="row">
+    <div class="col-4">-->
+    <video autoplay="true" id="myVideo" muted controls></video>
+    <p>Your ID:</p>
+    <span id="myId"></span>
+    <div class="col-">
       <video
         autoplay="true"
         id="peerVideo"
-        class="col-2"
         poster="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fmedia.giphy.com%2Fmedia%2Fi3pHUtmHiLd28%2Fgiphy.gif&f=1&nofb=1"
         controls
       ></video>
+      <p>Peer Id:</p>
+      <span id="peerId"></span>
     </div>
+    <!-- </div>
+    </div>-->
   </div>
 </template>
 
@@ -26,22 +26,24 @@ export default {
   name: "inviter",
   data() {
     return {
-      localStream: window.localStream,
       localPeer: null,
+      conn: null,
     };
   },
   computed: {},
   methods: {},
   components: {},
-  beforeDestroy(){
-    swal("ARE YOU SURE???")
+  beforeDestroy() {
     localStream = null;
+    this.conn.close();
+    this.localPeer.disconnect();
   },
   created() {
     let video = document.getElementById("myVideo");
     let peer = {};
     this.localPeer = peer;
     let conn = {};
+    this.conn = conn;
 
     let getUserMedia =
       navigator.getUserMedia ||
@@ -64,6 +66,7 @@ export default {
 
     let user = this.$store.state.stream.user.id;
     console.log(user);
+
     peer = new Peer(user, {
       debug: 2,
     });
@@ -77,7 +80,7 @@ export default {
         console.log("receieved peer.id");
         lastPeerId = peer.id;
       }
-      document.getElementById("myId").textContent = `My ID: ${peer.id}`;
+      document.getElementById("myId").textContent = `${peer.id}`;
       console.log("Peer ID: " + peer.id);
     });
 
@@ -95,9 +98,7 @@ export default {
 
       conn = c;
       console.log("Connected to: " + conn.peer);
-      document.getElementById(
-        "peerId"
-      ).textContent = `Connected To: ${conn.peer}`;
+      document.getElementById("peerId").textContent = `${conn.peer}`;
 
       // status.innerHTML = "Connected";
       ready();

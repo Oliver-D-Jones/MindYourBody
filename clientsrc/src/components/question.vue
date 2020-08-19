@@ -27,8 +27,8 @@ export default {
         icon: img,
         closeOnClickOutside: false,
         buttons: {
-          zero: { text: "Start Exercise", value: true },
           two: { text: "Quit Game", value: false },
+          zero: { text: "Start Exercise", value: true },
         },
       }).then((value) => {
         if (value) {
@@ -69,7 +69,7 @@ export default {
   text-align: center;
 }
 .swal-icon img {
-  max-width: 25%;
+  max-width: 20rem;
   border-radius: 5%;
   border: antiquewhite solid 2px;
   background-color: rgb(0, 0, 0);

@@ -43,7 +43,7 @@ export default {
       },
     }).then((value) => {
       if (value == correct_answer) {
-        swal(`${correct_answer}`, "Is Correct!", "success").then(() => {
+        swal(`${correct_answer} Is Correct!`, "", "success").then(() => {
           this.$emit("endgame", true);
           this.$store.state.answer = true;
           swal.close();

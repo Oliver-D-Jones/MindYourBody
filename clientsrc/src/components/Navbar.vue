@@ -1,5 +1,5 @@
 <template>
-  <nav class="navbar gameFont navbar-expand-lg navbar-dark text-light" style="border-bottom:solid 2px blue;max-height:8vh;">
+  <nav class="navbar gameFont navbar-expand-lg navbar-dark text-light" style="border-bottom:solid 2px blue;">
     <router-link class="navbar-brand" style="font-size: 3rem" :to="{ name: 'home' }">MYB</router-link>
     <button
       class="navbar-toggler"
@@ -33,8 +33,8 @@
         >
           <router-link :to="{ name: 'home' }" class="nav-link">Quit</router-link>
         </li>
-        <li class="nav-item" style="min-width: -webkit-fill-available;" v-if="$auth.isAuthenticated">
-          <h2 v-if="points" style="text-align: -webkit-right;">TOTAL POINTS: {{points}}</h2>
+        <li class="nav-item ml-5" v-if="$auth.isAuthenticated">
+          <h2 v-if="points">TOTAL POINTS: {{points}}</h2>
           <h2 v-else>TOTAL POINTS: 0</h2>
         </li>
       </ul>

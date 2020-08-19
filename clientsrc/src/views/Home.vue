@@ -2,15 +2,19 @@
   <div class="container-fluid gameFont" id="home" style="min-height:100vh;">
     <div class="row justify-content-center pt-5">
       <div class="col-sm-6 col-md-2">
-        <button type="button" class="btn btn-outline-warning" @click="invite">Invite</button>
+        <button type="button" class="btn btn-block btn-outline-warning" @click="invite">
+          <h5 class="py-0"><i class="fa fa-envelope" aria-hidden="true"></i> &nbsp;Invite</h5>
+        </button>
       </div>
       <div class="col-sm-6 col-md-2">
-        <button type="button" class="btn btn-outline-warning" @click="join">Join</button>
+        <button type="button" class="btn btn-block btn-outline-warning" @click="join">
+          <h5 class="py-0"><i class="fa fa-envelope-open" aria-hidden="true"></i> &nbsp;Join&nbsp;</h5>
+        </button>
       </div>
     </div>
     <div class="row p-4" style="justify-content: space-evenly">
       <div class="col-sm-12 col-md-3 text-warning">
-        <span>CATEGORY</span>
+        <span><i class="fa fa-tags" aria-hidden="true"></i> &nbsp;CATEGORY</span>
         <select name="category_id" v-model="subject" class="form-control dropDown">
           <option value hidden>Subject</option>
           <option>--- Select Subject ---</option>
@@ -42,7 +46,7 @@
         </select>
       </div>
       <div class="col-sm-12 col-md-3 text-warning">
-        <span>LEVEL</span>
+        <span><i class="fa fa-arrows-v" aria-hidden="true"></i> &nbsp;LEVEL</span>
         <select name="category_id" v-model="level" class="form-control dropDown">
           <option value hidden>Level</option>
           <option>--- Select Level ---</option>
@@ -53,11 +57,16 @@
         </select>
       </div>
     </div>
-    <div class="row p-4" style="justify-content: space-evenly">
-      <div class="col-xs-12" style="margin-top: 3rem">
-        <button @click="startPlay()" type="button" class="btn btn-outline-info">- START -</button>
-        <h1 class="comeInStyle text-light">MIND YOUR BODY</h1>
-        <img class="wowzors" src="../assets/home2.gif" style="width: 20rem;border-radius:100%" />
+    <div class="row mt-3" style="justify-content: space-evenly">
+      <div class="col-xs-12 mt-3">
+        <button @click="startPlay()" type="button" class="btn btn-block btn-outline-info">
+          <h4 class="pt-2 pb-1">
+            <i class="fa fa-superpowers" aria-hidden="true"></i>
+            START &nbsp;
+          </h4>
+        </button>
+        <h1 class="comeInStyle text-light my-3">MIND YOUR BODY</h1>
+        <img class="wowzors" src="../assets/home2.gif" style="width: 33vw;border-radius:90%" />
       </div>
     </div>
   </div>
@@ -85,14 +94,15 @@ export default {
       let title = document.createElement("h4");
       title.textContent = `Your Room ID Is:`;
 
-      let p_id = document.createElement("p");
-      p_id.textContent = id;
+      let h_id = document.createElement("h3");
+      h_id.textContent = id;
 
-      let warning = document.createElement("p");
+      let warning = document.createElement("h5");
       warning.textContent = "Make Sure To Notify Your Friend Of Your ID.";
+      warning.className = "text-warning";
 
       html_inject.appendChild(title);
-      html_inject.appendChild(p_id);
+      html_inject.appendChild(h_id);
       html_inject.appendChild(warning);
 
       swal({
@@ -102,13 +112,14 @@ export default {
         content: html_inject,
         className: "home-swal",
         buttons: {
-          zero: { text: "Confirm", value: true },
           one: { text: "Cancel", value: false },
+          zero: { text: "Confirm", value: true },
         },
       }).then((value) => {
         if (value) {
           this.$store.state.stream.class = "inviter";
           this.$store.state.stream.user.id = id;
+          this.startPlay();
           swal.close();
         } else {
           this.$store.state.stream.class = false;
@@ -136,8 +147,7 @@ export default {
           this.$store.state.stream.class = "invitee";
           this.$store.state.stream.peer.id = id;
           this.$store.state.stream.user.id = myId;
-
-          console.log("invitee", id);
+          this.startPlay();
         } else {
           //NOTE set peer to join ID
           this.$store.state.stream.class = false;
@@ -185,15 +195,26 @@ export default {
 
 
 <style>
+.comeInStyle {
+  text-shadow: 6px 8px 10px silver;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+::-webkit-scrollbar {
+  display: none;
+}
+
 #home {
   background-image: url("../assets/true.jpg");
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 }
-.wowzors{
+.wowzors {
   /* background-color: yellow; */
-  box-shadow: 10px 10px 5px grey;
+  box-shadow: 10px 10px 5px silver;
 }
 .swal-overlay {
   background-color: transparent;
@@ -203,7 +224,11 @@ export default {
 }
 .swal-modal {
   background-color: black;
-  border: 6px inset gold;
+  border-left: 4px inset blue;
+  border-bottom: 4px inset silver;
+  border-right: 4px inset silver;
+  border-top: 4px inset blue;
+
   color: white;
   min-width: 60%;
   min-height: 50%;
@@ -222,6 +247,6 @@ export default {
   max-width: 10%;
   border-radius: 5%;
   border: antiquewhite solid 2px;
-  background-color: rgba(63, 255, 106, 0.69);
+  background-color: rgba(39, 91, 151, 0.69);
 }
 </style>

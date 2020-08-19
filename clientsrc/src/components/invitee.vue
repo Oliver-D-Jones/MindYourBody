@@ -31,8 +31,9 @@ export default {
   methods: {},
   components: {},
   beforeDestroy() {
-    swal("ARE YOU SURE???");
     localStream = null;
+    this.conn.close();
+    this.peer.disconnect();
   },
   created() {
     // Call a peer, providing our mediaStream

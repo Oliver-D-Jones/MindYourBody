@@ -1,40 +1,38 @@
 <template>
   <div class="game">
-      <div class="container-fluid bg-info" style="min-height:99vh">
-        <div v-if="inviter">
+    <div class="container-fluid" style="min-height:100vh;">
+      <div class="row" style="display: flex;justify-content: space-around;">
+        <div class="col-2" v-if="inviter">
           <Inviter :key="'videostream'" />
         </div>
 
-        <div v-if="invitee">
-          <Invitee :key="'videostream'" />
+        <!-- <div v-if="invitee">
+        <Invitee :key="'videostream'" />
+        </div>-->
+
+        <div :class="display" v-if="exercise">
+          <Exercise :key="'workout'" :video="video" v-on:workoutcomplete="workoutcomplete()" />
         </div>
 
-        <div class="row">
-          <div class="col-12" v-if="exercise">
-            <Exercise :key="'workout'" v-on:workoutcomplete="workoutcomplete()" />
-          </div>
+        <div :class="display" v-if="end">
+          <Endgame v-on:init="init()" :video="video" />
         </div>
-        <div class="row">
-          <div class="col-12" v-if="end">
-            <Endgame v-on:init="init()" />
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-12" v-if="start" style="display:none">{{begin()}}</div>
 
+        <div v-if="start" style="display:none;max-width:0px">{{begin()}}</div>
+
+        <div :class="display" v-if="getQuestion">
           <Question
             :question="trivia.question"
             v-on:workout="workout()"
+            :video="video"
             :key="trivia.question"
-            v-if="getQuestion"
           />
         </div>
       </div>
-      <div class="row" style="display:none;">
-        <div class="col-12" v-if="answer">
-          <Answer :key="trivia.correct_answer" v-on:endgame="endgame()" />
-        </div>
+      <div :class="display" v-if="answer">
+        <Answer :key="trivia.correct_answer" :video="video" v-on:endgame="endgame()" />
       </div>
+    </div>
   </div>
 </template>
 
@@ -58,6 +56,7 @@ export default {
       getQuestion: false,
       inviter: false,
       invitee: false,
+      video: false,
     };
   },
   computed: {},
@@ -119,13 +118,18 @@ export default {
   beforeMount() {
     console.log(this.$store.state.stream.class);
     if (this.$store.state.stream.class == "inviter") {
-      console.log("in inviter");
       this.invitee = false;
       this.inviter = true;
+      this.video = true;
+      this.display = "col-sm-12 col-md-10";
     } else if (this.$store.state.stream.class == "invitee") {
-      console.log("in invitee");
       this.inviter = false;
       this.invitee = true;
+      this.video = true;
+      this.display = "col-sm-12 col-md-10";
+    } else {
+      this.display = "col-12";
+      this.video = false;
     }
     this.start = true;
   },
@@ -145,6 +149,11 @@ export default {
 };
 </script>
 <style>
-@import "/.assets/wowzer.css";
-
+video {
+  min-width: 200px !important;
+  max-width: 200px !important;
+  min-height: 150px !important;
+  max-height: 150px !important;
+  border: blue 1px solid;
+}
 </style>

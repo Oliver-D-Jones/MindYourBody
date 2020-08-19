@@ -1,10 +1,11 @@
 <template>
-  <div class="exercise container">
-    <div class="row justify-content-center" v-if="show">
-      <div class="card col-12 bg-info">
+  <div class="exercise container mt-5">
+    <div class="justify-content-center text-light" v-if="show">
+      <div class="col-12" style="border:solid 1px silver;">
         <div>
           <img
-            class="card-img-top mt-3 border shadow"
+            class="flyIn card-img-top mt-3 border shadow"
+            id="exerciseImg"
             :src="exercise.example"
             alt="Exercise Example"
             style=" max-width: 100%; max-height:350px; width: auto; height: auto"
@@ -22,7 +23,7 @@
             <b>Time:</b>
             {{exercise.time}} seconds
             <button
-              class="btn btn-warning"
+              class="btn btn-outline-warning"
               v-if="exercise.time"
               :disabled="exerciseTimerDisabled"
               @click="exerciseTimer(), exerciseTimerDisabled = true"
@@ -34,8 +35,12 @@
           </li>
         </ul>
         <div class="card-body">
-          <button class="btn btn-primary" @click="getExercise" v>Get a Different Exercise</button>
-          <button class="btn btn-success" @click="workOutComplete" :disabled="isDisabled">Finished!</button>
+          <button class="btn btn-outline-info" @click="getExercise" v>Get a Different Exercise</button>
+          <button
+            class="btn btn-outline-success"
+            @click="workOutComplete"
+            :disabled="isDisabled"
+          >Finished!</button>
           <span v-if="cheatTimer">Cheat Guard: {{cheatTimer}}</span>
         </div>
       </div>
@@ -54,6 +59,7 @@ export default {
       isDisabled: true,
       exerciseTimerDisabled: false,
       exerciseInterval: null,
+      display: "",
     };
   },
 
@@ -62,7 +68,13 @@ export default {
   },
 
   mounted() {
+    if (this.video) {
+      this.display = "card col-6 bg-dark";
+    } else {
+      this.display = "card col-12 bg-dark";
+    }
     this.show = true;
+    console.log("video-->", this.video);
     this.cheatInterval();
   },
   computed: {
@@ -78,6 +90,22 @@ export default {
       this.$store.dispatch("getExercise");
       clearInterval(this.exerciseInterval);
       this.exerciseTimerDisabled = false;
+      // setTimeout(() => {
+      //   document.getElementById("exerciseImg").animate(
+      //     [
+      //       // keyframes
+      //       { transform: "translateX(0px)" },
+      //       { transform: "translateY(-30px)" },
+      //       { transform: "translateX(30px)" },
+      //       { transform: "translateY(-30px)" },
+      //     ],
+      //     {
+      //       // timing options
+      //       duration: 100,
+      //       iterations: 6,
+      //     }
+      //   );
+      // }, 500);
 
       // NOTE enable code below to restart Cheat Gaurd when getting new exercise
       // this.isDisabled = true;
@@ -89,8 +117,11 @@ export default {
       // }
     },
     workOutComplete() {
-      this.$emit("workoutcomplete", true);
-      this.show = false;
+      document.getElementById("exerciseImg").className = "leaveInStyle";
+      setTimeout(() => {
+        this.$emit("workoutcomplete", true);
+        this.show = false;
+      }, 3200);
     },
 
     cheatInterval() {
@@ -114,6 +145,7 @@ export default {
     },
   },
   components: {},
+  props: ["video"],
 };
 </script>
 
