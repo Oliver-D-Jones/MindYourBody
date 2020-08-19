@@ -69,10 +69,18 @@ export default {
       }
       this.show = false;
     });
-    return {};
+    return {
+      date: Date.now(),
+      playerid: this.$store.state.currentPlayer.profileId,
+    };
   },
   mounted() {
     this.show = true;
+    this.$store.dispatch("getCurrentPlayer");
+    this.$store.dispatch("setDates", {
+      date: this.date,
+      id: this.playerid,
+    });
   },
 };
 </script>

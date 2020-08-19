@@ -70,20 +70,21 @@ export default new Vuex.Store({
     async getProfile({ commit, dispatch, state }) {
       try {
         let res = await api.get("/profile")
-        console.log(state.profile.id)
         await commit("setProfile", res.data)
         dispatch("getCurrentPlayer")
-        console.log(state.profile.id)
       } catch (err) {
         console.error(err)
       }
     },
     async getCurrentPlayer({ commit, dispatch, state }) {
       try {
-        console.log("zippee", state.profile.id)
         let res = await api.get("players/" + state.profile.id)
         commit("setCurrentPlayer", res.data)
       } catch (err) {
+        dispatch("newPlayer", {
+          id: state.profile.id,
+          name: state.profile.name
+        })
         console.error(err)
       }
     },
@@ -96,6 +97,8 @@ export default new Vuex.Store({
     getLeaders({ commit, dispatch, state }) {
       return state.leaders
     },
+
+    //fetches players with top 10 scores from players db for adding to leader board
     async loadLeaders({ commit, dispatch, state }) {
       let res = await api.get("players/" + "gettop")
       console.log("hello from loadLeaders")
@@ -106,6 +109,7 @@ export default new Vuex.Store({
       commit("setSubject", data)
     },
 
+    //checks if player already exists and, if not, passes data to new player constructor
     async checkPlayer({ commit, dispatch, state }, data) {
       try {
         let res = await api.get("players/" + data.data.id)
@@ -115,38 +119,42 @@ export default new Vuex.Store({
         console.error(err)
       }
     },
-
+    //creates new player in player db from combination of profile info and default settings
     async newPlayer({ commit, dispatch, state }, data) {
       console.log("hello from newPlayer")
+      debugger
       try {
         let res = await api.post("players", {
-          name: data.data.name,
+          name: data.name,
           points: 0,
-          profileId: data.data.id,
-          timeStreak: data.timeStreak,
+          profileId: data.id,
+          previousDate: 0,
+          recentDate: 0,
           timeStreakCount: 1,
           streak: data.streak
         })
-        dispatch('getPoints', data)
+        commit("setCurrentPlayer", res.data)
       } catch (err) {
         console.error(err)
       }
     },
 
+    //retrieves points stored in profile and passes along points just earned
     async getPoints({ commit, dispatch, state }, data) {
       console.log("hello from getPoints")
       try {
-        let res = await api.get("players/" + data.data.id)
+        let res = await api.get("players/" + data.id)
         dispatch("updatePoints", {
-          id: data.data.id,
+          id: data.id,
           oldPoints: res.data.points,
           newPoints: data.points,
-          streak: data.streak
+          //streak: data.streak
         })
       } catch (err) {
         console.error(err)
       }
     },
+    //adds all points awarded for question and streak if streak earned
     async updatePoints({ commit, dispatch, state }, data) {
       console.log("hello from updatePoints")
       try {
@@ -158,11 +166,28 @@ export default new Vuex.Store({
         console.error(err)
       }
     },
-    async updateTime({ commit, dispatch, state }, data) {
+    //sets the number of days in a row player has played
+    async updateStreak({ commit, dispatch, state }, data) {
       try {
-        debugger
-        let res = await api.put("players/" + data.id, data)
-        commit("getCurrentPlayer")
+        let res = await api.put("players/" + data.id, {
+          timeStreakCount: data.number,
+        })
+        dispatch("getCurrentPlayer")
+      } catch (err) {
+        console.error(err)
+      }
+    },
+    //sets most recent play date to current date, moves previous recent play date to "previous"
+    async setDates({ commit, dispatch, state }, data) {
+      try {
+        let res = await api.put("players/" + data.id, {
+          previousDate: state.currentPlayer.recentDate,
+          recentDate: data.date
+          //for test purposes:
+          //previousDate: 1593720150000,
+          //recentDate: 1593979350000
+        })
+        dispatch("getCurrentPlayer")
         //dispatch("checkTimeStreak", data)
         console.log(state.currentPlayer)
       } catch (err) {

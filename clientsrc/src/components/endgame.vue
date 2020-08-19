@@ -9,9 +9,7 @@
         id="endCoin"
         class="simpleEntrance"
       />
-     <span class="blazingStarText">
-        X {{points}}
-       </span>
+      <span class="blazingStarText">X {{points}}</span>
     </h3>
     <div v-else>
       <h3>No points this round.</h3>
@@ -82,7 +80,10 @@
     </div>
     <div class="row" style="justify-content: space-evenly">
       <div class="col-5">
-        <button @click="startPlay()" class="btn btn-block btn-outline-danger bg-dark py-2">PLAY AGAIN</button>
+        <button
+          @click="startPlay()"
+          class="btn btn-block btn-outline-danger bg-dark py-2"
+        >PLAY AGAIN</button>
       </div>
       <div class="col-5">
         <button @click="quit()" class="btn btn-block btn-outline-danger bg-dark py-2">QUIT FOR NOW</button>
@@ -101,6 +102,7 @@ export default {
       level: this.$store.state.level,
       answer: this.$store.state.answer,
       profile: this.$store.state.profile,
+      player: this.$store.state.currentPlayer,
       show: false,
       time: new Date(),
     };
@@ -112,62 +114,80 @@ export default {
     this.$store.dispatch("getTrivia");
     this.$store.dispatch("getProfile");
     this.$store.dispatch("getCurrentPlayer");
-    this.$store.dispatch("checkPlayer", {
-      data: this.profile,
-      points: this.points,
-      timeStreak: { previousDate: null, recentDate: null },
+    this.$store.dispatch("updateStreak", {
+      id: this.playerid,
+      number: this.addStreak,
     });
-    this.$store.dispatch("updateTime,", {
-      streakCount: this.addStreak,
+    this.$store.dispatch("getPoints", {
+      id: this.playerid,
+      points: this.points,
     });
     this.show = true;
   },
-
   computed: {
-    addStreak() {
-      // let oldYear = this.player.recentDate.slice(0, 4);
-      // let rawNewYear = this.time.toString();
-      // let newYear = rawNewYear.slice(0, 4);
-      // let oldDate =
-      //   this.player.recentDate.slice(5, 2) + this.player.recentDate.slice(8, 2);
-      // let newDate = rawNewYear.slice(5, 2) + rawNewYear.slice(8, 2);
-      // let oldYearNum = parseInt(oldYear);
-      // let newYearNum = parseInt(newYear);
-      // let leapYear =
-      //   oldYear == newYear &&
-      //   oldYearNum % 4 == 0 &&
-      //   !(oldYearNum % 100 == 0 && oldYearNum % 400 == 0) &&
-      //   oldDate == "0229" &&
-      //   newDate == "0301";
-      // if (
-      //   (newYearNum == oldYearNum + 1 &&
-      //     oldDate == "1231" &&
-      //     newDate == "0101") ||
-      //   leapYear ||
-      //   (oldDate == "0228" && newDate == "0301" && !leapYear) ||
-      //   (oldDate == "0131" && newDate == "0201") ||
-      //   (oldDate == "0331" && newDate == "0401") ||
-      //   (oldDate == "0430" && newDate == "0501") ||
-      //   (oldDate == "0630" && newDate == "0701") ||
-      //   (oldDate == "0731" && newDate == "0801") ||
-      //   (oldDate == "0831" && newDate == "0901") ||
-      //   (oldDate == "0930" && newDate == "1001") ||
-      //   (oldDate == "1031" && newDate == "1101") ||
-      //   (oldDate == "1130" && newDate == "1201")
-      // ) {
-      //   return this.player.streakCount + 1;
-      // }
+    playerid() {
+      return this.$store.state.currentPlayer.profileId;
+    },
+    checkStreak() {
+      let prev = parseInt(this.player.previousDate);
+      let rec = parseInt(this.player.recentDate);
+      let prevDate = new Date(prev);
+      let recDate = new Date(rec);
+      let prevYear = prevDate.getFullYear();
+      let recYear = recDate.getFullYear();
+      let prevYearNum = parseInt(prevYear);
+      let recYearNum = parseInt(recYear);
+      let prevMonth = ("0" + (prevDate.getMonth() + 1)).slice(-2);
+      let recMonth = ("0" + (recDate.getMonth() + 1)).slice(-2);
+      let prevDay = ("0" + prevDate.getDate()).slice(-2);
+      let recDay = ("0" + recDate.getDate()).slice(-2);
+      let previDom = prevMonth + prevDay;
+      let receDom = recMonth + recDay;
+      let previ = prevYear + prevMonth + prevDay;
+      let rece = recYear + recMonth + recDay;
+      let prevDom = parseInt(previDom);
+      let recDom = parseInt(receDom);
+      let previous = parseInt(previ);
+      let recent = parseInt(rece);
+      let leapYear =
+        prevYearNum == recYearNum &&
+        prevYearNum % 4 == 0 &&
+        prevDom == 229 &&
+        recDom == 301;
+      if (
+        (recYearNum == prevYearNum + 1 && prevDom == 1231 && recDom == 101) ||
+        (!leapYear && prevDom == 228 && recDom == 301) ||
+        (prevYearNum == recYearNum && recDom == prevDom + 1) ||
+        (prevDom == 131 && recDom == 201) ||
+        (prevDom == 229 && recDom == 301) ||
+        (prevDom == 331 && recDom == 401) ||
+        (prevDom == 430 && recDom == 501) ||
+        (prevDom == 630 && recDom == 701) ||
+        (prevDom == 731 && recDom == 801) ||
+        (prevDom == 831 && recDom == 901) ||
+        (prevDom == 930 && recDom == 1001) ||
+        (prevDom == 1031 && recDom == 1101) ||
+        (prevDom == 1130 && recDom == 1201)
+      ) {
+        return 1;
+      }
       return 0;
     },
+    addStreak() {
+      if (this.checkStreak == 1) {
+        return this.player.timeStreakCount + 1;
+      } else {
+        return 0;
+      }
+    },
     gotStreak() {
-      // if (this.player.streakCount % 5 == 0) {
-      //   this.points += 20;
-      //   return true;
-      // }
-      // return false;
+      if (this.player.timeStreakCount % 5 == 0) {
+        return 20;
+      }
+      return false;
     },
     days() {
-      return this.player.streakCount;
+      return this.player.timeStreakCount;
     },
     points() {
       let pts = 0;
@@ -182,7 +202,7 @@ export default {
       } else {
         pts = 0;
       }
-      return pts;
+      return pts + this.gotStreak;
     },
     streak() {
       let streak = this.$store.currentPlayer.streak;
@@ -211,21 +231,9 @@ export default {
       this.subject = "";
       this.level = "";
       this.$emit("init", true);
-      this.$store.dispatch("switchTimes", {
-        timeStreak: {
-          previousDate: this.player.timeStreak.recentDate,
-          recentDate: this.time.toString(),
-        },
-      });
     },
     quit() {
       router.push({ name: "home" });
-      this.$store.dispatch("switchTimes", {
-        timeStreak: {
-          previousDate: this.player.timeStreak.recentDate,
-          recentDate: this.time.toString(),
-        },
-      });
     },
   },
   components: {},
