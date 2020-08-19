@@ -52,10 +52,10 @@ export default {
         let html_inject = document.createElement("div");
         html_inject.className = "col-12";
         let title = document.createElement("h4");
-        title.innerHTML = `${correct_answer}<br/>is the correct answer!`;
+        title.innerHTML = `${correct_answer},<br/>is the correct answer!`;
         html_inject.appendChild(title);
         let img =
-          "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fmedia.giphy.com%2Fmedia%2FWq9RLX06zRg4UM42Qf%2Fgiphy.gif&f=1&nofb=1";
+          "http://images.all-free-download.com/images/graphiclarge/red_x_cross_wrong_not_clip_art_9830.jpg";
         swal({
           content: html_inject,
           className: "wrong",

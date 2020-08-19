@@ -1,7 +1,5 @@
 <template>
   <div class="inviter text-light mt-2">
-    <!-- <div class="row">
-    <div class="col-4">-->
     <video autoplay="true" id="myVideo" muted controls></video>
     <p>Your ID:</p>
     <span id="myId"></span>
@@ -15,8 +13,6 @@
       <p>Peer Id:</p>
       <span id="peerId"></span>
     </div>
-    <!-- </div>
-    </div>-->
   </div>
 </template>
 

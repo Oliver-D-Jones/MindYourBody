@@ -1,13 +1,21 @@
 <template>
-  <div v-if="show" class="gameFont text-light">
+  <div v-if="show" class="gameFont text-light" style="min-height:100vh">
     <h1 class="mt-4">End of Round</h1>
     <h3 v-if="answer">
       You just earned {{points}} points!
-      <img src="../assets/coin.gif" style="width: 10%;" />
+      <img
+        src="../assets/spin.gif"
+        style="width: 10%;border-radius:100%"
+        id="endCoin"
+        class="simpleEntrance"
+      />
+     <span class="blazingStarText">
+        X {{points}}
+       </span>
     </h3>
     <div v-else>
       <h3>No points this round.</h3>
-      <img src="../assets/frown.png" style="width: 10%;" />
+      <img src="../assets/frown.png" style="width: 10%;border-radius:100%" />
       <h3>Play Again?</h3>
     </div>
     <h3 v-if="gotStreak">
@@ -20,7 +28,12 @@
     </h3>
     <div class="row m-4" style="justify-content: space-evenly">
       <div class="col-sm-12 col-md-4">
-        <select name="category_id" v-model="subject" class="form-control dropDown">
+        <select
+          name="category_id"
+          v-model="subject"
+          class="form-control dropDown"
+          style="width: -webkit-fill-available;"
+        >
           <!-- style="max-width: 35%" -->
           <option value hidden>Subject</option>
           <option>--- Select Subject ---</option>
@@ -52,7 +65,12 @@
         </select>
       </div>
       <div class="col-sm-12 col-md-4">
-        <select name="category_id" v-model="level" class="form-control dropDown">
+        <select
+          name="category_id"
+          v-model="level"
+          class="form-control dropDown"
+          style="width: -webkit-fill-available;"
+        >
           <!-- style="max-width: 35%" -->
           <option value hidden>Level</option>
           <option>--- Select Level ---</option>
@@ -62,12 +80,13 @@
         </select>
       </div>
     </div>
-    <div>
-      <button @click="startPlay()" class="btn btn-danger btn-lg border mb-3">START</button>
-    </div>
-    <h3>OR</h3>
-    <div>
-      <button @click="quit()" class="btn btn-danger btn-lg border mt-3">QUIT</button>
+    <div class="row" style="justify-content: space-evenly">
+      <div class="col-5">
+        <button @click="startPlay()" class="btn btn-block btn-outline-danger bg-dark py-2">PLAY AGAIN</button>
+      </div>
+      <div class="col-5">
+        <button @click="quit()" class="btn btn-block btn-outline-danger bg-dark py-2">QUIT FOR NOW</button>
+      </div>
     </div>
   </div>
 </template>
@@ -87,6 +106,9 @@ export default {
     };
   },
   mounted() {
+    setTimeout(() => {
+      document.getElementById("endCoin").className = "blazingStar";
+    }, 6000);
     this.$store.dispatch("getTrivia");
     this.$store.dispatch("getProfile");
     this.$store.dispatch("getCurrentPlayer");
@@ -209,4 +231,8 @@ export default {
   components: {},
 };
 </script>
-<style scoped></style>
+<style scoped>
+.gameFont {
+  background-image: url("../assets/end.jpg");
+}
+</style>

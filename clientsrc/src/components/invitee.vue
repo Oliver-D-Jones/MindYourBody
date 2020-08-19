@@ -1,21 +1,17 @@
 <template>
-  <div class="invitee">
-    <div class="row border">
-      <div class="col-12 border">
-        <h4>
-          Invitee
-          <span id="myId"></span>
-          <span id="peerId"></span>
-        </h4>
-      </div>
-      <video autoplay="true" id="myVideo" class="col-2" muted controls></video>
+  <div class="invitee text-light mt-2">
+    <video autoplay="true" id="myVideo" muted controls></video>
+    <p>Your ID:</p>
+    <span id="myId"></span>
+    <div class="col-">
       <video
         autoplay="true"
         id="peerVideo"
-        class="col-2"
         poster="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fmedia.giphy.com%2Fmedia%2Fi3pHUtmHiLd28%2Fgiphy.gif&f=1&nofb=1"
         controls
       ></video>
+      <p>Peer Id:</p>
+      <span id="peerId"></span>
     </div>
   </div>
 </template>

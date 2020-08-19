@@ -1,24 +1,35 @@
 <template class="home">
   <div class="container-fluid gameFont" id="home" style="min-height:100vh;">
-    <div class="row justify-content-center pt-5">
+    <div class="row justify-content-center pt-3">
       <div class="col-sm-6 col-md-2">
         <button type="button" class="btn btn-block btn-outline-warning" @click="invite">
-          <h5 class="py-0"><i class="fa fa-envelope" aria-hidden="true"></i> &nbsp;Invite</h5>
+          <h5 class="py-0">
+            <i class="fa fa-envelope" aria-hidden="true"></i> &nbsp;Invite
+          </h5>
         </button>
       </div>
       <div class="col-sm-6 col-md-2">
         <button type="button" class="btn btn-block btn-outline-warning" @click="join">
-          <h5 class="py-0"><i class="fa fa-envelope-open" aria-hidden="true"></i> &nbsp;Join&nbsp;</h5>
+          <h5 class="py-0">
+            <i class="fa fa-handshake-o" aria-hidden="true"></i> &nbsp;Join&nbsp;
+          </h5>
         </button>
       </div>
     </div>
-    <div class="row p-4" style="justify-content: space-evenly">
+    <div class="row p-3" style="justify-content: space-evenly">
       <div class="col-sm-12 col-md-3 text-warning">
-        <span><i class="fa fa-tags" aria-hidden="true"></i> &nbsp;CATEGORY</span>
-        <select name="category_id" v-model="subject" class="form-control dropDown">
-          <option value hidden>Subject</option>
+        <span>
+          <i class="fa fa-tags" aria-hidden="true"></i> &nbsp;CATEGORY
+        </span>
+        <select
+          name="category_id"
+          v-model="subject"
+          class="form-control dropDown"
+          style="border:solid 3px blue;"
+          @change="chooseSubject"
+        >
           <option>--- Select Subject ---</option>
-          <option value show>Random</option>
+          <option :value="false" show>Random</option>
           <option value="9">general knowledge</option>
           <option value="10">Books</option>
           <option value="11">Film</option>
@@ -46,11 +57,18 @@
         </select>
       </div>
       <div class="col-sm-12 col-md-3 text-warning">
-        <span><i class="fa fa-arrows-v" aria-hidden="true"></i> &nbsp;LEVEL</span>
-        <select name="category_id" v-model="level" class="form-control dropDown">
-          <option value hidden>Level</option>
+        <span>
+          <i class="fa fa-arrows-v" aria-hidden="true"></i> &nbsp;LEVEL
+        </span>
+        <select
+          name="category_id"
+          v-model="level"
+          @change="chooseLevel"
+          class="form-control dropDown"
+          style="border:solid 3px blue;"
+        >
           <option>--- Select Level ---</option>
-          <option value show>Random</option>
+          <option :value="false" show>Random</option>
           <option value="easy">easy</option>
           <option value="medium">medium</option>
           <option value="hard">hard</option>
@@ -65,7 +83,7 @@
             START &nbsp;
           </h4>
         </button>
-        <h1 class="comeInStyle text-light my-3">MIND YOUR BODY</h1>
+        <h1 class="comeInStyle my-2">MIND YOUR BODY</h1>
         <img class="wowzors" src="../assets/home2.gif" style="width: 33vw;border-radius:90%" />
       </div>
     </div>
@@ -83,8 +101,13 @@ export default {
   },
   computed: {},
   methods: {
+    chooseLevel() {
+      this.$store.state.level = event.target.value;
+    },
+    chooseSubject() {
+      this.$store.state.subject = event.target.value;
+    },
     invite() {
-      console.log(this.$store.state.profile);
       let id = (Math.random().toString(36) + "0000000000000000000").substr(
         2,
         16
@@ -95,10 +118,10 @@ export default {
       title.textContent = `Your Room ID Is:`;
 
       let h_id = document.createElement("h3");
-      h_id.textContent = id;
+      h_id.innerHTML = `<i class="fa fa-key" aria-hidden="true"></i> &nbsp;${id}`;
 
       let warning = document.createElement("h5");
-      warning.textContent = "Make Sure To Notify Your Friend Of Your ID.";
+      warning.innerHTML = `<i class="fa fa-user-secret" aria-hidden="true"></i> &nbsp;Make Sure To Notify Your Friend Of Your ID.`;
       warning.className = "text-warning";
 
       html_inject.appendChild(title);
@@ -183,7 +206,6 @@ export default {
     },
   },
   beforeCreate() {
-    console.log("in BC home");
     this.$store.commit("clearStream");
   },
   mounted() {
@@ -196,7 +218,8 @@ export default {
 
 <style>
 .comeInStyle {
-  text-shadow: 6px 8px 10px silver;
+  color: white;
+  text-shadow: 2px 3px 4px skyblue;
 }
 
 /* Hide scrollbar for Chrome, Safari and Opera */
@@ -214,10 +237,10 @@ export default {
 }
 .wowzors {
   /* background-color: yellow; */
-  box-shadow: 10px 10px 5px silver;
+  box-shadow: 8px 8px 14px blue;
 }
 .swal-overlay {
-  background-color: transparent;
+  background-color: transparents;
 }
 .swal-title {
   color: antiquewhite;

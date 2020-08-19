@@ -1,7 +1,11 @@
 <template>
-  <div class="exercise container mt-5">
-    <div class="justify-content-center text-light" v-if="show">
+  <div class="exercise container mt-2">
+    <div class="justify-content-center text-light exercise_main" v-if="show">
       <div class="col-12" style="border:solid 1px silver;">
+        <h6 class="py-1 my-2 text-info" style="font-size:x-large">
+          <i class="fa fa-question-circle" aria-hidden="true"></i> &nbsp;
+          <span id="question"></span>
+        </h6>
         <div>
           <img
             class="flyIn card-img-top mt-3"
@@ -35,7 +39,11 @@
           </li>
         </ul>
         <div class="card-body">
-          <button class="btn btn-block btn-outline-info" @click="getExercise" v>Get a Different Exercise</button>
+          <button
+            class="btn btn-block btn-outline-info"
+            @click="getExercise"
+            v
+          >Get a Different Exercise</button>
           <button
             class="btn btn-block btn-outline-success"
             @click="workOutComplete"
@@ -66,15 +74,18 @@ export default {
   beforeDestroy() {
     this.$store.state.exercise[0] = {};
   },
-
+  beforeMount() {
+    this.show = true;
+  },
   mounted() {
     if (this.video) {
       this.display = "card col-6 bg-dark";
     } else {
       this.display = "card col-12 bg-dark";
     }
-    this.show = true;
-    console.log("video-->", this.video);
+    document.getElementById(
+      "question"
+    ).innerHTML = this.$store.state.trivia.question;
     this.cheatInterval();
   },
   computed: {
@@ -151,4 +162,8 @@ export default {
 
 
 <style scoped>
+.exercise_main {
+  background-color: black;
+  opacity: 0.88;
+}
 </style>

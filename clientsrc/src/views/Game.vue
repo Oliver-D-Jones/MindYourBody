@@ -1,14 +1,14 @@
 <template>
   <div class="game">
-    <div class="container-fluid" style="min-height:100vh;">
+    <div class="container-fluid" id="main" style="min-height:100vh;">
       <div class="row" style="display: flex;justify-content: space-around;">
         <div class="col-2" v-if="inviter">
           <Inviter :key="'videostream'" />
         </div>
 
-        <!-- <div v-if="invitee">
-        <Invitee :key="'videostream'" />
-        </div>-->
+        <div class="col-2" v-if="invitee">
+          <Invitee :key="'videostream'" />
+        </div>
 
         <div :class="display" v-if="exercise">
           <Exercise :key="'workout'" :video="video" v-on:workoutcomplete="workoutcomplete()" />
@@ -155,5 +155,8 @@ video {
   min-height: 150px !important;
   max-height: 150px !important;
   border: blue 1px solid;
+}
+#main {
+  background-image: url("../assets/end.jpg");
 }
 </style>
