@@ -181,10 +181,11 @@ export default new Vuex.Store({
     async setDates({ commit, dispatch, state }, data) {
       try {
         let res = await api.put("players/" + data.id, {
-          //previousDate: state.currentPlayer.recentDate,
-          //recentDate: data.date
-          previousDate: 1593720150000,
-          recentDate: 1593979350000
+          previousDate: state.currentPlayer.recentDate,
+          recentDate: data.date
+          //for test purposes:
+          //previousDate: 1593720150000,
+          //recentDate: 1593979350000
         })
         dispatch("getCurrentPlayer")
         //dispatch("checkTimeStreak", data)
