@@ -4,7 +4,7 @@
       <div class="col-12" style="border:solid 1px silver;">
         <div>
           <img
-            class="flyIn card-img-top mt-3 border shadow"
+            class="flyIn card-img-top mt-3"
             id="exerciseImg"
             :src="exercise.example"
             alt="Exercise Example"
@@ -23,7 +23,7 @@
             <b>Time:</b>
             {{exercise.time}} seconds
             <button
-              class="btn btn-outline-warning"
+              class="btn btn-block btn-outline-warning"
               v-if="exercise.time"
               :disabled="exerciseTimerDisabled"
               @click="exerciseTimer(), exerciseTimerDisabled = true"
@@ -35,9 +35,9 @@
           </li>
         </ul>
         <div class="card-body">
-          <button class="btn btn-outline-info" @click="getExercise" v>Get a Different Exercise</button>
+          <button class="btn btn-block btn-outline-info" @click="getExercise" v>Get a Different Exercise</button>
           <button
-            class="btn btn-outline-success"
+            class="btn btn-block btn-outline-success"
             @click="workOutComplete"
             :disabled="isDisabled"
           >Finished!</button>

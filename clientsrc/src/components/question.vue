@@ -17,8 +17,11 @@ export default {
       this.$store.dispatch("getExercise");
       let html_inject = document.createElement("div");
       html_inject.className = "col-12";
+      let cat = document.createElement("p");
+      cat.innerHTML = `<i class="fa fa-tags" aria-hidden="true"></i> &nbsp;${this.$store.state.trivia.category}`;
+      html_inject.appendChild(cat);
       let title = document.createElement("h4");
-      title.innerHTML = `${this.question}`;
+      title.innerHTML = `<i class="fa fa-question-circle" aria-hidden="true"></i> &nbsp;${this.question}`;
       html_inject.appendChild(title);
       let img = utils.getGif();
       swal({
