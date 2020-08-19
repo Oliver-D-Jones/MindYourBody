@@ -33,20 +33,31 @@ export default {
   computed: {},
   methods: {},
   components: {},
+  beforeDestroy(){
+    swal("ARE YOU SURE???")
+    localStream = null;
+  },
   created() {
     let video = document.getElementById("myVideo");
     let peer = {};
     this.localPeer = peer;
     let conn = {};
 
-    if (navigator.mediaDevices.getUserMedia) {
-      navigator.mediaDevices
-        .getUserMedia({ video: true, audio: true })
-        .then(function (stream) {
-          window.localStream = stream;
-          document.getElementById("myVideo").srcObject = stream;
-        });
-    }
+    let getUserMedia =
+      navigator.getUserMedia ||
+      navigator.webkitGetUserMedia ||
+      navigator.mozGetUserMedia;
+
+    getUserMedia(
+      { video: true, audio: true },
+      function (stream) {
+        window.localStream = stream;
+        document.getElementById("myVideo").srcObject = stream;
+      },
+      function (err) {
+        console.log("Failed to get stream", err);
+      }
+    );
 
     // Create own peer object with connection to shared PeerJS server
     let lastPeerId = null;
@@ -91,26 +102,18 @@ export default {
       // status.innerHTML = "Connected";
       ready();
     });
-    let getUserMedia =
-      navigator.getUserMedia ||
-      navigator.webkitGetUserMedia ||
-      navigator.mozGetUserMedia;
 
     peer.on("call", function (call) {
-      getUserMedia(
-        { video: true, audio: true },
-        function (stream) {
-          console.log("received call-->", stream);
-          call.answer(stream); // Answer the call with an A/V stream.
-          call.on("stream", function (remoteStream) {
-            // Show stream in some video/canvas element.
-            document.getElementById("peerVideo").srcObject = remoteStream;
-          });
-        },
-        function (err) {
-          console.log("Failed to get local stream", err);
-        }
-      );
+      try {
+        call.answer(window.localStream); // Answer the call with an A/V stream.
+        call.on("stream", function (remoteStream) {
+          // Show stream in some video/canvas element.
+          document.getElementById("peerVideo").srcObject = remoteStream;
+          console.log(localStream, remoteStream);
+        });
+      } catch (error) {
+        console.log("Failed to get/send stream", error);
+      }
     });
 
     peer.on("disconnected", function () {

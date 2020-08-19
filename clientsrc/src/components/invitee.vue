@@ -30,6 +30,10 @@ export default {
   computed: {},
   methods: {},
   components: {},
+  beforeDestroy() {
+    swal("ARE YOU SURE???");
+    localStream = null;
+  },
   created() {
     // Call a peer, providing our mediaStream
     let lastPeerId = null;
@@ -114,6 +118,7 @@ export default {
         call.on("stream", function (remoteStream) {
           // `stream` is the MediaStream of the remote peer.
           // Here you'd add it to an HTML video/canvas element.
+          console.log(remoteStream);
           document.getElementById("peerVideo").srcObject = remoteStream;
         });
       });

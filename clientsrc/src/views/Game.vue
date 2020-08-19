@@ -1,41 +1,40 @@
 <template>
   <div class="game">
-    <div class="container-fluid bg-info" style="min-height:99vh">
-      
-      <div v-if="inviter">
-        <Inviter :key="'videostream'" />
-      </div>
+      <div class="container-fluid bg-info" style="min-height:99vh">
+        <div v-if="inviter">
+          <Inviter :key="'videostream'" />
+        </div>
 
         <div v-if="invitee">
           <Invitee :key="'videostream'" />
         </div>
 
-      <div class="row">
-        <div class="col-12" v-if="exercise">
-          <Exercise :key="'workout'" v-on:workoutcomplete="workoutcomplete()" />
+        <div class="row">
+          <div class="col-12" v-if="exercise">
+            <Exercise :key="'workout'" v-on:workoutcomplete="workoutcomplete()" />
+          </div>
         </div>
-      </div>
-      <div class="row">
-        <div class="col-12" v-if="end">
-          <Endgame v-on:init="init()" />
+        <div class="row">
+          <div class="col-12" v-if="end">
+            <Endgame v-on:init="init()" />
+          </div>
         </div>
-      </div>
-      <div class="row">
-        <div class="col-12" v-if="start" style="display:none">{{begin()}}</div>
+        <div class="row">
+          <div class="col-12" v-if="start" style="display:none">{{begin()}}</div>
 
-        <Question
-          :question="trivia.question"
-          v-on:workout="workout()"
-          :key="trivia.question"
-          v-if="getQuestion"
-        />
+          <Question
+            :question="trivia.question"
+            v-on:workout="workout()"
+            :key="trivia.question"
+            v-if="getQuestion"
+          />
+        </div>
       </div>
-    </div>
-    <div class="row" style="display:none;">
-      <div class="col-12" v-if="answer">
-        <Answer :key="trivia.correct_answer" v-on:endgame="endgame()" />
+      <div class="row" style="display:none;">
+        <div class="col-12" v-if="answer">
+          <Answer :key="trivia.correct_answer" v-on:endgame="endgame()" />
+        </div>
       </div>
-    </div>
   </div>
 </template>
 
@@ -145,7 +144,7 @@ export default {
   },
 };
 </script>
+<style>
+@import "/.assets/wowzer.css";
 
-
-<style scoped>
 </style>

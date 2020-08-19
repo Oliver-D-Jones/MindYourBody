@@ -1,20 +1,20 @@
 <template class="home">
-  <div class="container-fluid gameFont" style="min-height:99vh">
-    <div class="row justify-content-center mt-2">
+  <div class="container-fluid gameFont" id="home" style="min-height:100vh;">
+    <div class="row justify-content-center pt-5">
       <div class="col-sm-6 col-md-2">
-        <button class="btn btn-block btn-warning" @click="invite">Invite</button>
+        <button type="button" class="btn btn-outline-warning" @click="invite">Invite</button>
       </div>
       <div class="col-sm-6 col-md-2">
-        <button class="btn btn-block btn-success" @click="join">Join</button>
+        <button type="button" class="btn btn-outline-warning" @click="join">Join</button>
       </div>
     </div>
     <div class="row p-4" style="justify-content: space-evenly">
-      <div class="col-sm-12 col-md-3">
+      <div class="col-sm-12 col-md-3 text-warning">
+        <span>CATEGORY</span>
         <select name="category_id" v-model="subject" class="form-control dropDown">
           <option value hidden>Subject</option>
-          <!-- style="max-width: 35%; margin-top: 3rem" -->
           <option>--- Select Subject ---</option>
-          <option :value="false">Random</option>
+          <option value show>Random</option>
           <option value="9">general knowledge</option>
           <option value="10">Books</option>
           <option value="11">Film</option>
@@ -41,11 +41,12 @@
           <option value="32">Cartoon & Animations</option>
         </select>
       </div>
-      <div class="col-sm-12 col-md-3">
+      <div class="col-sm-12 col-md-3 text-warning">
+        <span>LEVEL</span>
         <select name="category_id" v-model="level" class="form-control dropDown">
           <option value hidden>Level</option>
-          <!-- style="max-width: 35%; margin-top: 3rem" -->
           <option>--- Select Level ---</option>
+          <option value show>Random</option>
           <option value="easy">easy</option>
           <option value="medium">medium</option>
           <option value="hard">hard</option>
@@ -54,9 +55,9 @@
     </div>
     <div class="row p-4" style="justify-content: space-evenly">
       <div class="col-xs-12" style="margin-top: 3rem">
-        <button @click="startPlay()" class="btn btn-danger btn-lg border">START</button>
-        <h1>MIND YOUR BODY</h1>
-        <img src="../assets/logo.png" style="width: 20rem;" />
+        <button @click="startPlay()" type="button" class="btn btn-outline-info">- START -</button>
+        <h1 class="comeInStyle text-light">MIND YOUR BODY</h1>
+        <img class="wowzors" src="../assets/home2.gif" style="width: 20rem;border-radius:100%" />
       </div>
     </div>
   </div>
@@ -184,6 +185,16 @@ export default {
 
 
 <style>
+#home {
+  background-image: url("../assets/true.jpg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+.wowzors{
+  /* background-color: yellow; */
+  box-shadow: 10px 10px 5px grey;
+}
 .swal-overlay {
   background-color: transparent;
 }
