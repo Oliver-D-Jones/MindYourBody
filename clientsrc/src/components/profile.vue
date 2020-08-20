@@ -18,22 +18,31 @@
               Total Points:
               <b class="text-warning">{{playerStats.points}}</b>
             </h3>
-            <h5 class="p-1" v-if="playerStats.streak===1">
-              You have correctly answered
-              <b class="text-warning">{{playerStats.streak}}</b> question in a row!
-            </h5>
-            <h5 class="p-1" v-if="playerStats.streak!=1">
-              You have correctly answered
-              <b class="text-warning">{{playerStats.streak}}</b> questions in a row!
-            </h5>
             <h5 class="p-1" v-if="playerStats.timeStreakCount === 1">
-              You have played
+              PlayStreak:
               <b class="text-warning">{{playerStats.timeStreakCount}}</b> day in a row!
             </h5>
             <h5 class="p-1" v-if="playerStats.timeStreakCount !=1">
               Play Streak:
               <b class="text-warning">{{playerStats.timeStreakCount}}</b> days in a row!
             </h5>
+            <h5 class="p-1" v-if="playerStats.streak===1">
+              Question Streak:
+              <b class="text-warning">{{playerStats.streak}}</b> question in a row!
+            </h5>
+            <h5 class="p-1" v-if="playerStats.streak!=1">
+              Question Streak:
+              <b class="text-warning">{{playerStats.streak}}</b> questions in a row!
+            </h5>
+            <h5 class="p-1" v-if="playerStats.megaStreak === 1">
+              MEGA Streak
+              <b class="text-warning">{{playerStats.megaStreak}}</b> Question Streak in a row!
+            </h5>
+            <h5 class="p-1" v-if="playerStats.megaStreak !=1">
+              MEGA Streak:
+              <b class="text-warning">{{playerStats.megaStreak}}</b> Question Streaks in a row!
+            </h5>
+
             <table class="table table-striped table-hover mt-5">
               <thead>
                 <tr>
@@ -43,21 +52,10 @@
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="subject in profileScores" :key="subject.id">
-                  <td>{{subject.categoryTitle}}</td>
+                <tr v-for="subject in playerStats.categoryStats" :key="subject.id">
+                  <td>{{subject.category}}</td>
                   <td class="text-danger">{{subject.attempted}}</td>
                   <td class="text-success">{{subject.correct}}</td>
-                  <!-- <td v-for="categoryStat in playerStats.categoryStats" :key="categoryStat.id">
-                    <div v-if="subject.id===categoryStat.category">
-                      <div>{{subject.name}}</div>
-                      <div>
-                        <b class="text-success">{{categoryStat.correct}}</b>
-                      </div>
-                      <div>
-                        <b class="text-danger">{{categoryStat.attempted}}</b>
-                      </div>
-                    </div>
-                  </td>-->
                 </tr>
               </tbody>
             </table>
@@ -85,14 +83,14 @@ export default {
     categoryLibrary() {
       return this.$store.state.categoryLibrary;
     },
-    profileScores() {
-      return this.$store.state.currentPlayer.categoryStats.map((block) => {
-        block.categoryTitle = this.categoryLibrary.find(
-          (c) => c.id == block.category
-        ).name;
-        return block;
-      });
-    },
+    // profileScores() {
+    //   return this.$store.state.currentPlayer.categoryStats.map((block) => {
+    //     block.categoryTitle = this.categoryLibrary.find(
+    //       (c) => c.id == block.category
+    //     ).name;
+    //     return block;
+    //   });
+    // },
   },
   methods: {},
   components: {},

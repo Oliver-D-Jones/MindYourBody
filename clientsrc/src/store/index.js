@@ -14,9 +14,7 @@ export default new Vuex.Store({
     profile: {},
     leaders: [],
     user: {},
-    currentPlayer: {
-      categoryStats: []
-    },
+    currentPlayer: {},
     stream: { class: false, user: { id: null }, peer: { id: null } },
     level: null,
     subject: null,
@@ -165,7 +163,8 @@ export default new Vuex.Store({
           previousDate: 0,
           recentDate: 0,
           timeStreakCount: 1,
-          streak: data.streak
+          streak: 0,
+          megaStreak: 0
         })
         commit("setCurrentPlayer", res.data)
       } catch (err) {
@@ -182,7 +181,13 @@ export default new Vuex.Store({
           id: data.id,
           oldPoints: res.data.points,
           newPoints: data.points,
-          //streak: data.streak
+          streak: data.streak,
+          megaStreak: data.megaStreak,
+          categoryStats: [{
+            category: data.category,
+            correct: data.correct,
+            attempted: data.attempted
+          }]
         })
       } catch (err) {
         console.error(err)
@@ -193,9 +198,14 @@ export default new Vuex.Store({
       console.log("hello from updatePoints")
       try {
         let res = await api.put("players/" + data.id, {
-          points: (data.oldPoints + data.newPoints)
+          points: (data.oldPoints + data.newPoints),
+          streak: data.streak,
+          megaStreak: data.megaStreak,
+          categoryStats: [...state.currentPlayer.categoryStats, ...data.categoryStats]
+
         })
         dispatch("loadLeaders")
+        dispatch("getCurrentPlayer")
       } catch (err) {
         console.error(err)
       }

@@ -8,7 +8,7 @@
         </h6>
         <div>
           <img
-            class="flyIn card-img-top mt-3"
+            class="card-img-top mt-3"
             id="exerciseImg"
             :src="exercise.example"
             alt="Exercise Example"
@@ -132,7 +132,7 @@ export default {
       setTimeout(() => {
         this.$emit("workoutcomplete", true);
         this.show = false;
-      }, 3200);
+      }, 1000);
     },
 
     cheatInterval() {
