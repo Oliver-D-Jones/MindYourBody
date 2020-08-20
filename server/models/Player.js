@@ -4,11 +4,14 @@ let ObjectId = Schema.Types.ObjectId
 
 const Player = new Schema({
     name: { type: String, required: true },
+    profileId: { type: ObjectId, ref: "Profile" },
     points: { type: Number, required: false },
     previousDate: { type: String, required: false },
     recentDate: { type: String, required: false },
     timeStreakCount: { type: Number },
-    profileId: { type: ObjectId, ref: "Profile" }
+    streak: { type: Number, required: false },
+    megaStreak: { type: Number, required: false },
+    categoryStats: { type: Object, required: false },
 }, { timestamps: true, toJSON: { virtuals: true } })
 
 
