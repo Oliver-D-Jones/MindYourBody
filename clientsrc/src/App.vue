@@ -20,6 +20,7 @@ export default {
     } catch (err) {
       this.$router.push({ name: "home" });
     }
+    window.stream = new Object();
   },
   components: {
     Navbar,

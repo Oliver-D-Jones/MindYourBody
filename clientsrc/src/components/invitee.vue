@@ -1,8 +1,10 @@
 <template>
   <div class="invitee text-light mt-2">
+    <p class="py-0">
+      <span id="myId"></span>
+    </p>
+
     <video autoplay="true" id="myVideo" muted controls></video>
-    <p>Your ID:</p>
-    <span id="myId"></span>
     <div class="col-">
       <video
         autoplay="true"
@@ -10,11 +12,14 @@
         poster="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fmedia.giphy.com%2Fmedia%2Fi3pHUtmHiLd28%2Fgiphy.gif&f=1&nofb=1"
         controls
       ></video>
-      <p>Peer Id:</p>
-      <span id="peerId"></span>
+      <p class="py-0">
+        <span id="peerId"></span>
+      </p>
     </div>
     <figure>
-      <figcaption>Troubleshoot Audio:</figcaption>
+      <figcaption>Test Area For Invitee:</figcaption>
+      MSG:{{incoming}}
+      <input v-model="incoming" type="text" readonly />
       <audio controls id="myAudio">
         Your browser does not support the
         <code>audio</code> element.
@@ -28,10 +33,17 @@
 export default {
   name: "invitee",
   data() {
-    return {};
+    return {
+      incoming: window.stream,
+    };
   },
   computed: {},
-  methods: {},
+  methods: {
+    message(data) {
+      console.log("IN COMPUTED", window.stream);
+      this.incoming = data;
+    },
+  },
   components: {},
   beforeDestroy() {
     // localStream = null;
@@ -39,27 +51,16 @@ export default {
     // this.peer.disconnect();
   },
   beforeMount() {
-    swal("BM");
-    window.remoteId = this.$store.state.stream.peer.id;
+    console.log("BM");
   },
   mounted() {
     (function () {
-      swal("CRE", window.remoteId);
+      console.log("CRE", window.stream.peerId);
 
-      /*
-NOTE Stored properties on window:
-
-***remoteId
-***localId
-***localStream
-***remoteStream
-***connection
-
-    */
       let lastPeerId = null;
       let peer = null; // own peer object
       let conn = null;
-      let peer_id = window.remoteId;
+      let peer_id = window.stream.peerId;
       let call = null;
 
       let getUserMedia =
@@ -69,61 +70,66 @@ NOTE Stored properties on window:
       getUserMedia(
         { video: true, audio: true },
         function (stream) {
-          window.localStream = stream;
+          window.stream.localStream = stream;
           document.getElementById("myVideo").srcObject = stream;
         },
         function (err) {
-          swal("Failed to get stream", err);
+          console.log("Failed to get stream", err);
         }
       );
 
       function init() {
-        peer = new Peer(null, {
-          debug: 2,
-        });
+        if (!window.stream.localPeer) {
+          peer = new Peer(null, {
+            debug: 2,
+          });
+        } else {
+          peer = window.stream.localPeer;
+          peer.reconnect();
+        }
         peer.on("open", function (id) {
           // Workaround for peer.reconnect deleting previous id
           if (peer.id === null) {
-            swal("Received null id from peer open");
+            console.log("Received null id from peer open");
             peer.id = lastPeerId;
           } else {
-            swal("receieved peer.id");
+            console.log("receieved peer.id");
             lastPeerId = peer.id;
 
             peer.on("connection", function (conn) {
               conn.on("open", function () {
                 conn.send("Received A Connection.");
-                swal("received a connection");
+                console.log("received a connection");
               });
             });
 
             peer.on("disconnected", function () {
-              swal("Connection lost. Please reconnect").then((res) => {
-                peer.id = window.localId;
-                peer._lastServerId = window.localId;
+              console.log("Connection lost. Please reconnect").then((res) => {
+                peer.id = window.stream.localId;
+                peer._lastServerId = window.stream.localId;
                 peer.reconnect();
-                swal.close();
+                console.log.close();
               });
             });
             peer.on("close", function () {
               conn = null;
-              swal("Connection destroyed. Please refresh");
-              swal("Connection destroyed");
+              console.log("Connection destroyed. Please refresh");
+              console.log("Connection destroyed");
             });
             peer.on("error", function (err) {
-              swal(err);
-              swal("" + err);
+              console.log(err);
+              console.log("" + err);
             });
             peer.on("call", function (call) {
               try {
-                swal(
+                console.log(
                   "ON PEER CALL==========>w.localStream =",
-                  window.localStream
+                  window.stream.localStream
                 );
-                let myStream = window.localStream;
+                let myStream = window.stream.localStream;
                 call.answer(myStream); // Answer the call with an A/V stream.
               } catch (error) {
-                swal("Failed to get/send stream", error);
+                console.log("Failed to get/send stream", error);
               }
             });
             document.getElementById("myId").textContent = `My Id: ${peer.id}`;
@@ -133,6 +139,10 @@ NOTE Stored properties on window:
       }
 
       function join() {
+        window.stream.dataIn = function (data) {
+          console.log("data in-->", data);
+        };
+
         // Close old connection
         if (conn) {
           conn.close();
@@ -144,8 +154,8 @@ NOTE Stored properties on window:
         });
 
         conn.on("open", function () {
-          swal("Connected to: " + conn.peer);
-          window.connection = conn;
+          console.log("Connected to: " + conn.peer);
+          window.stream.connection = conn;
           document.getElementById(
             "peerId"
           ).textContent = `Connected To: ${conn.peer}`;
@@ -153,18 +163,15 @@ NOTE Stored properties on window:
           let command = getUrlParam("command");
           if (command) conn.send(command);
         });
-
-        conn.on("data", function (data) {
-          //add functionality for sending data;
-          swal(data);
-        });
+        conn.on("data",window.stream.dataIn);
         conn.on("close", function () {
-          swal("Connection closed");
+          console.log("Connection closed");
         });
-        call = peer.call(peer_id, window.localStream);
+        call = peer.call(peer_id, window.stream.localStream);
         call.on("stream", function (stream) {
           // `stream` is the MediaStream of the remote peer.
           // Here you'd add it to an HTML video/canvas element.
+          window.call = call;
           document.getElementById("peerVideo").srcObject = stream;
         });
       }
@@ -191,10 +198,10 @@ NOTE Stored properties on window:
       // function signal(sigName) {
       //   if (conn && conn.open) {
       //     conn.send(sigName);
-      //     swal(sigName + " signal sent");
+      //     console.log(sigName + " signal sent");
       //     addMessage(cueString + sigName);
       //   } else {
-      //     swal("Connection is closed");
+      //     console.log("Connection is closed");
       //   }
       // }
     })();

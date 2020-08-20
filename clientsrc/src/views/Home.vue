@@ -84,7 +84,7 @@
           </h4>
         </button>
         <h1 class="comeInStyle my-2">MIND YOUR BODY</h1>
-        <img class="wowzors" src="../assets/home2.gif" style="width: 33vw;border-radius:90%" />
+        <img class="fadeIn" src="../assets/home2.gif" style="width: 33vw;border-radius:90%" />
       </div>
     </div>
   </div>
@@ -140,13 +140,14 @@ export default {
         },
       }).then((value) => {
         if (value) {
-          this.$store.state.stream.class = "inviter";
-          this.$store.state.stream.user.id = id;
+          window.stream.class = "inviter";
+          window.stream.myId = id;
+          console.log("home--id->", id);
           this.startPlay();
           swal.close();
         } else {
-          this.$store.state.stream.class = false;
-          this.$store.state.stream.user.id = null;
+          window.stream.class = false;
+          window.stream.myId = null;
           swal.close();
         }
       });
@@ -167,19 +168,18 @@ export default {
         let id = document.getElementById("peerId").value;
         if (id) {
           //NOTE set peer to join ID
-          this.$store.state.stream.class = "invitee";
-          this.$store.state.stream.peer.id = id;
-          this.$store.state.stream.user.id = myId;
+          window.stream.class = "invitee";
+          window.stream.peerId = id;
+          window.stream.myId = myId;
           this.startPlay();
         } else {
-          //NOTE set peer to join ID
-          this.$store.state.stream.class = false;
-          this.$store.state.stream.peer.id = null;
+          window.stream.class = false;
+          window.stream.peerId = null;
         }
       });
     },
 
-    startPlay() {
+    async startPlay() {
       if (!this.subject) {
         this.$store.dispatch("setSubject", Math.floor(Math.random() * 23) + 9);
       }
@@ -200,9 +200,13 @@ export default {
         }
         this.$store.dispatch("setLevel", level);
       }
-      if(!this.$store.state.triviaToken){
-        const token = await fetch("https://opentdb.com/api_token.php?command=request");
-        this.$store.dispatch("setTriviaToken",token);
+      if (!this.$store.state.setTriviaToken) {
+        const res = await fetch(
+          "https://opentdb.com/api_token.php?command=request"
+        );
+        let token = await res.json();
+        this.$store.commit("setTriviaToken",token.token);
+
       }
       this.subject = false;
       this.level = false;
@@ -211,6 +215,7 @@ export default {
   },
   beforeCreate() {
     this.$store.commit("clearStream");
+    this.$store.commit("clearTrivaToken");
   },
   mounted() {
     this.$store.dispatch("loadLeaders");

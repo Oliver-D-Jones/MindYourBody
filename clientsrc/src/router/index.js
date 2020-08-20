@@ -6,7 +6,6 @@ import Game from '../views/Game.vue'
 import { nextTick } from "q"
 import { authGuard } from "@bcwdev/auth0-vue"
 import swal from "sweetalert"
-import _store from "../store"
 
 Vue.use(Router)
 
@@ -44,7 +43,7 @@ router.beforeEach((to, from, next) => {
   // if (to.name != "Home" && !isAuthenticated) {
   //   next({ name: "Home" })
   // }
-  if (from.name == "game" && _store.state.stream.class) {
+  if (from.name == "game" && window.stream.class) {
     swal({
       title: "Are you sure you want to leave game...You may lose your connection to your peer!",
       icon: "warning",
@@ -54,7 +53,7 @@ router.beforeEach((to, from, next) => {
       },
     }).then((value) => {
       if (value) {
-        _store.state.stream.class = false;
+        window.stream.class = false;
         swal.close();
         next();
       } else {

@@ -1,8 +1,9 @@
 <template>
   <div class="inviter text-light mt-2">
+    <p class="py-0">
+      <span id="myId"></span>
+    </p>
     <video autoplay="true" id="myVideo" muted controls></video>
-    <p>Your ID:</p>
-    <span id="myId"></span>
     <div class="col-">
       <video
         autoplay="true"
@@ -10,12 +11,17 @@
         poster="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fmedia.giphy.com%2Fmedia%2Fi3pHUtmHiLd28%2Fgiphy.gif&f=1&nofb=1"
         controls
       ></video>
-      <p>Peer Id:</p>
-      <span id="peerId"></span>
-      <button class="btn btn-block btn-outline-warning" @click="getInfo">Troubleshoot</button>
+      <p class="py-0">
+        <span id="peerId"></span>
+      </p>
+      <button class="btn btn-block btn-outline-warning" @click="getInfo">WINDOW STREAM</button>
     </div>
     <figure>
-      <figcaption>Troubleshoot Audio</figcaption>
+      <figcaption>Test Area For Inviter</figcaption>
+      <form action>
+        <input type="text" v-model="msg" />
+        <button type="button" @click="sendMsg">Submit</button>
+      </form>
       <audio controls id="myAudio">
         Your browser does not support the
         <code>audio</code> element.
@@ -32,13 +38,28 @@ export default {
     return {
       localPeer: null,
       conn: null,
-      lastId:null,
+      lastId: null,
+      msg: "",
     };
   },
   computed: {},
   methods: {
+    dataIn(data) {
+      swal("REC'D: " + data);
+    },
+    sendMsg() {
+      if (true) {
+        let msg = this.msg;
+        if (window.stream.connection) {
+          window.stream.connection.send(msg);
+        }
+      } else {
+        console.log("Connection is closed");
+      }
+      this.msg = "";
+    },
     getInfo() {
-      console.log(localPeer, connection, localStream, remoteStream);
+      console.log(stream);
     },
   },
   components: {},
@@ -49,17 +70,16 @@ export default {
     // this.localPeer.destroy();
   },
   beforeMount() {
-    window.localId = this.$store.state.stream.user.id;
-    console.log("BM-localId-->", window.localId);
+    console.log("BM-localId-->", window.stream.myId);
   },
   mounted() {
+    window.stream.dataIn = this.dataIn;
     (function () {
       let lastPeerId = null;
-      this.lastId = lastPeerId;
       let peer = null; // own peer object
       let conn = null;
       let call = null;
-      let myId = window.localId;
+      let myId = window.stream.myId;
 
       let getUserMedia =
         navigator.getUserMedia ||
@@ -69,14 +89,13 @@ export default {
       getUserMedia(
         { video: true, audio: true },
         function (stream) {
-          swal("GET USER MEDIA", stream);
-          window.localStream = stream;
+          window.stream.localStream = stream;
           document.getElementById("myVideo").srcObject = stream;
 
           // document.getElementById("myAudio").srcObject = stream;
         },
         function (err) {
-          swal("Failed to get stream", err);
+          alert("Failed to get stream " + err);
         }
       );
 
@@ -88,9 +107,20 @@ export default {
        */
       function init() {
         // Create own peer object with connection to shared PeerJS server
-        peer = new Peer(myId, {
-          debug: 2,
-        });
+        if (!window.stream.localPeer) {
+          peer = new Peer(myId, {
+            debug: 2,
+          });
+        } else {
+          try {
+            peer = window.stream.localPeer;
+            peer.reconnect();
+          } catch (error) {
+            peer = new Peer(myId, {
+              debug: 2,
+            });
+          }
+        }
 
         peer.on("open", function (id) {
           // Workaround for peer.reconnect deleting previous id
@@ -100,8 +130,8 @@ export default {
             lastPeerId = peer.id;
           }
           // document.getElementById("myId").textContent = `${peer.id}`;
-          document.getElementById("myId").textContent = `${peer.id}`;
-          window.localPeer = peer;
+          document.getElementById("myId").textContent = `My ID: ${peer.id}`;
+          window.stream.localPeer = peer;
 
           peer.on("connection", function (c) {
             // Allow only a single connection for now
@@ -116,14 +146,15 @@ export default {
             //   return;
             // }
             conn = c;
-            window.connection = c;
-            swal("conn",conn);
-            document.getElementById("peerId").textContent = `${conn.peer}`;
+            window.stream.connection = c;
+            document.getElementById(
+              "peerId"
+            ).textContent = `Connected To: ${conn.peer}`;
             ready();
           });
 
           peer.on("disconnected", function () {
-            swal("Connection lost. Please reconnect");
+            alert("Connection lost. Please reconnect");
 
             // Workaround for peer.reconnect deleting previous id
             peer.id = lastPeerId;
@@ -133,28 +164,26 @@ export default {
 
           peer.on("close", function () {
             conn = null;
-            swal("Connection destroyed");
+            alert("Connection destroyed");
           });
           peer.on("error", function (err) {
             let error = "Error: " + err;
-            swal({
-              title: error,
-            });
+            alert(error);
             peer.close();
           });
           peer.on("call", function (call) {
             try {
-              swal("WTF??????????????------", call);
-              let myStream = window.localStream;
+              let myStream = window.stream.localStream;
               call.answer(myStream); // Answer the call with an A/V stream.
               call.on("stream", function (stream) {
                 // Show stream in some video/canvas element.
                 document.getElementById("peerVideo").srcObject = stream;
                 document.getElementById("myAudio").srcObject = stream;
-                window.remoteStream = stream;
+                window.stream.remoteStream = stream;
+                window.stream.call = call;
               });
             } catch (error) {
-              swal("Failed to get/send stream", error);
+              alert("Failed to get/send stream " + error);
             }
           });
         });
@@ -163,12 +192,11 @@ export default {
          * Triggered once a connection has been achieved.
          * Defines callbacks to handle incoming data and connection events.
          */
+
         function ready() {
-          conn.on("data", function (data) {
-            swal("Data recieved");
-          });
+          conn.on("data", window.stream.dataIn);
           conn.on("close", function () {
-            swal("Connection reset. Awaiting connection...");
+            alert("Connection reset. Awaiting connection...");
             conn = null;
           });
         }

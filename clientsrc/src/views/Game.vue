@@ -82,17 +82,17 @@ export default {
     async begin() {
       //Get trivia data from api call and store
       //NOTE get personal pref. from store.state
-      console.log("in Begin of game");
+
       let cat = this.$store.state.subject;
       let level = this.$store.state.level;
       let answers = [];
-      // let token = this.$store.state.triviaToken;
-      // const res = await fetch(
-      //   `https://opentdb.com/api.php?amount=1&category=${cat}&difficulty=${level}&type=multiple&token=${token}`
-      // );
+      let token = this.$store.state.triviaToken;
       const res = await fetch(
-        `https://opentdb.com/api.php?amount=1&category=${cat}&difficulty=${level}&type=multiple`
+        `https://opentdb.com/api.php?amount=1&category=${cat}&difficulty=${level}&type=multiple&token=${token}`
       );
+      // const res = await fetch(
+      //   `https://opentdb.com/api.php?amount=1&category=${cat}&difficulty=${level}&type=multiple`
+      // );
       let data = await res.json();
       data = data.results[0];
       for (let property in data) {
@@ -120,13 +120,13 @@ export default {
     },
   },
   beforeMount() {
-    console.log(this.$store.state.stream.class);
-    if (this.$store.state.stream.class == "inviter") {
+    console.log(window.stream.class);
+    if (window.stream.class == "inviter") {
       this.invitee = false;
       this.inviter = true;
       this.video = true;
       this.display = "col-sm-12 col-md-10";
-    } else if (this.$store.state.stream.class == "invitee") {
+    } else if (window.stream.class == "invitee") {
       this.inviter = false;
       this.invitee = true;
       this.video = true;
@@ -141,7 +141,7 @@ export default {
     if (swal.isVisible()) {
       swal.close();
     }
-    window.localStream.stop();
+    window.stream.localStream.stop();
   },
   components: {
     Exercise,
@@ -159,7 +159,9 @@ video {
   max-width: 200px !important;
   min-height: 150px !important;
   max-height: 150px !important;
-  border: blue 1px solid;
+  border: solid 2px blue;
+  box-shadow: 2px 3px 8px white;
+  border-radius: 8%;
 }
 #main {
   background-image: url("../assets/end.jpg");
