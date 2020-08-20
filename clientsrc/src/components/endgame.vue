@@ -16,13 +16,16 @@
       <img src="../assets/frown.png" style="width: 10%;border-radius:100%" />
       <h3>Play Again?</h3>
     </div>
-    <h3 v-if="gotStreak">
-      You earned 20 points for a 5-day streak!
-      You have played for {{days}} days straight!
+    <h3 v-if="this.answerStreakEarned">
+      You earned 20 points for a 5-question streak!
       <img
         src="../assets/coin.gif"
         style="width: 15rem;"
       />
+    </h3>
+    <h3 v-if="this.megaStreakEarned">
+      You earned 100 points for a MEGA-Streak!
+      <img src="../assets/coin.gif" style="width: 15rem;" />
     </h3>
     <div class="row m-4" style="justify-content: space-evenly">
       <div class="col-sm-12 col-md-4">
@@ -99,12 +102,15 @@ export default {
   data() {
     return {
       subject: this.$store.state.subject,
+      category: this.$store.state.trivia.category,
       level: this.$store.state.level,
       answer: this.$store.state.answer,
       profile: this.$store.state.profile,
       player: this.$store.state.currentPlayer,
       show: false,
       time: new Date(),
+      answerStreakEarned: false,
+      megaStreakEarned: false,
     };
   },
   mounted() {
@@ -121,6 +127,11 @@ export default {
     this.$store.dispatch("getPoints", {
       id: this.playerid,
       points: this.points,
+      streak: this.answerStreak.reg,
+      megaStreak: this.answerStreak.mega,
+      category: "History",
+      correct: 3,
+      attempted: 5,
     });
     this.show = true;
   },
@@ -128,6 +139,18 @@ export default {
     playerid() {
       return this.$store.state.currentPlayer.profileId;
     },
+
+    categoryStats() {
+      let foundCategoryStatObject = this.$store.state.currentPlayer.categoryStats.find(
+        (c) => (c.cateogry = this.category)
+      );
+      foundCategoryStatObject.attempted++;
+      if (answer) {
+        foundCategoryStatObject.correct++;
+      }
+      return foundCategoryStatObject;
+    },
+
     checkStreak() {
       let prev = parseInt(this.player.previousDate);
       let rec = parseInt(this.player.recentDate);
@@ -181,13 +204,44 @@ export default {
       }
     },
     gotStreak() {
-      if (this.player.timeStreakCount % 5 == 0) {
+      if (this.player.timeStreakCount % 5 == 1) {
         return 20;
       }
       return false;
     },
     days() {
       return this.player.timeStreakCount;
+    },
+    answerStreak() {
+      let megaStreak = this.$store.state.currentPlayer.megaStreak;
+      let streak = this.$store.state.currentPlayer.streak;
+      let answer = this.$store.state.answer;
+      let points = 0;
+
+      if (!answer) {
+        streak = 0;
+        megaStreak = 0;
+        console.log("answerStreak increased", streak);
+      }
+      if (answer) {
+        streak++;
+        console.log("answerStreak increased", streak);
+      }
+      if (streak === 5) {
+        this.answerStreakEarned = true;
+        points += 20;
+        streak = 0;
+        megaStreak++;
+        console.log("Five in a row. You got a streak!", streak);
+      }
+      if (megaStreak === 5) {
+        this.megaStreakEarned = true;
+        // debugger;
+        points += 100;
+        megaStreak = 0;
+        console.log("Five streaks in a row. You got a megaStreak!", megaStreak);
+      }
+      return { reg: streak, mega: megaStreak, streakPoints: points };
     },
     points() {
       let pts = 0;
@@ -202,18 +256,7 @@ export default {
       } else {
         pts = 0;
       }
-      return pts + this.gotStreak;
-    },
-    streak() {
-      let streak = this.$store.currentPlayer.streak;
-      if (this.points > 0) {
-        streak++;
-        console.log("streak increased");
-      }
-      if (streak == 2) {
-        this.points += 20;
-        console.log("Five in a row. You got a streak!");
-      }
+      return pts + this.gotStreak + this.answerStreak.streakPoints;
     },
   },
   methods: {
