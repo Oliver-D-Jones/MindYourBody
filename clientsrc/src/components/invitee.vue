@@ -18,8 +18,8 @@
     </div>
     <figure>
       <figcaption>Test Area For Invitee:</figcaption>
-      MSG:{{incoming}}
-      <input v-model="incoming" type="text" readonly />
+      <textarea name id cols="30" rows="10" v-model="incoming"></textarea>
+      <input type="text" readonly />
       <audio controls id="myAudio">
         Your browser does not support the
         <code>audio</code> element.
@@ -84,8 +84,14 @@ export default {
             debug: 2,
           });
         } else {
-          peer = window.stream.localPeer;
-          peer.reconnect();
+          try {
+            peer = window.stream.localPeer;
+            peer.reconnect();
+          } catch (error) {
+            peer = new Peer(null, {
+              debug: 2,
+            });
+          }
         }
         peer.on("open", function (id) {
           // Workaround for peer.reconnect deleting previous id
@@ -163,7 +169,7 @@ export default {
           let command = getUrlParam("command");
           if (command) conn.send(command);
         });
-        conn.on("data",window.stream.dataIn);
+        conn.on("data", window.stream.dataIn);
         conn.on("close", function () {
           console.log("Connection closed");
         });
