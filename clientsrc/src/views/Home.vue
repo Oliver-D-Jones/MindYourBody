@@ -200,6 +200,10 @@ export default {
         }
         this.$store.dispatch("setLevel", level);
       }
+      if(!this.$store.state.triviaToken){
+        const token = await fetch("https://opentdb.com/api_token.php?command=request");
+        this.$store.dispatch("setTriviaToken",token);
+      }
       this.subject = false;
       this.level = false;
       router.push({ name: "game" });

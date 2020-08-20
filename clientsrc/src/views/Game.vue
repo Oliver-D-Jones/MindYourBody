@@ -86,6 +86,10 @@ export default {
       let cat = this.$store.state.subject;
       let level = this.$store.state.level;
       let answers = [];
+      // let token = this.$store.state.triviaToken;
+      // const res = await fetch(
+      //   `https://opentdb.com/api.php?amount=1&category=${cat}&difficulty=${level}&type=multiple&token=${token}`
+      // );
       const res = await fetch(
         `https://opentdb.com/api.php?amount=1&category=${cat}&difficulty=${level}&type=multiple`
       );
@@ -134,9 +138,10 @@ export default {
     this.start = true;
   },
   beforeDestroy() {
-    // if (swal.isVisible()) {
-    //   swal.close();
-    // }
+    if (swal.isVisible()) {
+      swal.close();
+    }
+    window.localStream.stop();
   },
   components: {
     Exercise,

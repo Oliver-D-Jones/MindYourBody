@@ -12,7 +12,15 @@
       ></video>
       <p>Peer Id:</p>
       <span id="peerId"></span>
+      <button class="btn btn-block btn-outline-warning" @click="getInfo">Troubleshoot</button>
     </div>
+    <figure>
+      <figcaption>Troubleshoot Audio</figcaption>
+      <audio controls id="myAudio">
+        Your browser does not support the
+        <code>audio</code> element.
+      </audio>
+    </figure>
   </div>
 </template>
 
@@ -24,130 +32,149 @@ export default {
     return {
       localPeer: null,
       conn: null,
+      lastId:null,
     };
   },
   computed: {},
-  methods: {},
+  methods: {
+    getInfo() {
+      console.log(localPeer, connection, localStream, remoteStream);
+    },
+  },
   components: {},
   beforeDestroy() {
-    localStream = null;
-    this.conn.close();
-    this.localPeer.disconnect();
+    // localStream = null;
+    // console.log(this.conn, this.localPeer);
+    // this.conn.close();
+    // this.localPeer.destroy();
   },
-  created() {
-    let video = document.getElementById("myVideo");
-    let peer = {};
-    this.localPeer = peer;
-    let conn = {};
-    this.conn = conn;
+  beforeMount() {
+    window.localId = this.$store.state.stream.user.id;
+    console.log("BM-localId-->", window.localId);
+  },
+  mounted() {
+    (function () {
+      let lastPeerId = null;
+      this.lastId = lastPeerId;
+      let peer = null; // own peer object
+      let conn = null;
+      let call = null;
+      let myId = window.localId;
 
-    let getUserMedia =
-      navigator.getUserMedia ||
-      navigator.webkitGetUserMedia ||
-      navigator.mozGetUserMedia;
+      let getUserMedia =
+        navigator.getUserMedia ||
+        navigator.webkitGetUserMedia ||
+        navigator.mozGetUserMedia;
 
-    getUserMedia(
-      { video: true, audio: true },
-      function (stream) {
-        window.localStream = stream;
-        document.getElementById("myVideo").srcObject = stream;
-      },
-      function (err) {
-        console.log("Failed to get stream", err);
-      }
-    );
+      getUserMedia(
+        { video: true, audio: true },
+        function (stream) {
+          swal("GET USER MEDIA", stream);
+          window.localStream = stream;
+          document.getElementById("myVideo").srcObject = stream;
 
-    // Create own peer object with connection to shared PeerJS server
-    let lastPeerId = null;
+          // document.getElementById("myAudio").srcObject = stream;
+        },
+        function (err) {
+          swal("Failed to get stream", err);
+        }
+      );
 
-    let user = this.$store.state.stream.user.id;
-    console.log(user);
-
-    peer = new Peer(user, {
-      debug: 2,
-    });
-
-    peer.on("open", function (id) {
-      // Workaround for peer.reconnect deleting previous id
-      if (peer.id === null) {
-        console.log("Received null id from peer open");
-        peer.id = lastPeerId;
-      } else {
-        console.log("receieved peer.id");
-        lastPeerId = peer.id;
-      }
-      document.getElementById("myId").textContent = `${peer.id}`;
-      console.log("Peer ID: " + peer.id);
-    });
-
-    peer.on("connection", function (c) {
-      // Allow only a single connection
-      if (conn && conn.open) {
-        c.on("open", function () {
-          c.send("Already connected to another client");
-          setTimeout(function () {
-            c.close();
-          }, 500);
+      /**
+       * Create the Peer object for our end of the connection.
+       *
+       * Sets up callbacks that handle any events related to our
+       * peer object.
+       */
+      function init() {
+        // Create own peer object with connection to shared PeerJS server
+        peer = new Peer(myId, {
+          debug: 2,
         });
-        return;
-      }
 
-      conn = c;
-      console.log("Connected to: " + conn.peer);
-      document.getElementById("peerId").textContent = `${conn.peer}`;
+        peer.on("open", function (id) {
+          // Workaround for peer.reconnect deleting previous id
+          if (peer.id === null) {
+            peer.id = lastPeerId;
+          } else {
+            lastPeerId = peer.id;
+          }
+          // document.getElementById("myId").textContent = `${peer.id}`;
+          document.getElementById("myId").textContent = `${peer.id}`;
+          window.localPeer = peer;
 
-      // status.innerHTML = "Connected";
-      ready();
-    });
+          peer.on("connection", function (c) {
+            // Allow only a single connection for now
+            //later create array and push new connetion
+            // if (conn && conn.open) {
+            //   c.on("open", function () {
+            //     c.send("Already connected to another client");
+            //     setTimeout(function () {
+            //       c.close();
+            //     }, 500);
+            //   });
+            //   return;
+            // }
+            conn = c;
+            window.connection = c;
+            swal("conn",conn);
+            document.getElementById("peerId").textContent = `${conn.peer}`;
+            ready();
+          });
 
-    peer.on("call", function (call) {
-      try {
-        call.answer(window.localStream); // Answer the call with an A/V stream.
-        call.on("stream", function (remoteStream) {
-          // Show stream in some video/canvas element.
-          document.getElementById("peerVideo").srcObject = remoteStream;
-          console.log(localStream, remoteStream);
+          peer.on("disconnected", function () {
+            swal("Connection lost. Please reconnect");
+
+            // Workaround for peer.reconnect deleting previous id
+            peer.id = lastPeerId;
+            peer._lastServerId = lastPeerId;
+            peer.reconnect();
+          });
+
+          peer.on("close", function () {
+            conn = null;
+            swal("Connection destroyed");
+          });
+          peer.on("error", function (err) {
+            let error = "Error: " + err;
+            swal({
+              title: error,
+            });
+            peer.close();
+          });
+          peer.on("call", function (call) {
+            try {
+              swal("WTF??????????????------", call);
+              let myStream = window.localStream;
+              call.answer(myStream); // Answer the call with an A/V stream.
+              call.on("stream", function (stream) {
+                // Show stream in some video/canvas element.
+                document.getElementById("peerVideo").srcObject = stream;
+                document.getElementById("myAudio").srcObject = stream;
+                window.remoteStream = stream;
+              });
+            } catch (error) {
+              swal("Failed to get/send stream", error);
+            }
+          });
         });
-      } catch (error) {
-        console.log("Failed to get/send stream", error);
+
+        /**
+         * Triggered once a connection has been achieved.
+         * Defines callbacks to handle incoming data and connection events.
+         */
+        function ready() {
+          conn.on("data", function (data) {
+            swal("Data recieved");
+          });
+          conn.on("close", function () {
+            swal("Connection reset. Awaiting connection...");
+            conn = null;
+          });
+        }
       }
-    });
-
-    peer.on("disconnected", function () {
-      // status_1.innerHTML = "Connection lost. Please reconnect";
-      console.log("Connection lost. Please reconnect");
-
-      // Workaround for peer.reconnect deleting previous id
-      peer.id = lastPeerId;
-      peer._lastServerId = lastPeerId;
-      peer.reconnect();
-    });
-    peer.on("close", function () {
-      conn = null;
-      // status_1.innerHTML = "Connection destroyed. Please refresh";
-      console.log("Connection destroyed");
-    });
-    peer.on("error", function (err) {
-      console.log(err);
-      // alert("" + err);
-      let error = "" + err;
-      swal({
-        title: error,
-      });
-      peer.close();
-    });
-    function ready() {
-      conn.on("data", function (data) {
-        // console.log("Data recieved");
-        // document.getElementById("msgIn").textContent = data;
-        console.log(data, typeof data);
-        // document.getElementById("myPeer").srcObject = data;
-      });
-      conn.on("close", function () {
-        // status.innerHTML = "Connection reset<br>Awaiting connection...";
-        conn = "";
-      });
-    }
+      init();
+    })();
   },
 };
 </script>

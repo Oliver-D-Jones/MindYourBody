@@ -13,6 +13,13 @@
       <p>Peer Id:</p>
       <span id="peerId"></span>
     </div>
+    <figure>
+      <figcaption>Troubleshoot Audio:</figcaption>
+      <audio controls id="myAudio">
+        Your browser does not support the
+        <code>audio</code> element.
+      </audio>
+    </figure>
   </div>
 </template>
 
@@ -27,99 +34,170 @@ export default {
   methods: {},
   components: {},
   beforeDestroy() {
-    localStream = null;
-    this.conn.close();
-    this.peer.disconnect();
+    // localStream = null;
+    // this.conn.close();
+    // this.peer.disconnect();
   },
-  created() {
-    // Call a peer, providing our mediaStream
-    let lastPeerId = null;
-    let conn = null;
-    let peer = null;
-    let peer_id = this.$store.state.stream.peer.id;
-    let myId = this.$store.state.stream.user.id;
+  beforeMount() {
+    swal("BM");
+    window.remoteId = this.$store.state.stream.peer.id;
+  },
+  mounted() {
+    (function () {
+      swal("CRE", window.remoteId);
 
-    peer = new Peer(myId, {
-      debug: 2,
-    });
+      /*
+NOTE Stored properties on window:
 
-    peer.on("open", function (id) {
-      // Workaround for peer.reconnect deleting previous id
-      if (peer.id === null) {
-        console.log("Received null id from peer open");
-        peer.id = lastPeerId;
-      } else {
-        console.log("receieved peer.id");
-        lastPeerId = peer.id;
-      }
-      document.getElementById("myId").textContent = `My Id: ${peer.id}`;
+***remoteId
+***localId
+***localStream
+***remoteStream
+***connection
 
-      peer.on("connection", function (c) {
-        // Disallow incoming connections
-        c.on("open", function () {
-          c.send("Sender does not accept incoming connections");
-          setTimeout(function () {
-            c.close();
-          }, 500);
-        });
-      });
-      peer.on("disconnected", function () {
-        swal("Connection lost. Please reconnect").then((res) => {
-          peer.id = this.$store.state.stream.user.id;
-          peer._lastServerId = this.$store.state.stream.user.id;
-          peer.reconnect();
-          swal.close();
-        });
-        // Workaround for peer.reconnect deleting previous id
-      });
-      peer.on("close", function () {
-        conn = null;
-        swal("Connection destroyed. Please refresh");
-        console.log("Connection destroyed");
-      });
-      peer.on("error", function (err) {
-        console.log(err);
-        swal("" + err);
-      });
-
-      conn = peer.connect(peer_id, {
-        reliable: true,
-      });
-
-      conn.on("open", function () {
-        // swal("Connected to: " + conn.peer);
-        console.log("Connected to: " + conn.peer);
-        document.getElementById(
-          "peerId"
-        ).textContent = `Connected To: ${conn.peer}`;
-      });
-
-      conn.on("data", function (data) {
-        //add functionality for sending data;
-        swal(data);
-      });
-      conn.on("close", function () {
-        swal("Connection closed");
-      });
+    */
+      let lastPeerId = null;
+      let peer = null; // own peer object
+      let conn = null;
+      let peer_id = window.remoteId;
+      let call = null;
 
       let getUserMedia =
         navigator.getUserMedia ||
         navigator.webkitGetUserMedia ||
         navigator.mozGetUserMedia;
+      getUserMedia(
+        { video: true, audio: true },
+        function (stream) {
+          window.localStream = stream;
+          document.getElementById("myVideo").srcObject = stream;
+        },
+        function (err) {
+          swal("Failed to get stream", err);
+        }
+      );
 
-      getUserMedia({ video: true, audio: true }, function (stream) {
-        window.localStream = stream;
-        document.getElementById("myVideo").srcObject = stream;
+      function init() {
+        peer = new Peer(null, {
+          debug: 2,
+        });
+        peer.on("open", function (id) {
+          // Workaround for peer.reconnect deleting previous id
+          if (peer.id === null) {
+            swal("Received null id from peer open");
+            peer.id = lastPeerId;
+          } else {
+            swal("receieved peer.id");
+            lastPeerId = peer.id;
 
-        let call = peer.call(peer_id, window.localStream);
-        call.on("stream", function (remoteStream) {
+            peer.on("connection", function (conn) {
+              conn.on("open", function () {
+                conn.send("Received A Connection.");
+                swal("received a connection");
+              });
+            });
+
+            peer.on("disconnected", function () {
+              swal("Connection lost. Please reconnect").then((res) => {
+                peer.id = window.localId;
+                peer._lastServerId = window.localId;
+                peer.reconnect();
+                swal.close();
+              });
+            });
+            peer.on("close", function () {
+              conn = null;
+              swal("Connection destroyed. Please refresh");
+              swal("Connection destroyed");
+            });
+            peer.on("error", function (err) {
+              swal(err);
+              swal("" + err);
+            });
+            peer.on("call", function (call) {
+              try {
+                swal(
+                  "ON PEER CALL==========>w.localStream =",
+                  window.localStream
+                );
+                let myStream = window.localStream;
+                call.answer(myStream); // Answer the call with an A/V stream.
+              } catch (error) {
+                swal("Failed to get/send stream", error);
+              }
+            });
+            document.getElementById("myId").textContent = `My Id: ${peer.id}`;
+            join();
+          }
+        });
+      }
+
+      function join() {
+        // Close old connection
+        if (conn) {
+          conn.close();
+        }
+
+        // Create connection to destination peer specified in the input field
+        conn = peer.connect(peer_id, {
+          reliable: true,
+        });
+
+        conn.on("open", function () {
+          swal("Connected to: " + conn.peer);
+          window.connection = conn;
+          document.getElementById(
+            "peerId"
+          ).textContent = `Connected To: ${conn.peer}`;
+          // Check URL params for comamnds that should be sent immediately
+          let command = getUrlParam("command");
+          if (command) conn.send(command);
+        });
+
+        conn.on("data", function (data) {
+          //add functionality for sending data;
+          swal(data);
+        });
+        conn.on("close", function () {
+          swal("Connection closed");
+        });
+        call = peer.call(peer_id, window.localStream);
+        call.on("stream", function (stream) {
           // `stream` is the MediaStream of the remote peer.
           // Here you'd add it to an HTML video/canvas element.
-          console.log(remoteStream);
-          document.getElementById("peerVideo").srcObject = remoteStream;
+          document.getElementById("peerVideo").srcObject = stream;
         });
-      });
-    });
+      }
+
+      /**
+       * Get first "GET style" parameter from href.
+       * This enables delivering an initial command upon page load.
+       *
+       * Would have been easier to use location.hash.
+       */
+      function getUrlParam(name) {
+        name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+        var regexS = "[\\?&]" + name + "=([^&#]*)";
+        var regex = new RegExp(regexS);
+        var results = regex.exec(window.location.href);
+        if (results == null) return null;
+        else return results[1];
+      }
+      init();
+      /**
+       * Send a signal via the peer connection and add it to the log.
+       * This will only occur if the connection is still alive.
+       */
+      // function signal(sigName) {
+      //   if (conn && conn.open) {
+      //     conn.send(sigName);
+      //     swal(sigName + " signal sent");
+      //     addMessage(cueString + sigName);
+      //   } else {
+      //     swal("Connection is closed");
+      //   }
+      // }
+    })();
   },
 };
 </script>
