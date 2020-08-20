@@ -1,6 +1,6 @@
 <template>
-  <div class="invitee text-light mt-2">
-    <p class="py-0">
+  <div class="invitee text-light mt-2 border">
+    <p class="py-0 bg-info text-dark">
       <span id="myId"></span>
     </p>
 
@@ -20,7 +20,7 @@
       <figcaption>Test Area For Invitee:</figcaption>
       <textarea name id cols="30" rows="10" v-model="incoming"></textarea>
       <input type="text" readonly />
-      <audio controls id="myAudio">
+      <audio controls volume="true" autoplay id="peerAudio">
         Your browser does not support the
         <code>audio</code> element.
       </audio>
@@ -77,7 +77,14 @@ export default {
           console.log("Failed to get stream", err);
         }
       );
-
+      function setData(data) {
+        console.log(data);
+        this.$store.state.trivia = data.trivia;
+        this.$store.state.level = data.trivia.difficulty;
+        this.$store.state.subject = data.trivia.category;
+        this.$store.state.answer = data.trivia.correct_answer;
+        this.$store.state.exercise = data.exercise;
+      }
       function init() {
         if (!window.stream.localPeer) {
           peer = new Peer(null, {
@@ -128,10 +135,6 @@ export default {
             });
             peer.on("call", function (call) {
               try {
-                console.log(
-                  "ON PEER CALL==========>w.localStream =",
-                  window.stream.localStream
-                );
                 let myStream = window.stream.localStream;
                 call.answer(myStream); // Answer the call with an A/V stream.
               } catch (error) {
@@ -145,10 +148,6 @@ export default {
       }
 
       function join() {
-        window.stream.dataIn = function (data) {
-          console.log("data in-->", data);
-        };
-
         // Close old connection
         if (conn) {
           conn.close();
@@ -169,7 +168,9 @@ export default {
           let command = getUrlParam("command");
           if (command) conn.send(command);
         });
-        conn.on("data", window.stream.dataIn);
+        conn.on("data", function (data) {
+          setData(data);
+        });
         conn.on("close", function () {
           console.log("Connection closed");
         });
@@ -177,8 +178,12 @@ export default {
         call.on("stream", function (stream) {
           // `stream` is the MediaStream of the remote peer.
           // Here you'd add it to an HTML video/canvas element.
-          window.call = call;
+          window.stream.call = call;
+          window.stream.remoteStream = stream;
           document.getElementById("peerVideo").srcObject = stream;
+          // document.getElementById(
+          //   "peerAudio"
+          // ).srcObject = stream.getAudioTracks()[0];
         });
       }
 

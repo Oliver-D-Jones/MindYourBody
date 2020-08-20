@@ -3,7 +3,7 @@
     <div class="container-fluid" id="main" style="min-height:100vh;">
       <div class="row" style="display: flex;justify-content: space-around;">
         <div class="col-2" v-if="inviter">
-          <Inviter :key="'videostream'" />
+          <Inviter :key="'videostream'" v-on:init="init()" />
         </div>
 
         <div class="col-2" v-if="invitee">
@@ -79,44 +79,56 @@ export default {
       this.answer = false;
       this.end = true;
     },
+    sendToInvitee() {
+      let trivia = this.$store.state.trivia;
+      let exercise = this.$store.state.exercise;
+      let data = { trivia: trivia, exercise: exercise };
+      console.log(data);
+      window.stream.connection.send(data);
+    },
     async begin() {
-      //Get trivia data from api call and store
-      //NOTE get personal pref. from store.state
-
-      let cat = this.$store.state.subject;
-      let level = this.$store.state.level;
-      let answers = [];
-      let token = this.$store.state.triviaToken;
-      const res = await fetch(
-        `https://opentdb.com/api.php?amount=1&category=${cat}&difficulty=${level}&type=multiple&token=${token}`
-      );
-      // const res = await fetch(
-      //   `https://opentdb.com/api.php?amount=1&category=${cat}&difficulty=${level}&type=multiple`
-      // );
-      let data = await res.json();
-      data = data.results[0];
-      for (let property in data) {
-        if (Array.isArray(data[property])) {
-          data[property].forEach((prop, i, a) => {
-            a[i] = prop;
-          });
-        } else {
-          data[property] = data[property];
+      if (window.stream.class != "invitee") {
+        await this.$store.dispatch("getExercise");
+        let cat = this.$store.state.subject;
+        let level = this.$store.state.level;
+        let answers = [];
+        let token = window.stream.triviaToken;
+        const res = await fetch(
+          `https://opentdb.com/api.php?amount=1&category=${cat}&difficulty=${level}&type=multiple&token=${token}`
+        );
+        let data = await res.json();
+        data = data.results[0];
+        for (let property in data) {
+          if (Array.isArray(data[property])) {
+            data[property].forEach((prop, i, a) => {
+              a[i] = prop;
+            });
+          } else {
+            data[property] = data[property];
+          }
         }
+        this.question = data.question;
+        this.trivia = data;
+        answers = data.incorrect_answers;
+        answers.push(data.correct_answer);
+        answers.forEach((v, i, a) => {
+          let swap_index = Math.floor(a.length * Math.random());
+          let temp = a[swap_index];
+          a[swap_index] = v;
+          a[i] = temp;
+        });
+        data.incorrect_answers = answers;
+        this.$store.commit("setTrivia", data);
+        if (window.stream.class == "inviter") {
+          // window.stream.
+          this.sendToInvitee();
+        }
+        this.getQuestion = true;
+        this.start = false;
+      } else {
+        //---for invitee
+        console.log("in else for invitee at game...");
       }
-      this.$store.commit("setTrivia", data);
-      this.question = data.question;
-      this.trivia = data;
-      answers = data.incorrect_answers;
-      answers.push(data.correct_answer);
-      answers.forEach((v, i, a) => {
-        let swap_index = Math.floor(a.length * Math.random());
-        let temp = a[swap_index];
-        a[swap_index] = v;
-        a[i] = temp;
-      });
-      this.getQuestion = true;
-      this.start = false;
     },
   },
   beforeMount() {
@@ -134,14 +146,14 @@ export default {
     } else {
       this.display = "col-12";
       this.video = false;
+      this.start = true;
     }
-    this.start = true;
   },
   beforeDestroy() {
-    if (swal.isVisible()) {
-      swal.close();
-    }
-    window.stream.localStream.stop();
+    // if (swal.isVisible()) {
+    //   swal.close();
+    // }
+    // window.stream.localStream.stop();
   },
   components: {
     Exercise,

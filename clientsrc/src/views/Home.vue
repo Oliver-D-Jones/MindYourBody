@@ -1,14 +1,21 @@
 <template class="home">
   <div class="container-fluid gameFont" id="home" style="min-height:100vh;">
     <div class="row justify-content-center pt-3">
-      <div class="col-sm-6 col-md-2">
+      <div class="col-sm-4 col-md-3">
         <button type="button" class="btn btn-block btn-outline-warning" @click="invite">
           <h5 class="py-0">
             <i class="fa fa-envelope" aria-hidden="true"></i> &nbsp;Invite
           </h5>
         </button>
       </div>
-      <div class="col-sm-6 col-md-2">
+      <div class="col-sm-4 col-md-3 text-light" v-if="streamClass || peerStream || myStream">
+        <button type="button" class="btn btn-block btn-outline-danger" @click="closeConnection">
+          <h5 class="py-0 text-warning">
+            <i class="fa fa-times" aria-hidden="true"></i> &nbsp;Close Connection
+          </h5>
+        </button>
+      </div>
+      <div class="col-sm-4 col-md-3">
         <button type="button" class="btn btn-block btn-outline-warning" @click="join">
           <h5 class="py-0">
             <i class="fa fa-handshake-o" aria-hidden="true"></i> &nbsp;Join&nbsp;
@@ -84,7 +91,7 @@
           </h4>
         </button>
         <h1 class="comeInStyle my-2">MIND YOUR BODY</h1>
-        <img class="fadeIn" src="../assets/home2.gif" style="width: 33vw;border-radius:90%" />
+        <img class="fadeIn" src="../assets/home2.gif" style="width: 30vw;border-radius:90%" />
       </div>
     </div>
   </div>
@@ -97,10 +104,40 @@ export default {
     return {
       subject: false,
       level: false,
+      streamClass: false,
+      peerStream: false,
+      myStream: false,
     };
   },
   computed: {},
   methods: {
+    closeConnection() {
+      if (window.stream.remoteStream) {
+        window.stream.remoteStream.getTracks().forEach((t) => {
+          console.log(t);
+          t.stop();
+        });
+      }
+      if (window.stream.localStream) {
+        window.stream.localStream.getTracks().forEach((t) => {
+          console.log(t);
+          t.stop();
+        });
+      }
+      if (window.stream.localPeer) {
+        window.stream.localPeer.active = false;
+      }
+      if (window.stream.remotePeer) {
+        window.stream.remotePeer = false;
+      }
+      if (window.stream.connection) {
+        window.stream.connection.close();
+      }
+      console.log(window.stream);
+
+      window.stream = {};
+      window.stream.class = false;
+    },
     chooseLevel() {
       this.$store.state.level = event.target.value;
     },
@@ -200,13 +237,12 @@ export default {
         }
         this.$store.dispatch("setLevel", level);
       }
-      if (!this.$store.state.setTriviaToken) {
+      if (!window.stream.triviaToken) {
         const res = await fetch(
           "https://opentdb.com/api_token.php?command=request"
         );
         let token = await res.json();
-        this.$store.commit("setTriviaToken",token.token);
-
+        window.stream.triviaToken = token.token;
       }
       this.subject = false;
       this.level = false;
@@ -217,6 +253,25 @@ export default {
     this.$store.commit("clearStream");
     this.$store.commit("clearTrivaToken");
   },
+  created() {
+    console.log(window.stream);
+    if (window.stream.class) {
+      this.streamClass = window.stream.class;
+    }
+    if (
+      window.stream.localStream != undefined &&
+      window.stream.localStream.active
+    ) {
+      this.myStream = window.stream.localStream.active;
+    }
+    if (
+      window.stream.remoteStream != undefined &&
+      window.stream.remoteStream.active
+    ) {
+      this.peerStream = window.stream.remoteStream.active;
+    }
+  },
+  beforeMount() {},
   mounted() {
     this.$store.dispatch("loadLeaders");
   },

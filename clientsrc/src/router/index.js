@@ -37,7 +37,6 @@ const router = new Router({
 })
 
 export default router
-
 // for all routes
 router.beforeEach((to, from, next) => {
   // if (to.name != "Home" && !isAuthenticated) {
@@ -45,7 +44,7 @@ router.beforeEach((to, from, next) => {
   // }
   if (from.name == "game" && window.stream.class) {
     swal({
-      title: "Are you sure you want to leave game...You may lose your connection to your peer!",
+      title: "Are you sure you want to leave Game...You may lose your connection to your peer!",
       icon: "warning",
       buttons: {
         one: { text: "Cancel", value: false },
@@ -53,7 +52,6 @@ router.beforeEach((to, from, next) => {
       },
     }).then((value) => {
       if (value) {
-        window.stream.class = false;
         swal.close();
         next();
       } else {

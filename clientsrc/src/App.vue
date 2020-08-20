@@ -9,10 +9,13 @@
 import Navbar from "./components/Navbar";
 import { onAuth } from "@bcwdev/auth0-vue";
 import swal from "sweetalert";
-import Peer from 'peerjs';
+import Peer from "peerjs";
 export default {
   name: "App",
+
   async beforeCreate() {
+    window.stream = new Object();
+    window.stream.class = false;
     try {
       await onAuth();
       this.$store.dispatch("setBearer", this.$auth.bearer);
@@ -20,7 +23,6 @@ export default {
     } catch (err) {
       this.$router.push({ name: "home" });
     }
-    window.stream = new Object();
   },
   components: {
     Navbar,

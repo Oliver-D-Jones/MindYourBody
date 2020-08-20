@@ -230,7 +230,8 @@ export default {
       }
       this.subject = "";
       this.level = "";
-      this.$emit("init", true);
+
+
     },
     quit() {
       router.push({ name: "home" });

@@ -1,6 +1,6 @@
 <template>
-  <div class="inviter text-light mt-2">
-    <p class="py-0">
+  <div class="inviter text-light mt-2 border">
+    <p class="py-0 bg-info text-dark">
       <span id="myId"></span>
     </p>
     <video autoplay="true" id="myVideo" muted controls></video>
@@ -22,7 +22,7 @@
         <input type="text" v-model="msg" />
         <button type="button" @click="sendMsg">Submit</button>
       </form>
-      <audio controls id="myAudio">
+      <audio controls volume="true" autoplay id="peerAudio">
         Your browser does not support the
         <code>audio</code> element.
       </audio>
@@ -44,6 +44,10 @@ export default {
   },
   computed: {},
   methods: {
+    beginPlay() {
+      console.log("in begin play");
+      this.$emit("init", true);
+    },
     dataIn(data) {
       swal("REC'D: " + data);
     },
@@ -74,6 +78,7 @@ export default {
   },
   mounted() {
     window.stream.dataIn = this.dataIn;
+    window.stream.beginPlay = this.beginPlay;
     (function () {
       let lastPeerId = null;
       let peer = null; // own peer object
@@ -92,7 +97,7 @@ export default {
           window.stream.localStream = stream;
           document.getElementById("myVideo").srcObject = stream;
 
-          // document.getElementById("myAudio").srcObject = stream;
+          // document.getElementById("peerAudio").srcObject = stream;
         },
         function (err) {
           alert("Failed to get stream " + err);
@@ -116,6 +121,7 @@ export default {
             peer = window.stream.localPeer;
             peer.reconnect();
           } catch (error) {
+            console.log(error);
             peer = new Peer(myId, {
               debug: 2,
             });
@@ -147,6 +153,7 @@ export default {
             // }
             conn = c;
             window.stream.connection = c;
+            window.stream.beginPlay();
             document.getElementById(
               "peerId"
             ).textContent = `Connected To: ${conn.peer}`;
@@ -175,12 +182,15 @@ export default {
             try {
               let myStream = window.stream.localStream;
               call.answer(myStream); // Answer the call with an A/V stream.
+              window.stream.call = call;
               call.on("stream", function (stream) {
                 // Show stream in some video/canvas element.
                 document.getElementById("peerVideo").srcObject = stream;
-                document.getElementById("myAudio").srcObject = stream;
                 window.stream.remoteStream = stream;
-                window.stream.call = call;
+
+                // document.getElementById(
+                //   "peerAudio"
+                // ).srcObject = stream.getAudioTracks()[0];
               });
             } catch (error) {
               alert("Failed to get/send stream " + error);
