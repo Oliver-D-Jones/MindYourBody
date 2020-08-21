@@ -274,6 +274,7 @@ export default {
       if (this.level != this.$store.state.level) {
         this.$store.dispatch("setLevel", this.level);
       }
+      this.$emit("init",true)
       this.subject = "";
       this.level = "";
     },

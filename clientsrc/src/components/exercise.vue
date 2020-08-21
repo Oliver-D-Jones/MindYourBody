@@ -42,7 +42,7 @@
           <button
             class="btn btn-block btn-outline-info"
             @click="getExercise"
-            v
+            v-if="allowGet"
           >Get a Different Exercise</button>
           <button
             class="btn btn-block btn-outline-success"
@@ -62,6 +62,7 @@ export default {
   name: "exercise",
   data: function () {
     return {
+      allowGet: true,
       cheatTimer: 1,
       show: false,
       isDisabled: true,
@@ -75,6 +76,9 @@ export default {
     this.$store.state.exercise[0] = {};
   },
   beforeMount() {
+    if (window.stream.class == "invitee") {
+      this.allowGet = false;
+    }
     this.show = true;
   },
   mounted() {
@@ -90,10 +94,13 @@ export default {
   },
   computed: {
     exercise() {
+      if (window.stream.class == "inviter") {
+        window.stream.connection.send({
+          class: "exercise",
+          data: this.$store.state.exercise[0],
+        });
+      }
       return this.$store.state.exercise[0];
-    },
-    question() {
-      return this.$store.state.question;
     },
   },
   methods: {
@@ -101,6 +108,7 @@ export default {
       this.$store.dispatch("getExercise");
       clearInterval(this.exerciseInterval);
       this.exerciseTimerDisabled = false;
+      //NOTE add animation for invitee too ---
       // setTimeout(() => {
       //   document.getElementById("exerciseImg").animate(
       //     [
@@ -156,7 +164,6 @@ export default {
     },
   },
   components: {},
-  props: ["video"],
 };
 </script>
 

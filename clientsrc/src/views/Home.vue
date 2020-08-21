@@ -208,7 +208,7 @@ export default {
           window.stream.class = "invitee";
           window.stream.peerId = id;
           window.stream.myId = myId;
-          this.startPlay();
+          router.push({ name: "game" });
         } else {
           window.stream.class = false;
           window.stream.peerId = null;

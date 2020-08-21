@@ -46,7 +46,6 @@ export default {
       });
     },
   },
-  props: ["question"],
   mounted() {
     this.show = true;
   },

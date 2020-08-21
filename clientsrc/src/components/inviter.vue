@@ -3,7 +3,13 @@
     <p class="py-0 bg-info text-dark">
       <span id="myId"></span>
     </p>
-    <video autoplay="true" id="myVideo" muted controls></video>
+    <video
+      autoplay="true"
+      id="myVideo"
+      muted
+      controls
+      poster="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fmedia.giphy.com%2Fmedia%2Fi3pHUtmHiLd28%2Fgiphy.gif&f=1&nofb=1"
+    ></video>
     <div class="col-">
       <video
         autoplay="true"
@@ -14,19 +20,12 @@
       <p class="py-0">
         <span id="peerId"></span>
       </p>
-      <button class="btn btn-block btn-outline-warning" @click="getInfo">WINDOW STREAM</button>
     </div>
-    <figure>
-      <figcaption>Test Area For Inviter</figcaption>
-      <form action>
-        <input type="text" v-model="msg" />
-        <button type="button" @click="sendMsg">Submit</button>
-      </form>
-      <audio controls volume="true" autoplay id="peerAudio">
-        Your browser does not support the
-        <code>audio</code> element.
-      </audio>
-    </figure>
+
+    <audio controls volume="true" autoplay id="peerAudio">
+      Your browser does not support the
+      <code>audio</code> element.
+    </audio>
   </div>
 </template>
 
@@ -35,35 +34,20 @@
 export default {
   name: "inviter",
   data() {
-    return {
-      localPeer: null,
-      conn: null,
-      lastId: null,
-      msg: "",
-    };
+    return {};
   },
   computed: {},
   methods: {
-    beginPlay() {
-      console.log("in begin play");
-      this.$emit("init", true);
+    sendToInvitee() {
+      let dataToSend = {
+        trivia: this.$store.state.trivia,
+        exercise: this.$store.state.exercise,
+      };
+      this.$emit("inviterStart");
+      window.stream.connection.send(dataToSend);
     },
     dataIn(data) {
-      swal("REC'D: " + data);
-    },
-    sendMsg() {
-      if (true) {
-        let msg = this.msg;
-        if (window.stream.connection) {
-          window.stream.connection.send(msg);
-        }
-      } else {
-        console.log("Connection is closed");
-      }
-      this.msg = "";
-    },
-    getInfo() {
-      console.log(stream);
+      console.log("REC'D: " + data);
     },
   },
   components: {},
@@ -73,12 +57,10 @@ export default {
     // this.conn.close();
     // this.localPeer.destroy();
   },
-  beforeMount() {
-    console.log("BM-localId-->", window.stream.myId);
-  },
+  beforeMount() {},
   mounted() {
     window.stream.dataIn = this.dataIn;
-    window.stream.beginPlay = this.beginPlay;
+    window.stream.sendToInvitee = this.sendToInvitee;
     (function () {
       let lastPeerId = null;
       let peer = null; // own peer object
@@ -153,7 +135,6 @@ export default {
             // }
             conn = c;
             window.stream.connection = c;
-            window.stream.beginPlay();
             document.getElementById(
               "peerId"
             ).textContent = `Connected To: ${conn.peer}`;
@@ -204,7 +185,7 @@ export default {
          */
 
         function ready() {
-          conn.on("data", window.stream.dataIn);
+          conn.on("data", window.stream.sendToInvitee);
           conn.on("close", function () {
             alert("Connection reset. Awaiting connection...");
             conn = null;
@@ -216,7 +197,6 @@ export default {
   },
 };
 </script>
-
 
 <style scoped>
 </style>

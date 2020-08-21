@@ -3,8 +3,13 @@
     <p class="py-0 bg-info text-dark">
       <span id="myId"></span>
     </p>
-
-    <video autoplay="true" id="myVideo" muted controls></video>
+    <video
+      autoplay="true"
+      id="myVideo"
+      muted
+      controls
+      poster="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fmedia.giphy.com%2Fmedia%2Fi3pHUtmHiLd28%2Fgiphy.gif&f=1&nofb=1"
+    ></video>
     <div class="col-">
       <video
         autoplay="true"
@@ -16,32 +21,21 @@
         <span id="peerId"></span>
       </p>
     </div>
-    <figure>
-      <figcaption>Test Area For Invitee:</figcaption>
-      <textarea name id cols="30" rows="10" v-model="incoming"></textarea>
-      <input type="text" readonly />
-      <audio controls volume="true" autoplay id="peerAudio">
-        Your browser does not support the
-        <code>audio</code> element.
-      </audio>
-    </figure>
+    <audio controls volume="true" autoplay id="peerAudio"></audio>
   </div>
 </template>
-
-
 <script>
 export default {
   name: "invitee",
   data() {
-    return {
-      incoming: window.stream,
-    };
+    return {};
   },
   computed: {},
   methods: {
-    message(data) {
-      console.log("IN COMPUTED", window.stream);
-      this.incoming = data;
+    setData(data) {
+      this.$store.dispatch("inviteeExercise", data.exercise[0]);
+      this.$store.dispatch("inviteeTrivia", data.trivia);
+      this.$emit("inviteeStart");
     },
   },
   components: {},
@@ -51,12 +45,10 @@ export default {
     // this.peer.disconnect();
   },
   beforeMount() {
-    console.log("BM");
+    window.stream.setData = this.setData;
   },
   mounted() {
     (function () {
-      console.log("CRE", window.stream.peerId);
-
       let lastPeerId = null;
       let peer = null; // own peer object
       let conn = null;
@@ -77,14 +69,6 @@ export default {
           console.log("Failed to get stream", err);
         }
       );
-      function setData(data) {
-        console.log(data);
-        this.$store.state.trivia = data.trivia;
-        this.$store.state.level = data.trivia.difficulty;
-        this.$store.state.subject = data.trivia.category;
-        this.$store.state.answer = data.trivia.correct_answer;
-        this.$store.state.exercise = data.exercise;
-      }
       function init() {
         if (!window.stream.localPeer) {
           peer = new Peer(null, {
@@ -161,6 +145,7 @@ export default {
         conn.on("open", function () {
           console.log("Connected to: " + conn.peer);
           window.stream.connection = conn;
+          conn.send("GET DATA");
           document.getElementById(
             "peerId"
           ).textContent = `Connected To: ${conn.peer}`;
@@ -169,7 +154,8 @@ export default {
           if (command) conn.send(command);
         });
         conn.on("data", function (data) {
-          setData(data);
+          console.log("INVITEE REC'D DATA->", data);
+          window.stream.setData(data);
         });
         conn.on("close", function () {
           console.log("Connection closed");
