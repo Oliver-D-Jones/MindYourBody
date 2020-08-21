@@ -200,11 +200,14 @@ export default {
       if (this.checkStreak == 1) {
         return this.player.timeStreakCount + 1;
       } else {
-        return 0;
+        return 1;
       }
     },
     gotStreak() {
-      if (this.player.timeStreakCount % 5 == 1) {
+      if (
+        this.player.timeStreakCount !== 0 &&
+        this.player.timeStreakCount % 5 == 0
+      ) {
         return 20;
       }
       return false;
@@ -273,8 +276,6 @@ export default {
       }
       this.subject = "";
       this.level = "";
-
-
     },
     quit() {
       router.push({ name: "home" });

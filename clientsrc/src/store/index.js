@@ -2,10 +2,14 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import router from '../router/index'
 import { api } from "./AxiosService"
+import answer from "./modules/answer"
+import exercise from "./modules/exercise"
+import leaders from "./modules/leaders"
+import level from "./modules/level"
+import subject from "./modules/subject"
+import trivia from "./modules/trivia"
 
 Vue.use(Vuex)
-
-
 
 export default new Vuex.Store({
   state: {
@@ -83,22 +87,15 @@ export default new Vuex.Store({
 
   },
   actions: {
-    async getExercise({ commit, dispatch }) {
-      try {
-        let res = await api.get("/exercises/random")
-        commit("setExercise", res.data)
-      } catch (err) {
-        console.error(err)
-      }
-    },
-
     //#region -- AUTH STUFF --
     setBearer({ }, bearer) {
       api.defaults.headers.authorization = bearer;
     },
+
     resetBearer() {
       api.defaults.headers.authorization = "";
     },
+
     async getProfile({ commit, dispatch, state }) {
       try {
         let res = await api.get("/profile")
@@ -108,6 +105,7 @@ export default new Vuex.Store({
         console.error(err)
       }
     },
+
     async getCurrentPlayer({ commit, dispatch, state }) {
       try {
         let res = await api.get("players/" + state.profile.id)
@@ -117,57 +115,6 @@ export default new Vuex.Store({
           id: state.profile.id,
           name: state.profile.name
         })
-        console.error(err)
-      }
-    },
-    getAnswer({ commit, dispatch, state }) {
-      return state.answer
-    },
-    getTrivia({ commit, dispatch, state }) {
-      return state.trivia
-    },
-    getLeaders({ commit, dispatch, state }) {
-      return state.leaders
-    },
-
-    //fetches players with top 10 scores from players db for adding to leader board
-    async loadLeaders({ commit, dispatch, state }) {
-      let res = await api.get("players/" + "gettop")
-      console.log("hello from loadLeaders")
-      commit("setLeaders", res.data)
-    },
-
-    setSubject({ commit, dispatch, state }, data) {
-      commit("setSubject", data)
-    },
-
-    //checks if player already exists and, if not, passes data to new player constructor
-    async checkPlayer({ commit, dispatch, state }, data) {
-      try {
-        let res = await api.get("players/" + data.data.id)
-        dispatch('getPoints', data)
-      } catch (err) {
-        dispatch("newPlayer", data)
-        console.error(err)
-      }
-    },
-    //creates new player in player db from combination of profile info and default settings
-    async newPlayer({ commit, dispatch, state }, data) {
-      console.log("hello from newPlayer")
-      debugger
-      try {
-        let res = await api.post("players", {
-          name: data.name,
-          points: 0,
-          profileId: data.id,
-          previousDate: 0,
-          recentDate: 0,
-          timeStreakCount: 1,
-          streak: 0,
-          megaStreak: 0
-        })
-        commit("setCurrentPlayer", res.data)
-      } catch (err) {
         console.error(err)
       }
     },
@@ -193,34 +140,7 @@ export default new Vuex.Store({
         console.error(err)
       }
     },
-    //adds all points awarded for question and streak if streak earned
-    async updatePoints({ commit, dispatch, state }, data) {
-      console.log("hello from updatePoints")
-      try {
-        let res = await api.put("players/" + data.id, {
-          points: (data.oldPoints + data.newPoints),
-          streak: data.streak,
-          megaStreak: data.megaStreak,
-          categoryStats: [...state.currentPlayer.categoryStats, ...data.categoryStats]
 
-        })
-        dispatch("loadLeaders")
-        dispatch("getCurrentPlayer")
-      } catch (err) {
-        console.error(err)
-      }
-    },
-    //sets the number of days in a row player has played
-    async updateStreak({ commit, dispatch, state }, data) {
-      try {
-        let res = await api.put("players/" + data.id, {
-          timeStreakCount: data.number,
-        })
-        dispatch("getCurrentPlayer")
-      } catch (err) {
-        console.error(err)
-      }
-    },
     //sets most recent play date to current date, moves previous recent play date to "previous"
     async setDates({ commit, dispatch, state }, data) {
       try {
@@ -238,8 +158,75 @@ export default new Vuex.Store({
         console.error(err)
       }
     },
-    setLevel({ commit, dispatch, state }, data) {
-      commit("setLevel", data)
+
+    //checks if player already exists and, if not, passes data to new player constructor
+    async checkPlayer({ commit, dispatch, state }, data) {
+      try {
+        let res = await api.get("players/" + data.data.id)
+        dispatch('getPoints', data)
+      } catch (err) {
+        dispatch("newPlayer", data)
+        console.error(err)
+      }
     },
+
+    //creates new player in player db from combination of profile info and default settings
+    async newPlayer({ commit, dispatch, state }, data) {
+      console.log("hello from newPlayer")
+      debugger
+      try {
+        let res = await api.post("players", {
+          name: data.name,
+          points: 0,
+          profileId: data.id,
+          previousDate: 0,
+          recentDate: 0,
+          timeStreakCount: 1,
+          streak: 0,
+          megaStreak: 0
+        })
+        commit("setCurrentPlayer", res.data)
+      } catch (err) {
+        console.error(err)
+      }
+    },
+
+    //adds all points awarded for question and streak if streak earned
+    async updatePoints({ commit, dispatch, state }, data) {
+      console.log("hello from updatePoints")
+      try {
+        let res = await api.put("players/" + data.id, {
+          points: (data.oldPoints + data.newPoints),
+          streak: data.streak,
+          megaStreak: data.megaStreak,
+          categoryStats: [...state.currentPlayer.categoryStats, ...data.categoryStats]
+
+        })
+        dispatch("loadLeaders")
+        dispatch("getCurrentPlayer")
+      } catch (err) {
+        console.error(err)
+      }
+    },
+
+    //sets the number of days in a row player has played
+    async updateStreak({ commit, dispatch, state }, data) {
+      try {
+        let res = await api.put("players/" + data.id, {
+          timeStreakCount: data.number,
+        })
+        dispatch("getCurrentPlayer")
+      } catch (err) {
+        console.error(err)
+      }
+    },
+  },
+  modules: {
+    answer,
+    exercise,
+    leaders,
+    level,
+    subject,
+    trivia
   }
 })
