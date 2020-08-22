@@ -153,7 +153,6 @@ export default new Vuex.Store({
     //creates new player in player db from combination of profile info and default settings
     async newPlayer({ commit, dispatch, state }, data) {
       console.log("hello from newPlayer")
-      debugger
       try {
         let res = await api.post("players", {
           name: data.name,
@@ -163,7 +162,8 @@ export default new Vuex.Store({
           recentDate: 0,
           timeStreakCount: 1,
           streak: 0,
-          megaStreak: 0
+          megaStreak: 0,
+          categoryStats: []
         })
         commit("setCurrentPlayer", res.data)
       } catch (err) {
@@ -179,10 +179,18 @@ export default new Vuex.Store({
           points: (data.oldPoints + data.newPoints),
           streak: data.streak,
           megaStreak: data.megaStreak,
-          categoryStats: [...state.currentPlayer.categoryStats, ...data.categoryStats]
-
         })
         dispatch("loadLeaders")
+        dispatch("getCurrentPlayer")
+      } catch (err) {
+        console.error(err)
+      }
+    },
+
+    //updates the player object and profile modal with latest game stats
+    async updateCategoryStats({ commit, dispatch, state }, data) {
+      try {
+        let res = await api.put("players/" + data.profileId, { categoryStats: data.categoryStats })
         dispatch("getCurrentPlayer")
       } catch (err) {
         console.error(err)

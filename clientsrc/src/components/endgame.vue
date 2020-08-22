@@ -113,6 +113,7 @@ export default {
       megaStreakEarned: false,
     };
   },
+
   mounted() {
     setTimeout(() => {
       document.getElementById("endCoin").className = "blazingStar";
@@ -129,10 +130,8 @@ export default {
       points: this.points,
       streak: this.answerStreak.reg,
       megaStreak: this.answerStreak.mega,
-      category: "History",
-      correct: 3,
-      attempted: 5,
     });
+    this.$store.dispatch("updateCategoryStats", this.categoryStats);
     this.show = true;
   },
   computed: {
@@ -141,14 +140,39 @@ export default {
     },
 
     categoryStats() {
-      let foundCategoryStatObject = this.$store.state.currentPlayer.categoryStats.find(
-        (c) => (c.cateogry = this.category)
+      let y = this.player.categoryStats.findIndex(
+        (x) => x.category == this.category
       );
-      foundCategoryStatObject.attempted++;
-      if (answer) {
-        foundCategoryStatObject.correct++;
+      let playerObject = this.player;
+      let foundCategoryStatObject = this.player.categoryStats.find(
+        (object) => object.category == this.category
+      );
+      if (foundCategoryStatObject !== undefined) {
+        if (this.answer) {
+          playerObject.categoryStats[y].attempted++;
+          playerObject.categoryStats[y].correct++;
+        } else {
+          playerObject.categoryStats[y].attempted++;
+        }
+        return playerObject;
       }
-      return foundCategoryStatObject;
+
+      if (foundCategoryStatObject === undefined) {
+        if (this.answer) {
+          playerObject.categoryStats.push({
+            category: this.category,
+            attempted: (playerObject.categoryStats.attempted = 1),
+            correct: (playerObject.categoryStats.correct = 1),
+          });
+        } else {
+          playerObject.categoryStats.push({
+            category: this.category,
+            attempted: (playerObject.categoryStats.attempted = 1),
+            correct: (playerObject.categoryStats.correct = 0),
+          });
+        }
+        return playerObject;
+      }
     },
 
     checkStreak() {
@@ -196,6 +220,7 @@ export default {
       }
       return 0;
     },
+
     addStreak() {
       if (this.checkStreak == 1) {
         return this.player.timeStreakCount + 1;
@@ -203,6 +228,7 @@ export default {
         return 1;
       }
     },
+
     gotStreak() {
       if (
         this.player.timeStreakCount !== 0 &&
@@ -215,12 +241,12 @@ export default {
     days() {
       return this.player.timeStreakCount;
     },
+
     answerStreak() {
       let megaStreak = this.$store.state.currentPlayer.megaStreak;
       let streak = this.$store.state.currentPlayer.streak;
       let answer = this.$store.state.answer;
       let points = 0;
-
       if (!answer) {
         streak = 0;
         megaStreak = 0;
@@ -239,13 +265,13 @@ export default {
       }
       if (megaStreak === 5) {
         this.megaStreakEarned = true;
-        // debugger;
         points += 100;
         megaStreak = 0;
         console.log("Five streaks in a row. You got a megaStreak!", megaStreak);
       }
       return { reg: streak, mega: megaStreak, streakPoints: points };
     },
+
     points() {
       let pts = 0;
       let level = this.$store.state.trivia.difficulty;
@@ -262,6 +288,7 @@ export default {
       return pts + this.gotStreak + this.answerStreak.streakPoints;
     },
   },
+
   methods: {
     startPlay() {
       this.show = false;
@@ -274,7 +301,6 @@ export default {
       if (this.level != this.$store.state.level) {
         this.$store.dispatch("setLevel", this.level);
       }
-      this.$emit("init",true)
       this.subject = "";
       this.level = "";
     },
@@ -282,6 +308,7 @@ export default {
       router.push({ name: "home" });
     },
   },
+
   components: {},
 };
 </script>

@@ -49,6 +49,7 @@
                   <th>Categories</th>
                   <th>Attempted</th>
                   <th>Correct</th>
+                  <th>%</th>
                 </tr>
               </thead>
               <tbody>
@@ -56,6 +57,9 @@
                   <td>{{subject.category}}</td>
                   <td class="text-danger">{{subject.attempted}}</td>
                   <td class="text-success">{{subject.correct}}</td>
+                  <td
+                    class="text-warning"
+                  >{{ Math.trunc(subject.correct / subject.attempted * 100) }} %</td>
                 </tr>
               </tbody>
             </table>
