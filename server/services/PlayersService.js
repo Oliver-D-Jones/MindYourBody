@@ -40,6 +40,7 @@ class PlayersService {
         }
 
     }
+
     async delete(id) {
         let data = await dbContext.Players.findOneAndRemove({ _id: id });
         if (!data) {
