@@ -13,15 +13,15 @@ export default {
     let answers = this.$store.state.trivia.incorrect_answers;
     let correct_answer = this.$store.state.trivia.correct_answer;
     let html_inject = document.createElement("div");
+    let qIcon = utils.getGif();
     html_inject.className = "col-12";
     let title = document.createElement("h4");
     title.innerHTML = `${this.$store.state.trivia.question}`;
     html_inject.appendChild(title);
-    let img = utils.getGif();
+
     swal({
       content: html_inject,
       className: "red-bg",
-      icon: img,
       closeOnClickOutside: false,
       buttons: {
         zero: {
@@ -54,12 +54,10 @@ export default {
         let title = document.createElement("h4");
         title.innerHTML = `${correct_answer},<br/>is the correct answer!`;
         html_inject.appendChild(title);
-        let img =
-          "http://images.all-free-download.com/images/graphiclarge/red_x_cross_wrong_not_clip_art_9830.jpg";
         swal({
           content: html_inject,
+          icon:"//external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fmedia.giphy.com%2Fmedia%2F3oKIPhgolxVfDklIqc%2Fgiphy.gif&f=1&nofb=1",
           className: "wrong",
-          icon: img,
           closeOnClickOutside: false,
         }).then(() => {
           this.$emit("endgame", true);

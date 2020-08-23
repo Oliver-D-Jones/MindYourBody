@@ -17,27 +17,43 @@ export default {
       let html_inject = document.createElement("div");
       html_inject.className = "col-12";
       let cat = document.createElement("p");
-      cat.innerHTML = `<i class="fa fa-tags" aria-hidden="true"></i> &nbsp;${this.$store.state.trivia.category}<br/><br/><i class="fa fa-arrows-v" aria-hidden="true"></i> &nbsp;${this.$store.state.level}`;
+      cat.innerHTML = `<i class="fa fa-tags" aria-hidden="true"></i> &nbsp;${this.$store.state.trivia.category}<br/><br/><i class="fa fa-arrows-v" aria-hidden="true"></i> &nbsp;${this.$store.state.trivia.difficulty}`;
       html_inject.appendChild(cat);
       let title = document.createElement("h4");
       title.innerHTML = `${this.$store.state.trivia.question}`;
       html_inject.appendChild(title);
-      let img = utils.getGif();
+      let img = utils.getGif();let btns;
+      if(window.stream.class === "invitee"){
+        btns= {
+          quit: { text: "Quit Game", value: false },
+        }
+      }
+      else{
+        btns = {
+          quit: { text: "Quit Game", value: false },
+          startEx: { text: "Start Exercise", value: true },
+        }
+      }
       swal({
         content: html_inject,
         className: "red-bg",
         icon: img,
         closeOnClickOutside: false,
-        buttons: {
-          two: { text: "Quit Game", value: false },
-          zero: { text: "Start Exercise", value: true },
-        },
+        buttons:btns,
       }).then((value) => {
         if (value) {
+          if(window.stream.class=="inviter"){
+            
+            window.stream.connection.send({class:"beginExercise"});
+          }
           this.$emit("workout", true);
           this.show = false;
           swal.close();
         } else {
+          if(window.stream.class=="invitee"){
+            swal.close();
+            return;
+          }
           this.$emit("init", false);
           this.show = false;
           swal.close();

@@ -1,3 +1,4 @@
+
 export default {
     gifs: [
         "https://cdn.dribbble.com/users/706471/screenshots/3660298/brain-workout-2.gif",

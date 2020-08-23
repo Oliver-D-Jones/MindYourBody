@@ -5,6 +5,13 @@
         <div class="col-2" v-if="invitee">
           <Invitee
             key="inviteeVideostream"
+            v-on:inviteeWorkoutComplete="()=>{
+              inviteeAct = true;
+          }"
+            v-on:inviteeWorkout="()=>{
+            showQuestion = false;
+            exercise = true;
+          }"
             v-on:inviteeStart="()=>{
               start = false;
               showQuestion=true;
@@ -16,9 +23,8 @@
           class="col-2"
           v-if="inviter"
           v-on:inviterStart="()=>{
-              test='TEST'
-              start = false;
               showQuestion=true;
+              start = false;
             }"
         >
           <Inviter key="inviterVideostream" />
@@ -38,7 +44,7 @@
         </div>
       </div>
       <div :class="display" v-if="answer">
-        <Answer key="answer" v-on:endgame="endgame()" />
+        <Answer key="answer" v-on:endgame="endgame()" :inviteeAct="inviteeAct" />
       </div>
     </div>
   </div>
@@ -64,6 +70,7 @@ export default {
       showQuestion: false,
       inviter: false,
       invitee: false,
+      inviteeAct:false,
     };
   },
   computed: {},
@@ -125,10 +132,10 @@ export default {
       });
       data.incorrect_answers = answers;
       this.$store.commit("setTrivia", data);
-      if (!stream.class) {
-        this.showQuestion = true;
-      }
-        this.start = false;
+      // if (!stream.class) {
+      //   }
+      this.showQuestion = true;
+      this.start = false;
     },
   },
   beforeMount() {

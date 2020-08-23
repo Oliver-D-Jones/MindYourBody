@@ -33,9 +33,7 @@ export default {
   computed: {},
   methods: {
     setData(data) {
-      this.$store.dispatch("inviteeExercise", data.exercise[0]);
-      this.$store.dispatch("inviteeTrivia", data.trivia);
-      this.$emit("inviteeStart");
+      console.log(data);
     },
   },
   components: {},
@@ -45,7 +43,24 @@ export default {
     // this.peer.disconnect();
   },
   beforeMount() {
-    window.stream.setData = this.setData;
+    let vm = this;
+    window.stream.setData = function (data, VM = vm) {
+      console.log("d===>", data);
+      if (data.class == "game") {
+        VM.$store.dispatch("inviteeExercise", data.exercise);
+        VM.$store.dispatch("inviteeTrivia", data.trivia);
+        VM.$emit("inviteeStart");
+
+      } else if (data.class == "beginExercise") {
+        console.log("inviteWorkout");
+        swal.close();
+        VM.$emit("inviteeWorkout");
+
+      } else if (data.class == "workoutComplete") {
+
+        VM.$emit("inviteeWorkoutComplete");
+      }
+    };
   },
   mounted() {
     (function () {
@@ -207,5 +222,5 @@ export default {
 </script>
 
 
-<style scoped>
+<style>
 </style>

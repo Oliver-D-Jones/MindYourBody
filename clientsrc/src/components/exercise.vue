@@ -6,15 +6,16 @@
           <i class="fa fa-question-circle" aria-hidden="true"></i> &nbsp;
           <span id="question"></span>
         </h6>
-        <div>
-          <img
-            class="card-img-top mt-3"
-            id="exerciseImg"
-            :src="exercise.example"
-            alt="Exercise Example"
-            style=" max-width: 100%; max-height:350px; width: auto; height: auto"
-          />
-        </div>
+        <transition name="bounce">
+          <div v-if="imgExer">
+            <img
+              class="card-img-top mt-3"
+              :src="exercise.example"
+              alt="Exercise Example"
+              style="max-width: 100%; max-height:350px; width: auto; height: auto"
+            />
+          </div>
+        </transition>
         <div class="card-body">
           <h2 class="card-title">{{exercise.title}}</h2>
         </div>
@@ -44,6 +45,7 @@
             @click="getExercise"
             v-if="allowGet"
           >Get a Different Exercise</button>
+          <span v-if="inviteeAct">{{workOutComplete()}}</span>
           <button
             class="btn btn-block btn-outline-success"
             @click="workOutComplete"
@@ -69,11 +71,11 @@ export default {
       exerciseTimerDisabled: false,
       exerciseInterval: null,
       display: "",
+      imgExer: false,
     };
   },
-
   beforeDestroy() {
-    this.$store.state.exercise[0] = {};
+    this.$store.state.exercise = {};
   },
   beforeMount() {
     if (window.stream.class == "invitee") {
@@ -82,49 +84,40 @@ export default {
     this.show = true;
   },
   mounted() {
-    if (this.video) {
-      this.display = "card col-6 bg-dark";
-    } else {
-      this.display = "card col-12 bg-dark";
-    }
+    // if (this.video) {
+    //   this.display = "card col-6 bg-dark";
+    // } else {
+    //   this.display = "card col-12 bg-dark";
+    // }
     document.getElementById(
       "question"
     ).innerHTML = this.$store.state.trivia.question;
+
     this.cheatInterval();
+    this.imgExer = true;
   },
   computed: {
     exercise() {
+      this.imgExer = true;
       if (window.stream.class == "inviter") {
-        window.stream.connection.send({
-          class: "exercise",
-          data: this.$store.state.exercise[0],
-        });
+        let dataToSend = {
+          trivia: this.$store.state.trivia,
+          exercise: this.$store.state.exercise,
+        };
+        console.log(dataToSend);
+        // window.stream.connection.send(dataToSend);
       }
-      return this.$store.state.exercise[0];
+      console.log(this.$store.state.exercise);
+      return this.$store.state.exercise;
     },
   },
   methods: {
     getExercise() {
+      this.imgExer = false;
       this.$store.dispatch("getExercise");
+      //NOTE ADD METHOD TO SEND NEW EXERCISE
       clearInterval(this.exerciseInterval);
       this.exerciseTimerDisabled = false;
-      //NOTE add animation for invitee too ---
-      // setTimeout(() => {
-      //   document.getElementById("exerciseImg").animate(
-      //     [
-      //       // keyframes
-      //       { transform: "translateX(0px)" },
-      //       { transform: "translateY(-30px)" },
-      //       { transform: "translateX(30px)" },
-      //       { transform: "translateY(-30px)" },
-      //     ],
-      //     {
-      //       // timing options
-      //       duration: 100,
-      //       iterations: 6,
-      //     }
-      //   );
-      // }, 500);
 
       // NOTE enable code below to restart Cheat Gaurd when getting new exercise
       // this.isDisabled = true;
@@ -136,11 +129,14 @@ export default {
       // }
     },
     workOutComplete() {
-      document.getElementById("exerciseImg").className = "leaveInStyle";
+      // if (window.stream.class == "inviter") {
+      //   window.stream.connection.send("workoutComplete");
+      // }
+      this.imgExer = false;
       setTimeout(() => {
-        this.$emit("workoutcomplete", true);
         this.show = false;
-      }, 1000);
+        this.$emit("workoutcomplete", true);
+      }, 600);
     },
 
     cheatInterval() {
@@ -163,6 +159,7 @@ export default {
       this.exerciseInterval = exerciseCountDown;
     },
   },
+  props: ["inviteeAct"],
   components: {},
 };
 </script>
@@ -171,6 +168,26 @@ export default {
 <style scoped>
 .exercise_main {
   background-color: black;
-  opacity: 0.88;
+  opacity: 0.95;
+}
+.bounce-enter-active {
+  animation: bounce-in 0.6s;
+}
+.bounce-leave-active {
+  animation: bounce-in 0.6s reverse;
+}
+@keyframes bounce-in {
+  0% {
+    transform: scale(0);
+    opacity: 0.1;
+  }
+  50% {
+    transform: scale(1.5);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 </style>

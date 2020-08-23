@@ -38,8 +38,9 @@ export default {
   },
   computed: {},
   methods: {
-    sendToInvitee() {
+    sendToInvitee(c) {
       let dataToSend = {
+        class:"game",
         trivia: this.$store.state.trivia,
         exercise: this.$store.state.exercise,
       };
@@ -185,7 +186,12 @@ export default {
          */
 
         function ready() {
-          conn.on("data", window.stream.sendToInvitee);
+          conn.on("data", function(data){
+            console.log(data);
+            if(data == "GET DATA"){
+              window.stream.sendToInvitee();
+            }
+          });
           conn.on("close", function () {
             alert("Connection reset. Awaiting connection...");
             conn = null;

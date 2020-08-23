@@ -23,64 +23,8 @@
         </button>
       </div>
     </div>
-    <div class="row p-3" style="justify-content: space-evenly">
-      <div class="col-sm-12 col-md-3 text-warning">
-        <span>
-          <i class="fa fa-tags" aria-hidden="true"></i> &nbsp;CATEGORY
-        </span>
-        <select
-          name="category_id"
-          v-model="subject"
-          class="form-control dropDown"
-          style="border:solid 3px blue;"
-          @change="chooseSubject"
-        >
-          <option>--- Select Subject ---</option>
-          <option :value="false" show>Random</option>
-          <option value="9">general knowledge</option>
-          <option value="10">Books</option>
-          <option value="11">Film</option>
-          <option value="12">Music</option>
-          <option value="13">Musicals & Theatre</option>
-          <option value="14">Television</option>
-          <option value="15">Video Games</option>
-          <option value="16">Board Games</option>
-          <option value="17">Science & Nature</option>
-          <option value="18">Computers</option>
-          <option value="19">Mathematics</option>
-          <option value="20">Mythology</option>
-          <option value="21">Sports</option>
-          <option value="22">Geography</option>
-          <option value="23">History</option>
-          <option value="24">Politics</option>
-          <option value="25">Art</option>
-          <option value="26">Celebrities</option>
-          <option value="27">Animals</option>
-          <option value="28">Vehicles</option>
-          <option value="29">Entertainment</option>
-          <option value="30">Gadgets</option>
-          <option value="31">Japanese Anime & Manga</option>
-          <option value="32">Cartoon & Animations</option>
-        </select>
-      </div>
-      <div class="col-sm-12 col-md-3 text-warning">
-        <span>
-          <i class="fa fa-arrows-v" aria-hidden="true"></i> &nbsp;LEVEL
-        </span>
-        <select
-          name="category_id"
-          v-model="level"
-          @change="chooseLevel"
-          class="form-control dropDown"
-          style="border:solid 3px blue;"
-        >
-          <option>--- Select Level ---</option>
-          <option :value="false" show>Random</option>
-          <option value="easy">easy</option>
-          <option value="medium">medium</option>
-          <option value="hard">hard</option>
-        </select>
-      </div>
+    <div>
+      <Selector key="select_home" v-on:setTopic="setParams($event)" />
     </div>
     <div class="row mt-3" style="justify-content: space-evenly">
       <div class="col-xs-12 mt-3">
@@ -91,26 +35,33 @@
           </h4>
         </button>
         <h1 class="comeInStyle my-2">MIND YOUR BODY</h1>
-        <img class="fadeIn" src="../assets/home2.gif" style="width: 30vw;border-radius:90%" />
+        <div class="fadeBox">
+          <img class="fadeIn" src="../assets/home2.gif" style="width: 30vw;border-radius:90%" />
+        </div>
       </div>
     </div>
   </div>
 </template>
 <script>
 import router from "../router";
+import Selector from "../components/select";
 export default {
   name: "home",
   data() {
     return {
-      subject: false,
-      level: false,
       streamClass: false,
       peerStream: false,
       myStream: false,
+      level: false,
+      subject: false,
     };
   },
   computed: {},
   methods: {
+    setParams(s) {
+      this.subject = s.subject;
+      this.level = s.level;
+},
     closeConnection() {
       if (window.stream.remoteStream) {
         window.stream.remoteStream.getTracks().forEach((t) => {
@@ -137,12 +88,6 @@ export default {
 
       window.stream = {};
       window.stream.class = false;
-    },
-    chooseLevel() {
-      this.$store.state.level = event.target.value;
-    },
-    chooseSubject() {
-      this.$store.state.subject = event.target.value;
     },
     invite() {
       let id = (Math.random().toString(36) + "0000000000000000000").substr(
@@ -275,17 +220,16 @@ export default {
   mounted() {
     this.$store.dispatch("loadLeaders");
   },
-  components: {},
+  components: { Selector },
 };
 </script>
 
 
-<style>
-.comeInStyle {
-  color: white;
-  text-shadow: 2px 3px 4px skyblue;
-}
 
+<style>
+.fadeIn {
+  box-shadow: 8px 12px 16px 1px rgb(53, 53, 207);
+}
 /* Hide scrollbar for Chrome, Safari and Opera */
 ::-webkit-scrollbar {
   display: none;

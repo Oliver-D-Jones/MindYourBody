@@ -1,6 +1,9 @@
 <template>
-  <nav class="navbar gameFont navbar-expand-lg navbar-dark text-light" style="border-bottom:solid 2px blue;">
-    <router-link class="navbar-brand" style="font-size: 3rem" :to="{ name: 'home' }">MYB</router-link>
+  <nav
+    class="navbar gameFont navbar-expand-lg"
+    style="border-bottom:solid 2px white;background-image:linear-gradient(to right, rgb(0, 0, 0,.5), rgba(0, 0, 255, 0.4));"
+  >
+    <router-link class="navbar-brand" style="font-size: 2.5rem" :to="{ name: 'home' }">MYB</router-link>
     <button
       class="navbar-toggler"
       type="button"
@@ -34,13 +37,13 @@
           <router-link :to="{ name: 'home' }" class="nav-link">Quit</router-link>
         </li>
         <li class="nav-item ml-5" v-if="$auth.isAuthenticated">
-          <h2 v-if="points">TOTAL POINTS: {{points}}</h2>
-          <h2 v-else>TOTAL POINTS: 0</h2>
+          <h3 v-if="points">Total Points: {{points}}</h3>
+          <h3 v-else>Total Points: 0</h3>
         </li>
       </ul>
       <span class="navbar-text">
         <button class="btn btn-success" @click="login" v-if="!$auth.isAuthenticated">Login</button>
-        <button class="btn btn-danger" @click="logout" v-else>logout</button>
+        <button class="btn btn-dark text-info" @click="logout" v-else>logout</button>
       </span>
     </div>
     <!--leadermodal-->
