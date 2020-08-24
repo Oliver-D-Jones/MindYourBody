@@ -22,36 +22,37 @@ export default {
       let title = document.createElement("h4");
       title.innerHTML = `${this.$store.state.trivia.question}`;
       html_inject.appendChild(title);
-      let img = utils.getGif();let btns;
-      if(window.stream.class === "invitee"){
-        btns= {
+      let img = utils.getGif();
+      let btns;
+      if (window.stream.class === "invitee") {
+        btns = {
           quit: { text: "Quit Game", value: false },
-        }
-      }
-      else{
+        };
+      } else {
         btns = {
           quit: { text: "Quit Game", value: false },
           startEx: { text: "Start Exercise", value: true },
-        }
+        };
       }
       swal({
         content: html_inject,
         className: "red-bg",
         icon: img,
         closeOnClickOutside: false,
-        buttons:btns,
+        buttons: btns,
       }).then((value) => {
         if (value) {
-          if(window.stream.class=="inviter"){
-            
-            window.stream.connection.send({class:"beginExercise"});
+          if (window.stream.class == "inviter") {
+            window.stream.connection.send({ class: "beginExercise" });
           }
-          this.$emit("workout", true);
           this.show = false;
+          this.$emit("workout", true);
           swal.close();
         } else {
-          if(window.stream.class=="invitee"){
+          if (window.stream.class == "invitee") {
             swal.close();
+            // this.$router.push({ name: "home" });
+
             return;
           }
           this.$emit("init", false);

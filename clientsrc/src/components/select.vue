@@ -8,7 +8,7 @@
         name="category_id"
         v-model="subject"
         class="form-control dropDown"
-        style="border:solid 3px blue;"
+        style="border:solid 1px white;color: blue;background: black;"
         @change="chooseSubject"
       >
         <option>--- Select Subject ---</option>
@@ -48,7 +48,7 @@
         v-model="level"
         @change="chooseLevel"
         class="form-control dropDown"
-        style="border:solid 3px blue;"
+        style="border:solid 1px white;color: blue;background: black;"
       >
         <option>--- Select Level ---</option>
         <option :value="false" show>Random</option>
@@ -74,11 +74,11 @@ export default {
   methods: {
     chooseLevel() {
       this.$store.state.level = event.target.value;
-      this.$emit("setTopic", {level:this.level,subject:this.subject});
+      this.$emit("setTopic", { level: this.level, subject: this.subject });
     },
     chooseSubject() {
       this.$store.state.subject = event.target.value;
-      this.$emit("setTopic", {level:this.level,subject:this.subject});
+      this.$emit("setTopic", { level: this.level, subject: this.subject });
     },
   },
   components: {},

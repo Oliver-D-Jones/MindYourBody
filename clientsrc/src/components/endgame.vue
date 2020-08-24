@@ -13,8 +13,8 @@
     </h3>
     <div v-else>
       <h3>No points this round.</h3>
-      <img src="../assets/frown.png" style="width: 10%;border-radius:100%" />
-      <h3>Play Again?</h3>
+      <img src="../assets/endWrong.gif" style="width: 10%;
+      border-radius: 50%;" />
     </div>
     <h3 v-if="this.answerStreakEarned">
       You earned 20 points for a 5-question streak!
@@ -27,7 +27,7 @@
       You earned 100 points for a MEGA-Streak!
       <img src="../assets/coin.gif" style="width: 15rem;" />
     </h3>
-    <div class="row m-4" style="justify-content: space-evenly">
+    <div class="row m-4" style="justify-content: space-evenly" v-if="playerClass != 'invitee'">
       <div class="col-sm-12 col-md-4">
         <select
           name="category_id"
@@ -37,7 +37,6 @@
         >
           <!-- style="max-width: 35%" -->
           <option value hidden>Subject</option>
-          <option>--- Select Subject ---</option>
           <option value="false">Random</option>
           <option value="9">general knowledge</option>
           <option value="10">Books</option>
@@ -74,7 +73,6 @@
         >
           <!-- style="max-width: 35%" -->
           <option value hidden>Level</option>
-          <option>--- Select Level ---</option>
           <option value="easy">easy</option>
           <option value="medium">medium</option>
           <option value="hard">hard</option>
@@ -84,9 +82,11 @@
     <div class="row" style="justify-content: space-evenly">
       <div class="col-5">
         <button
+          v-if="playerClass != 'invitee'"
           @click="startPlay()"
           class="btn btn-block btn-outline-danger bg-dark py-2"
         >PLAY AGAIN</button>
+        <span v-else>Awaiting Friend...</span>
       </div>
       <div class="col-5">
         <button @click="quit()" class="btn btn-block btn-outline-danger bg-dark py-2">QUIT FOR NOW</button>
@@ -111,9 +111,9 @@ export default {
       time: new Date(),
       answerStreakEarned: false,
       megaStreakEarned: false,
+      playerClass: window.stream.class,
     };
   },
-
   mounted() {
     setTimeout(() => {
       document.getElementById("endCoin").className = "blazingStar";
@@ -138,7 +138,6 @@ export default {
     playerid() {
       return this.$store.state.currentPlayer.profileId;
     },
-
     categoryStats() {
       let y = this.player.categoryStats.findIndex(
         (x) => x.category == this.category
@@ -220,7 +219,6 @@ export default {
       }
       return 0;
     },
-
     addStreak() {
       if (this.checkStreak == 1) {
         return this.player.timeStreakCount + 1;
@@ -228,7 +226,6 @@ export default {
         return 1;
       }
     },
-
     gotStreak() {
       if (
         this.player.timeStreakCount !== 0 &&
@@ -241,7 +238,6 @@ export default {
     days() {
       return this.player.timeStreakCount;
     },
-
     answerStreak() {
       let megaStreak = this.$store.state.currentPlayer.megaStreak;
       let streak = this.$store.state.currentPlayer.streak;
@@ -271,7 +267,6 @@ export default {
       }
       return { reg: streak, mega: megaStreak, streakPoints: points };
     },
-
     points() {
       let pts = 0;
       let level = this.$store.state.trivia.difficulty;
@@ -288,12 +283,12 @@ export default {
       return pts + this.gotStreak + this.answerStreak.streakPoints;
     },
   },
-
   methods: {
     startPlay() {
       this.show = false;
+
       if (!this.subject) {
-        this.$store.dispatch("setSubject", Math.floor(Math.random() * 23) + 9);
+        this.subject = Math.floor(Math.random() * 23) + 9;
       }
       if (this.subject != this.$store.state.subject) {
         this.$store.dispatch("setSubject", this.subject);
@@ -301,14 +296,22 @@ export default {
       if (this.level != this.$store.state.level) {
         this.$store.dispatch("setLevel", this.level);
       }
+      this.$emit("init");
+
+      if (window.stream.class == "inviter") {
+        window.stream.connection.send({
+          class: "replay",
+        });
+      }
+
       this.subject = "";
       this.level = "";
     },
     quit() {
+      this.show = false;
       router.push({ name: "home" });
     },
   },
-
   components: {},
 };
 </script>

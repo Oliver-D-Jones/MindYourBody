@@ -1,6 +1,8 @@
 <template>
-  <div class="inviter text-light mt-2 border">
+  <div class="inviter text-light mt-2">
     <p class="py-0 bg-info text-dark">
+      <span>{{me}}</span>
+      <br />
       <span id="myId"></span>
     </p>
     <video
@@ -10,58 +12,101 @@
       controls
       poster="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fmedia.giphy.com%2Fmedia%2Fi3pHUtmHiLd28%2Fgiphy.gif&f=1&nofb=1"
     ></video>
-    <div class="col-">
+    <div>
+      <p class="py-0 bg-warning text-dark">
+        <span>{{peer}}</span>
+      </p>
       <video
         autoplay="true"
         id="peerVideo"
         poster="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fmedia.giphy.com%2Fmedia%2Fi3pHUtmHiLd28%2Fgiphy.gif&f=1&nofb=1"
         controls
       ></video>
-      <p class="py-0">
-        <span id="peerId"></span>
-      </p>
     </div>
 
-    <audio controls volume="true" autoplay id="peerAudio">
-      Your browser does not support the
-      <code>audio</code> element.
-    </audio>
+    <div class="py-1">
+      <button
+        class="btn btn-outline-info btn-sm bg-light"
+        @click="()=>{
+        showAllMsg = !showAllMsg;
+        showLastMsg = !showLastMsg;
+        }"
+      >
+        <i class="fa fa-comments fa-2x" aria-hidden="true" v-if="showLastMsg"></i>
+        <i class="fa fa-comment fa-2x" aria-hidden="true" v-else></i>
+      </button>
+      <br />
+      <p class="bg-dark text-info rounded" v-if="showLastMsg" id="msgOne">{{lastMessage}}</p>
+      <textarea v-if="showAllMsg" class="bg-dark text-info pt-2" id="msgAll" :value="messageString"></textarea>
+    </div>
+    <audio controls volume="true" autoplay id="peerAudio"></audio>
   </div>
 </template>
-
-
 <script>
 export default {
   name: "inviter",
   data() {
-    return {};
+    return {
+      messageString: "",
+      lastMessage: "No Messages Yet.",
+      showAllMsg: false,
+      showLastMsg: true,
+      me: this.$store.state.currentPlayer.name,
+      peer: "",
+    };
   },
   computed: {},
   methods: {
-    sendToInvitee(c) {
-      let dataToSend = {
-        class:"game",
-        trivia: this.$store.state.trivia,
-        exercise: this.$store.state.exercise,
-      };
-      this.$emit("inviterStart");
-      window.stream.connection.send(dataToSend);
-    },
-    dataIn(data) {
-      console.log("REC'D: " + data);
+    respondToInvitee(data) {
+      let dataToSend;
+      try {
+        switch (data.class) {
+          case "GET DATA":
+            dataToSend = {
+              class: "game",
+              trivia: this.$store.state.trivia,
+              exercise: this.$store.state.exercise,
+            };
+            break;
+          case "namePlease":
+            dataToSend = {
+              class: "name",
+              name: this.$store.state.currentPlayer.name,
+            };
+            break;
+          case "peerName":
+            this.peer = data.name;
+            return;
+          case "message":
+            let time = new Date().toLocaleTimeString();
+            let _string = time + " - " + data.message;
+            this.lastMessage = _string;
+            this.messageString += _string + "\n";
+            return;
+          default:
+            dataToSend = {
+              class: "message",
+              message: "error; make sure to specify class.",
+            };
+        }
+        window.stream.connection.send(dataToSend);
+      } catch (error) {
+        console.log(error);
+      }
     },
   },
   components: {},
+  beforeCreate() {
+    this.displayStart = true;
+  },
   beforeDestroy() {
     // localStream = null;
     // console.log(this.conn, this.localPeer);
     // this.conn.close();
     // this.localPeer.destroy();
   },
-  beforeMount() {},
   mounted() {
-    window.stream.dataIn = this.dataIn;
-    window.stream.sendToInvitee = this.sendToInvitee;
+    window.stream.respondToInvitee = this.respondToInvitee;
     (function () {
       let lastPeerId = null;
       let peer = null; // own peer object
@@ -83,7 +128,7 @@ export default {
           // document.getElementById("peerAudio").srcObject = stream;
         },
         function (err) {
-          alert("Failed to get stream " + err);
+          console.log("Failed to get stream " + err);
         }
       );
 
@@ -118,7 +163,6 @@ export default {
           } else {
             lastPeerId = peer.id;
           }
-          // document.getElementById("myId").textContent = `${peer.id}`;
           document.getElementById("myId").textContent = `My ID: ${peer.id}`;
           window.stream.localPeer = peer;
 
@@ -135,15 +179,11 @@ export default {
             //   return;
             // }
             conn = c;
-            window.stream.connection = c;
-            document.getElementById(
-              "peerId"
-            ).textContent = `Connected To: ${conn.peer}`;
             ready();
           });
 
           peer.on("disconnected", function () {
-            alert("Connection lost. Please reconnect");
+            console.log("Connection lost. Please reconnect");
 
             // Workaround for peer.reconnect deleting previous id
             peer.id = lastPeerId;
@@ -153,11 +193,11 @@ export default {
 
           peer.on("close", function () {
             conn = null;
-            alert("Connection destroyed");
+            console.log("Connection destroyed");
           });
           peer.on("error", function (err) {
             let error = "Error: " + err;
-            alert(error);
+            console.log(error);
             peer.close();
           });
           peer.on("call", function (call) {
@@ -175,7 +215,7 @@ export default {
                 // ).srcObject = stream.getAudioTracks()[0];
               });
             } catch (error) {
-              alert("Failed to get/send stream " + error);
+              console.log("Failed to get/send stream " + error);
             }
           });
         });
@@ -186,14 +226,15 @@ export default {
          */
 
         function ready() {
-          conn.on("data", function(data){
-            console.log(data);
-            if(data == "GET DATA"){
-              window.stream.sendToInvitee();
-            }
+          conn.on("open", function () {
+            console.log("conn opened");
+            window.stream.connection = conn;
+          });
+          conn.on("data", function (data) {
+            window.stream.respondToInvitee(data);
           });
           conn.on("close", function () {
-            alert("Connection reset. Awaiting connection...");
+            console.log("Connection reset. Awaiting connection...");
             conn = null;
           });
         }
@@ -204,5 +245,10 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
+#msgAll {
+  min-width: -webkit-fill-available;
+  padding: 4px;
+  border: 1px solid white;
+}
 </style>

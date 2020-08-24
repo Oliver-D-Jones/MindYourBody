@@ -5,7 +5,7 @@
   >
     <router-link class="navbar-brand" style="font-size: 2.5rem" :to="{ name: 'home' }">MYB</router-link>
     <button
-      class="navbar-toggler"
+      class="navbar-toggler btn btn-outline-info pb-1"
       type="button"
       data-toggle="collapse"
       data-target="#navbarText"
@@ -13,7 +13,7 @@
       aria-expanded="false"
       aria-label="Toggle navigation"
     >
-      <span class="navbar-toggler-icon"></span>
+      <span><i class="fa fa-bars fa-2x" aria-hidden="true" ></i></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarText">
       <ul class="navbar-nav mr-auto align-content-center">

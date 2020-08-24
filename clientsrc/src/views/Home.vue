@@ -61,7 +61,7 @@ export default {
     setParams(s) {
       this.subject = s.subject;
       this.level = s.level;
-},
+    },
     closeConnection() {
       if (window.stream.remoteStream) {
         window.stream.remoteStream.getTracks().forEach((t) => {
@@ -118,7 +118,7 @@ export default {
         className: "home-swal",
         buttons: {
           one: { text: "Cancel", value: false },
-          zero: { text: "Confirm", value: true },
+          zero: { text: "Send Invite", value: true },
         },
       }).then((value) => {
         if (value) {
@@ -228,7 +228,7 @@ export default {
 
 <style>
 .fadeIn {
-  box-shadow: 8px 12px 16px 1px rgb(53, 53, 207);
+  box-shadow: 8px 12px 16px 1px rgba(100, 100, 228, 0.4);
 }
 /* Hide scrollbar for Chrome, Safari and Opera */
 ::-webkit-scrollbar {
@@ -277,7 +277,7 @@ export default {
 .swal-icon img {
   max-width: 10%;
   border-radius: 5%;
-  border: antiquewhite solid 2px;
+  border: antiquewhite solid 1px;
   background-color: rgba(39, 91, 151, 0.69);
 }
 </style>

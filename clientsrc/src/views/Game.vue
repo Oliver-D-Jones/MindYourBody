@@ -2,7 +2,7 @@
   <div class="game">
     <div class="container-fluid" id="main" style="min-height:100vh;">
       <div class="row" style="display: flex;justify-content: space-around;">
-        <div class="col-2" v-if="invitee">
+        <div class="col-3" v-if="invitee">
           <Invitee
             key="inviteeVideostream"
             v-on:inviteeWorkoutComplete="()=>{
@@ -12,39 +12,32 @@
             showQuestion = false;
             exercise = true;
           }"
-            v-on:inviteeStart="()=>{
-              start = false;
-              showQuestion=true;
-            }"
+            v-on:beginPlay="startGame()"
+            v-on:init="init()"
           />
+          <button v-if="displayStart" class="btn btn-outline-warning" @click="startGame">START</button>
         </div>
 
-        <div
-          class="col-2"
-          v-if="inviter"
-          v-on:inviterStart="()=>{
-              showQuestion=true;
-              start = false;
-            }"
-        >
-          <Inviter key="inviterVideostream" />
+        <div class="col-3" v-if="inviter">
+          <Inviter :key="'inviterVideostream'" v-on:beginPlay="startGame()" />
+          <button v-if="displayStart" class="btn btn-outline-warning" @click="startGame">START</button>
         </div>
+
+        <div :class="display" v-if="showQuestion">
+          <Question v-on:workout="workout()" key="question" />
+        </div>
+
         <div :class="display" v-if="exercise">
           <Exercise key="workout" v-on:workoutcomplete="workoutcomplete()" />
+        </div>
+
+        <div :class="display" v-if="answer">
+          <Answer key="answer" v-on:endgame="endgame()" :inviteeAct="inviteeAct" />
         </div>
 
         <div :class="display" v-if="end">
           <Endgame v-on:init="init()" key="endgame" />
         </div>
-
-        <div v-if="start" style="display:none;max-width:0px">{{begin()}}</div>
-
-        <div :class="display" v-if="showQuestion">
-          <Question v-on:workout="workout()" key="question" />
-        </div>
-      </div>
-      <div :class="display" v-if="answer">
-        <Answer key="answer" v-on:endgame="endgame()" :inviteeAct="inviteeAct" />
       </div>
     </div>
   </div>
@@ -63,37 +56,39 @@ export default {
   data() {
     return {
       test: null,
-      start: false,
+      // start: false,
       answer: false,
       exercise: false,
       end: false,
       showQuestion: false,
       inviter: false,
       invitee: false,
-      inviteeAct:false,
+      inviteeAct: false,
+      displayStart: true,
     };
   },
   computed: {},
   methods: {
-    // inviteeStart(go) {
-    //   console.log("emit inviteeStart");
-    //   this.showQuestion = true;
-    // },
-    // inviterStart(go) {
-    //   console.log("emit inviterStart?????????????????????????????????????????");
-    //   this.showQuestion = true;
-    //   this.start = false;
-    // },
+    startGame() {
+      this.showQuestion = true;
+      this.displayStart = false;
+    },
     workoutcomplete(complete) {
       this.exercise = false;
       this.answer = true;
     },
     workout(work) {
-      this.start = false;
+      // this.start = false;
+      this.showQuestion = false;
       this.exercise = true;
     },
     init(play) {
-      this.start = true;
+      // this.start = true;
+      if (window.stream.class != "invitee") {
+        this.begin();
+      }
+      console.log("IN init()");
+      this.displayStart = true;
       this.end = false;
       this.showQuestion = false;
       this.exercise = false;
@@ -132,24 +127,24 @@ export default {
       });
       data.incorrect_answers = answers;
       this.$store.commit("setTrivia", data);
-      // if (!stream.class) {
-      //   }
-      this.showQuestion = true;
-      this.start = false;
+      if (!stream.class) {
+        this.showQuestion = true;
+      }
     },
   },
   beforeMount() {
     console.log(window.stream.class);
     if (window.stream.class == "inviter") {
-      this.start = true;
       this.inviter = true;
-      this.display = "col-sm-12 col-md-10";
+      this.begin();
+
+      this.display = "col-9";
     } else if (window.stream.class == "invitee") {
       this.invitee = true;
-      this.display = "col-sm-12 col-md-10";
+      this.display = "col-9";
     } else {
       this.display = "col-12";
-      this.start = true;
+      this.begin();
     }
   },
   beforeDestroy() {

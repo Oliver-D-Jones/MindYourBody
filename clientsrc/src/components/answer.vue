@@ -56,7 +56,7 @@ export default {
         html_inject.appendChild(title);
         swal({
           content: html_inject,
-          icon:"//external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fmedia.giphy.com%2Fmedia%2F3oKIPhgolxVfDklIqc%2Fgiphy.gif&f=1&nofb=1",
+          icon:"https://external-content.duckduckgo.com/iu/?u=http%3A%2F%2Fwww.philgalfond.com%2Fwp-content%2Fuploads%2Fwronganswer-300x300.jpg&f=1&nofb=1",
           className: "wrong",
           closeOnClickOutside: false,
         }).then(() => {
