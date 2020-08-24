@@ -119,6 +119,9 @@ export default {
       function init() {
         if (!window.stream.localPeer) {
           peer = new Peer(null, {
+            secure: true,
+            host: "mind-your-body.herokuapp.com",
+            port: 443,
             debug: 2,
           });
         } else {
@@ -127,6 +130,9 @@ export default {
             peer.reconnect();
           } catch (error) {
             peer = new Peer(null, {
+              secure: true,
+              host: "mind-your-body.herokuapp.com",
+              port: 443,
               debug: 2,
             });
           }

@@ -142,6 +142,9 @@ export default {
         // Create own peer object with connection to shared PeerJS server
         if (!window.stream.localPeer) {
           peer = new Peer(myId, {
+            secure: true,
+            host: "mind-your-body.herokuapp.com",
+            port: 443,
             debug: 2,
           });
         } else {
@@ -151,6 +154,9 @@ export default {
           } catch (error) {
             console.log(error);
             peer = new Peer(myId, {
+              secure: true,
+              host: "mind-your-body.herokuapp.com",
+              port: 443,
               debug: 2,
             });
           }
