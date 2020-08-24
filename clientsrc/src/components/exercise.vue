@@ -3,7 +3,7 @@
     <div class="card exercise_main" style="border:solid 1px silver;" v-if="show">
       <h6 class="py-1 my-1 text-info bg-dark" style="font-size:x-large">
         <i class="fa fa-question-circle" aria-hidden="true"></i> &nbsp;
-        <span id="question" class="" ></span>
+        <span id="question" class></span>
       </h6>
       <transition name="bounce">
         <div v-if="imgExer">
@@ -81,7 +81,6 @@ export default {
     this.show = true;
   },
   mounted() {
-
     document.getElementById(
       "question"
     ).innerHTML = this.$store.state.trivia.question;
@@ -131,11 +130,12 @@ export default {
       // if (window.stream.class == "inviter") {
       //   window.stream.connection.send("workoutComplete");
       // }
-      window.stream.connection.send({
-        class: "message",
-        message: "Peer has finished their exercise...",
-      });
-
+      if (window.stream.class == "inviter") {
+        window.stream.connection.send({
+          class: "message",
+          message: "Peer has finished their exercise...",
+        });
+      }
       this.imgExer = false;
       setTimeout(() => {
         this.show = false;

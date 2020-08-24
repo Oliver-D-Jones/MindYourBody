@@ -118,7 +118,7 @@ export default {
         className: "home-swal",
         buttons: {
           one: { text: "Cancel", value: false },
-          zero: { text: "Send Invite", value: true },
+          zero: { text: "Confirm", value: true },
         },
       }).then((value) => {
         if (value) {
