@@ -83,11 +83,13 @@ export default {
       this.exercise = true;
     },
     init(play) {
-      // this.start = true;
       if (window.stream.class != "invitee") {
         this.begin();
+        if (window.stream.class == "inviter")
+          window.stream.connection.send({
+            class: "replay",
+          });
       }
-      console.log("IN init()");
       this.displayStart = true;
       this.end = false;
       this.showQuestion = false;

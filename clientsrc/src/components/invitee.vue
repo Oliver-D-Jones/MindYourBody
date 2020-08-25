@@ -37,7 +37,6 @@
       <p class="bg-dark text-info rounded" v-if="showLastMsg" id="msgOne">{{lastMessage}}</p>
       <textarea v-if="showAllMsg" class="bg-dark text-info pt-2" id="msgAll" :value="messageString"></textarea>
     </div>
-    <audio controls volume="true" autoplay id="peerAudio"></audio>
   </div>
 </template>
 <script>
@@ -222,9 +221,6 @@ export default {
           window.stream.call = call;
           window.stream.remoteStream = stream;
           document.getElementById("peerVideo").srcObject = stream;
-          // document.getElementById(
-          //   "peerAudio"
-          // ).srcObject = stream.getAudioTracks()[0];
         });
       }
 

@@ -8,7 +8,7 @@
           </h5>
         </button>
       </div>
-      <div class="col-sm-4 col-md-3 text-light" v-if="streamClass || peerStream || myStream">
+      <div class="col-sm-4 col-md-3 text-light" v-if="stream">
         <button type="button" class="btn btn-block btn-outline-danger" @click="closeConnection">
           <h5 class="py-0 text-warning">
             <i class="fa fa-times" aria-hidden="true"></i> &nbsp;Close Connection
@@ -49,9 +49,7 @@ export default {
   name: "home",
   data() {
     return {
-      streamClass: false,
-      peerStream: false,
-      myStream: false,
+      stream:window.stream.class,
       level: false,
       subject: false,
     };
@@ -61,6 +59,7 @@ export default {
     setParams(s) {
       this.subject = s.subject;
       this.level = s.level;
+      console.log(s);
     },
     closeConnection() {
       if (window.stream.remoteStream) {
@@ -82,12 +81,11 @@ export default {
         window.stream.remotePeer = false;
       }
       if (window.stream.connection) {
-        window.stream.connection.close();
+        window.stream.connection.destroy();
       }
-      console.log(window.stream);
-
       window.stream = {};
       window.stream.class = false;
+      this.stream =false;
     },
     invite() {
       let id = (Math.random().toString(36) + "0000000000000000000").substr(
@@ -164,6 +162,8 @@ export default {
     async startPlay() {
       if (!this.subject) {
         this.$store.dispatch("setSubject", Math.floor(Math.random() * 23) + 9);
+      } else {
+        this.$store.dispatch("setSubject", this.subject);
       }
       if (!this.level) {
         let level = Math.floor(Math.random() * 3);
@@ -181,7 +181,10 @@ export default {
             level = "medium";
         }
         this.$store.dispatch("setLevel", level);
+      } else {
+        this.$store.dispatch("setLevel", this.level);
       }
+
       if (!window.stream.triviaToken) {
         const res = await fetch(
           "https://opentdb.com/api_token.php?command=request"
@@ -189,8 +192,8 @@ export default {
         let token = await res.json();
         window.stream.triviaToken = token.token;
       }
-      this.subject = false;
-      this.level = false;
+      this.subject = "";
+      this.level = "";
       router.push({ name: "game" });
     },
   },

@@ -27,59 +27,10 @@
       You earned 100 points for a MEGA-Streak!
       <img src="../assets/coin.gif" style="width: 15rem;" />
     </h3>
-    <div class="row m-4" style="justify-content: space-evenly" v-if="playerClass != 'invitee'">
-      <div class="col-sm-12 col-md-4">
-        <select
-          name="category_id"
-          v-model="subject"
-          class="form-control dropDown"
-          style="width: -webkit-fill-available;"
-        >
-          <!-- style="max-width: 35%" -->
-          <option value hidden>Subject</option>
-          <option value="false">Random</option>
-          <option value="9">general knowledge</option>
-          <option value="10">Books</option>
-          <option value="11">Film</option>
-          <option value="12">Music</option>
-          <option value="13">Musicals & Theatre</option>
-          <option value="14">Telvision</option>
-          <option value="15">Video Games</option>
-          <option value="16">Board Games</option>
-          <option value="17">Science & Nature</option>
-          <option value="18">Computers</option>
-          <option value="19">Mathematics</option>
-          <option value="20">Mythology</option>
-          <option value="21">Sports</option>
-          <option value="22">Geography</option>
-          <option value="23">History</option>
-          <option value="24">Politics</option>
-          <option value="25">Art</option>
-          <option value="26">Celebrities</option>
-          <option value="27">Animals</option>
-          <option value="28">Vehicles</option>
-          <option value="29">Entertainment</option>
-          <option value="30">Gadgets</option>
-          <option value="31">Japanese Anime & Manga</option>
-          <option value="32">Cartoon & Animations</option>
-        </select>
-      </div>
-      <div class="col-sm-12 col-md-4">
-        <select
-          name="category_id"
-          v-model="level"
-          class="form-control dropDown"
-          style="width: -webkit-fill-available;"
-        >
-          <!-- style="max-width: 35%" -->
-          <option value hidden>Level</option>
-          <option value="easy">easy</option>
-          <option value="medium">medium</option>
-          <option value="hard">hard</option>
-        </select>
-      </div>
+    <div v-if="playerClass != 'invitee'">
+      <Selector key="select_home" v-on:setTopic="setParams($event)" />
     </div>
-    <div class="row" style="justify-content: space-evenly">
+    <div class="row mt-3" style="justify-content: space-evenly">
       <div class="col-5">
         <button
           v-if="playerClass != 'invitee'"
@@ -97,6 +48,8 @@
 
 <script>
 import router from "../router";
+import Selector from "../components/select";
+
 export default {
   name: "endgame",
   data() {
@@ -115,9 +68,6 @@ export default {
     };
   },
   mounted() {
-    setTimeout(() => {
-      document.getElementById("endCoin").className = "blazingStar";
-    }, 6000);
     this.$store.dispatch("getTrivia");
     this.$store.dispatch("getProfile");
     this.$store.dispatch("getCurrentPlayer");
@@ -284,6 +234,10 @@ export default {
     },
   },
   methods: {
+    setParams(s) {
+      this.subject = s.subject;
+      this.level = s.level;
+    },
     startPlay() {
       this.show = false;
 
@@ -298,11 +252,11 @@ export default {
       }
       this.$emit("init");
 
-      if (window.stream.class == "inviter") {
-        window.stream.connection.send({
-          class: "replay",
-        });
-      }
+      // if (window.stream.class == "inviter") {
+      //   window.stream.connection.send({
+      //     class: "replay",
+      //   });
+      // }
 
       this.subject = "";
       this.level = "";
@@ -312,7 +266,7 @@ export default {
       router.push({ name: "home" });
     },
   },
-  components: {},
+  components: {Selector},
 };
 </script>
 <style scoped>

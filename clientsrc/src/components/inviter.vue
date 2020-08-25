@@ -39,7 +39,6 @@
       <p class="bg-dark text-info rounded" v-if="showLastMsg" id="msgOne">{{lastMessage}}</p>
       <textarea v-if="showAllMsg" class="bg-dark text-info pt-2" id="msgAll" :value="messageString"></textarea>
     </div>
-    <audio controls volume="true" autoplay id="peerAudio"></audio>
   </div>
 </template>
 <script>
@@ -47,6 +46,7 @@ export default {
   name: "inviter",
   data() {
     return {
+      
       messageString: "",
       lastMessage: "No Messages Yet.",
       showAllMsg: false,
@@ -124,8 +124,6 @@ export default {
         function (stream) {
           window.stream.localStream = stream;
           document.getElementById("myVideo").srcObject = stream;
-
-          // document.getElementById("peerAudio").srcObject = stream;
         },
         function (err) {
           console.log("Failed to get stream " + err);
@@ -215,10 +213,6 @@ export default {
                 // Show stream in some video/canvas element.
                 document.getElementById("peerVideo").srcObject = stream;
                 window.stream.remoteStream = stream;
-
-                // document.getElementById(
-                //   "peerAudio"
-                // ).srcObject = stream.getAudioTracks()[0];
               });
             } catch (error) {
               console.log("Failed to get/send stream " + error);
