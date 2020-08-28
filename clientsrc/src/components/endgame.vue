@@ -23,6 +23,10 @@
       <img v-else src="../assets/endWrong.gif" style="width: 10%;
       border-radius: 50%;" />
     </div>
+    <h3 v-if="gotStreak">
+      You earned 20 points for a 5-day streak!
+      You have played for {{days}} days straight!
+    </h3>
     <h3 v-if="this.answerStreakEarned">
       You earned 20 points for a 5-question streak!
       <img
@@ -72,13 +76,19 @@ export default {
       level: this.$store.state.level,
       answer: this.$store.state.answer,
       profile: this.$store.state.profile,
-      player: this.$store.state.currentPlayer,
+
+      timeStreak: 0,
       show: false,
       time: new Date(),
       answerStreakEarned: false,
       megaStreakEarned: false,
       playerClass: window.stream.class,
     };
+  },
+  watch: {
+    days: function (newStreakCount) {
+      this.timeStreak = newStreakCount;
+    },
   },
   mounted() {
     this.$store.dispatch("getTrivia");
@@ -191,15 +201,23 @@ export default {
     },
     gotStreak() {
       if (
-        this.player.timeStreakCount !== 0 &&
-        this.player.timeStreakCount % 5 == 0
+        //this.player.timeStreakCount !== 0 &&
+        //this.player.timeStreakCount % 5 == 0
+        this.timeStreak !== 0 &&
+        this.timeStreak % 5 == 0
       ) {
         return 20;
       }
       return false;
     },
+    /*player() {
+      return this.player;
+    },*/
     days() {
       return this.player.timeStreakCount;
+    },
+    player() {
+      return this.$store.state.currentPlayer;
     },
     answerStreak() {
       let megaStreak = this.$store.state.currentPlayer.megaStreak;
@@ -276,5 +294,4 @@ export default {
 };
 </script>
 <style scoped>
-
 </style>
