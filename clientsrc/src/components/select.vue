@@ -8,11 +8,11 @@
         name="category_id"
         v-model="subject"
         class="form-control dropDown"
-        style="border:solid 1px white;color: blue;background: black;"
+        style="border:solid 1px white;color: lightblue;background: black;"
         @change="chooseSubject"
       >
         <option>--- Select Subject ---</option>
-        <option value="" show>Random</option>
+        <option value show>Random</option>
         <option value="9">general knowledge</option>
         <option value="10">Books</option>
         <option value="11">Film</option>
@@ -48,10 +48,10 @@
         v-model="level"
         @change="chooseLevel"
         class="form-control dropDown"
-        style="border:solid 1px white;color: blue;background: black;"
+        style="border:solid 1px white;color: lightblue;background: black;"
       >
         <option>--- Select Level ---</option>
-        <option value="" show>Random</option>
+        <option value show>Random</option>
         <option value="easy">easy</option>
         <option value="medium">medium</option>
         <option value="hard">hard</option>
@@ -76,8 +76,7 @@ export default {
       this.$emit("setTopic", { level: this.level, subject: this.subject });
     },
     chooseSubject() {
-
-this.$emit("setTopic", { level: this.level, subject: this.subject });
+      this.$emit("setTopic", { level: this.level, subject: this.subject });
     },
   },
   components: {},

@@ -71,8 +71,8 @@ export default new Vuex.Store({
         console.error(err)
       }
     },
-    triviaToken({commit},data){
-      commit("setTriviaToken",data)
+    triviaToken({ commit }, data) {
+      commit("setTriviaToken", data)
     },
     inviteeExercise({ commit }, data) {
       commit("setExercise", data)
@@ -180,15 +180,15 @@ export default new Vuex.Store({
         console.error(err)
       }
     },
-        //updates the player object and profile modal with latest game stats
-        async updateCategoryStats({ commit, dispatch, state }, data) {
-          try {
-            let res = await api.put("players/" + data.profileId, { categoryStats: data.categoryStats })
-            dispatch("getCurrentPlayer")
-          } catch (err) {
-            console.error(err)
-          }
-        },
+    //updates the player object and profile modal with latest game stats
+    async updateCategoryStats({ commit, dispatch, state }, data) {
+      try {
+        let res = await api.put("players/" + data.profileId, { categoryStats: data.categoryStats })
+        dispatch("getCurrentPlayer")
+      } catch (err) {
+        console.error(err)
+      }
+    },
 
     //sets the number of days in a row player has played
     async updateStreak({ commit, dispatch, state }, data) {

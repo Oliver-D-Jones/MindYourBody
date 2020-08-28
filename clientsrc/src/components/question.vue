@@ -24,16 +24,10 @@ export default {
       html_inject.appendChild(title);
       let img = utils.getGif();
       let btns;
-      // if (window.stream.class === "invitee") {
-      //   btns = {
-      //     quit: { text: "Quit Game", value: false },
-      //   };
-      // } else {
-        btns = {
-          quit: { text: "Quit Game", value: false },
-          startEx: { text: "Start Exercise", value: true },
-        };
-      // }
+      btns = {
+        quit: { text: "Quit Game", value: false },
+        startEx: { text: "Start Exercise", value: true },
+      };
       swal({
         content: html_inject,
         className: "red-bg",
@@ -42,19 +36,16 @@ export default {
         buttons: btns,
       }).then((value) => {
         if (value) {
-          // if (window.stream.class == "inviter") {
-          //   window.stream.connection.send({ class: "beginExercise" });
-          // }
+          if (window.stream.class) {
+            stream.sendMessage("Your Friend Started Their Exercise.");
+          }
           this.show = false;
           this.$emit("workout", true);
           swal.close();
         } else {
-          // if (window.stream.class == "invitee") {
-          //   swal.close();
-          //   // this.$router.push({ name: "home" });
-
-          //   return;
-          // }
+          if (window.stream.class) {
+            stream.sendMessage("Your Friend Quit On You.");
+          }
           this.$emit("init", false);
           this.show = false;
           swal.close();
@@ -63,7 +54,7 @@ export default {
       });
     },
   },
-  beforeDestroy(){
+  beforeDestroy() {
     swal.close();
   },
   mounted() {

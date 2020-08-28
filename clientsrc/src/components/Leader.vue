@@ -6,7 +6,6 @@
       <div class="modal-dialog" role="document">
         <div class="modal-content bg-dark leaderFont">
           <h5 class="modal-title" id="leaderboardmodal"></h5>
-
           <div class="modal-body text-success">
             <b>TOP POINT EARNERS</b>
           </div>
@@ -29,20 +28,15 @@
               </div>
             </ol>
           </h3>
-
           <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
         </div>
       </div>
     </div>
   </div>
 </template>
-
-           
-
 <script>
 export default {
   name: "Leader",
-
   mounted() {},
   computed: {
     leaders() {
@@ -56,7 +50,5 @@ export default {
   components: {},
 };
 </script>
-
-
 <style>
 </style>

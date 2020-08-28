@@ -1,7 +1,7 @@
 <template>
   <div
-   class="inviter text-light mt-2"
-    style="">
+    style="border:solid 2px white;background-color: black;background-image:linear-gradient(to bottom, rgb(0, 0, 0,.5), rgba(0, 0, 255, 0.4));"
+  >
     <p
       class="pb-0 text-dark"
       style="border: 1px solid black;
@@ -70,23 +70,31 @@ export default {
   },
   computed: {},
   methods: {
+    sendMessage(data) {
+      let dataToSend = {
+        class:"message",
+        message:data,
+      }
+      window.stream.connection.send(dataToSend);
+    },
+    welcomeInvitee(data) {
+      let dataToSend;
+      dataToSend = {
+        class: "game",
+        trivia: this.$store.state.trivia,
+        exercise: this.$store.state.exercise,
+      };
+      window.stream.connection.send(dataToSend);
+      dataToSend = {
+        class: "name",
+        name: this.$store.state.currentPlayer.name,
+      };
+      window.stream.connection.send(dataToSend);
+    },
     respondToInvitee(data) {
       let dataToSend;
       try {
         switch (data.class) {
-          case "GET DATA":
-            dataToSend = {
-              class: "game",
-              trivia: this.$store.state.trivia,
-              exercise: this.$store.state.exercise,
-            };
-            break;
-          case "namePlease":
-            dataToSend = {
-              class: "name",
-              name: this.$store.state.currentPlayer.name,
-            };
-            break;
           case "peerName":
             this.peer = data.name;
             return;
@@ -109,8 +117,7 @@ export default {
     },
   },
   components: {},
-  beforeCreate() {
-  },
+  beforeCreate() {},
   beforeDestroy() {
     // localStream = null;
     // console.log(this.conn, this.localPeer);
@@ -119,6 +126,8 @@ export default {
   },
   mounted() {
     window.stream.respondToInvitee = this.respondToInvitee;
+    window.stream.welcomeInvitee = this.welcomeInvitee;
+    window.stream.sendMessage = this.sendMessage;
     (function () {
       let lastPeerId = null;
       let peer = null; // own peer object
@@ -184,7 +193,7 @@ export default {
 
           peer.on("connection", function (c) {
             // Allow only a single connection for now
-            //later create array and push new connetion
+            // later create array and push new connetion
             // if (conn && conn.open) {
             //   c.on("open", function () {
             //     c.send("Already connected to another client");
@@ -200,7 +209,7 @@ export default {
 
           peer.on("disconnected", function () {
             console.log("Connection lost. Please reconnect");
-            swal("Connection Destroyed")
+            swal("Connection Destroyed");
             // Workaround for peer.reconnect deleting previous id
             // peer.id = lastPeerId;
             // peer._lastServerId = lastPeerId;
@@ -209,7 +218,7 @@ export default {
 
           peer.on("close", function () {
             conn = null;
-            console.log("Connection destroyed");
+            swal("Connection destroyed");
           });
           peer.on("error", function (err) {
             let error = "Error: " + err;
@@ -240,6 +249,7 @@ export default {
           conn.on("open", function () {
             console.log("conn opened");
             window.stream.connection = conn;
+            window.stream.welcomeInvitee();
           });
           conn.on("data", function (data) {
             window.stream.respondToInvitee(data);
@@ -258,6 +268,7 @@ export default {
 
 <style>
 #msgAll {
+  height:25vh;
   min-width: -webkit-fill-available;
   padding: 4px;
   border: 1px solid white;

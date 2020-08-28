@@ -57,7 +57,6 @@
     </div>
   </nav>
 </template>
-
 <script>
 import about from "../components/about";
 import Leader from "../components/Leader";
@@ -97,7 +96,6 @@ export default {
   },
 };
 </script>
-
 <style>
 .nav-link {
   color: rgb(0, 0, 206);
