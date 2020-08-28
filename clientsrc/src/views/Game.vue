@@ -1,6 +1,6 @@
 <template>
   <div class="game">
-    <div class="container-fluid" id="main" style="min-height:100vh;">
+    <div class="container-fluid" id="main" style="">
       <div class="row" style="display: flex;justify-content: space-around;">
         <div class="col-3 mt-1" v-if="invitee">
           <Invitee

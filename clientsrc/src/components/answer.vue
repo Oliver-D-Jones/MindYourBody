@@ -19,6 +19,10 @@ export default {
   methods: {
     answer() {
       let answers = this.$store.state.trivia.incorrect_answers;
+      let answersHTML = answers.map((a) => {
+        return `<span>${a}</span>`;
+      });
+      console.log(answersHTML);
       let correct_answer = this.$store.state.trivia.correct_answer;
       let html_inject = document.createElement("div");
       let qIcon = utils.getGif();
@@ -33,19 +37,19 @@ export default {
         closeOnClickOutside: false,
         buttons: {
           zero: {
-            text: answers[0],
+            content: answersHTML[0],
             value: answers[0],
           },
           two: {
-            text: answers[1],
+            content: answersHTML[1],
             value: answers[1],
           },
           three: {
-            text: answers[2],
+            content: answersHTML[2],
             value: answers[2],
           },
           four: {
-            text: answers[3],
+            content: answersHTML[3],
             value: answers[3],
           },
         },

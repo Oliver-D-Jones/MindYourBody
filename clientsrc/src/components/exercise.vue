@@ -1,5 +1,5 @@
 <template>
-  <div class="exercise mt-2">
+  <div class="exercise mt-2" style="">
     <div class="card exercise_main" style="border:solid 1px silver;" v-if="show">
       <h6 class="py-1 my-1 text-info bg-dark" style="font-size:x-large">
         <i class="fa fa-question-circle" aria-hidden="true"></i> &nbsp;
@@ -11,7 +11,7 @@
             class="card-img-top mt-1"
             :src="exercise.example"
             alt="Exercise Example"
-            style="max-width: 100%; max-height:350px; width: auto; height: auto"
+            style="max-width: 100%; max-height:33vh; width: auto; height: auto"
           />
         </div>
       </transition>
