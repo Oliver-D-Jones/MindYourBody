@@ -1,7 +1,7 @@
 <template>
   <div
    class="inviter text-light mt-2"
-    style="border:solid 2px white;background-color:black;background-image:linear-gradient(to bottom, rgb(0, 0, 0,.5), rgba(0, 0, 255, 0.4));">
+    style="">
     <p
       class="pb-0 text-dark"
       style="border: 1px solid black;
