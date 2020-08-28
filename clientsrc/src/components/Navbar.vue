@@ -1,11 +1,11 @@
 <template>
   <nav
-    class="navbar gameFont navbar-expand-lg mb-1 text-dark"
-    style="height:10vh;max-height:12vh;border-bottom:solid 2px white; background-image: radial-gradient(white, white, black);"
+    class="navbar gameFont navbar-expand-lg mb-1 text-dark font-weight-bold"
+    style="border-bottom:solid 2px white; background-image: radial-gradient(white, gray, black);"
   >
     <router-link
       class="navbar-brand"
-      style="font-size: 2.5rem;color:blue;"
+      style="font-size: 2.5rem; color:rgb(0, 0, 206);"
       :to="{ name: 'home' }"
     >MYB</router-link>
     <button
@@ -27,10 +27,10 @@
           <router-link :to="{ name: 'home' }" class="nav-link">Home</router-link>
         </li>
         <li class="nav-item">
-          <a class="nav-link" data-toggle="modal" href="#leaderboardmodal">Leaderboard</a>
+          <Leader />
         </li>
         <li class="nav-item">
-          <a class="nav-link" data-toggle="modal" href="#aboutmodal">About</a>
+          <about />
         </li>
         <li class="nav-item">
           <Profile v-if="$auth.isAuthenticated" />
@@ -43,12 +43,11 @@
           <router-link :to="{ name: 'home' }" class="nav-link">Quit</router-link>
         </li>
       </ul>
-      <div
-        class="navbar-text"
-        v-if="$auth.isAuthenticated"
-        style="margin-top: auto;margin-right: 37vw;color:blue;"
-      >
-        <h4 v-if="points">Total Points: {{points}}</h4>
+      <div v-if="$auth.isAuthenticated" style="margin-top: auto;margin-right: 37vw;color:blue;">
+        <h4 v-if="points">
+          Total Points:
+          <span class="text-success">{{points}}</span>
+        </h4>
         <h4 v-else>Total Points: 0</h4>
       </div>
       <span class="navbar-text">
@@ -56,65 +55,12 @@
         <button class="btn btn-dark text-info" @click="logout" v-else>logout</button>
       </span>
     </div>
-    <!--leadermodal-->
-    <div
-      class="modal fade"
-      id="leaderboardmodal"
-      tabindex="-1"
-      role="dialog"
-      aria-labelledby="exampleModalLongTitle"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog" role="document">
-        <div class="modal-content bg-light leaderFont">
-          <div class="modal-header">
-            <h5 class="modal-title" id="leaderboardmodal"></h5>
-          </div>
-          <div class="modal-body">
-            <b>TOP POINT EARNERS</b>
-          </div>
-          <h3>
-            <ol>
-              <leader v-for="leader in leaders" :leader="leader" :key="leader.id"></leader>
-            </ol>
-          </h3>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div
-      class="modal fade"
-      id="aboutmodal"
-      tabindex="-1"
-      role="dialog"
-      aria-labelledby="exampleModalLongTitle"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="aboutmodal">Directions</h5>
-          </div>
-          <div class="modal-body text-justify">
-            <p>Welcome to 'Mind Your Body', the total app for the whole person. Press 'start' to receive a question that tests your knowledge. When you are ready, press 'start exercise' and you will be given an routine. While you exercise, consider the answer to the question. When you finish the exercise, press 'complete' and choose the best answer to your question. A right answer earns you 5 points for an easy question, 10 points for an intermediate question, and 20 points for a difficult question. You may change the exercise before beginning. Repeat as many times as you like for a full workout of both your body and your brain.</p>
-            <!-- NOTE add about -->
-            <!-- <p><b>Invite & join</b></p> -->
-
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
   </nav>
 </template>
-
 <script>
-import Profile from "../components/profile";
+import about from "../components/about";
 import Leader from "../components/Leader";
+import Profile from "../components/profile";
 import axios from "axios";
 let _api = axios.create({
   baseURL: "https://localhost:3000",
@@ -126,9 +72,6 @@ export default {
     this.$store.dispatch("getLeaders");
   },
   computed: {
-    leaders() {
-      return this.$store.state.leaders;
-    },
     points() {
       return this.$store.state.currentPlayer.points;
     },
@@ -147,14 +90,14 @@ export default {
     },
   },
   components: {
+    about,
     Leader,
     Profile,
   },
 };
 </script>
-
 <style>
 .nav-link {
-  color: blue;
+  color: rgb(0, 0, 206);
 }
 </style>
