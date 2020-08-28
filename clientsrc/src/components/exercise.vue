@@ -1,5 +1,5 @@
 <template>
-  <div class="exercise mt-2" style="">
+  <div class="exercise mt-2" style>
     <div class="card exercise_main" style="border:solid 1px silver;" v-if="show">
       <h6 class="py-1 my-1 text-info bg-dark" style="font-size:x-large">
         <i class="fa fa-question-circle" aria-hidden="true"></i> &nbsp;
@@ -127,11 +127,8 @@ export default {
       }
     },
     workOutComplete() {
-      if (window.stream.class == "inviter") {
-        window.stream.connection.send({
-          class: "message",
-          message: "Peer has finished their exercise...",
-        });
+      if (window.stream.class) {
+        window.stream.sendMessage("Your Friend Finished Their Exercise.");
       }
       this.imgExer = false;
       setTimeout(() => {

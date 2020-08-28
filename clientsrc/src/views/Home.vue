@@ -49,7 +49,7 @@ export default {
   name: "home",
   data() {
     return {
-      stream: window.stream.class || false,
+      stream: window.stream.class,
       level: false,
       subject: false,
     };
@@ -74,8 +74,8 @@ export default {
           t.stop();
         });
       }
-      if (window.stream.connection) {
-        window.stream.connection.destroy();
+      if (stream.localPeer) {
+        window.stream.localPeer.destroy();
       }
 
       window.stream = {};
@@ -121,8 +121,8 @@ export default {
           this.startPlay();
           swal.close();
         } else {
+          window.stream = {};
           window.stream.class = false;
-          window.stream.myId = null;
           swal.close();
         }
       });
@@ -149,8 +149,8 @@ export default {
           window.stream.myId = myId;
           router.push({ name: "game" });
         } else {
+          window.stream = {};
           window.stream.class = false;
-          window.stream.peerId = null;
         }
       });
     },
@@ -194,11 +194,14 @@ export default {
     },
   },
   beforeCreate() {
-    window.stream = {};
-    window.stream.class = false;
+
   },
   created() {},
-  beforeMount() {},
+  beforeMount() {
+    window.stream = new Object();
+    window.stream.class = false;
+    this.stream = window.stream.class;
+  },
   mounted() {
     this.$store.dispatch("loadLeaders");
   },
