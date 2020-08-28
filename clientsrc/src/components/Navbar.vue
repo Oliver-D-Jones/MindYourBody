@@ -3,7 +3,11 @@
     class="navbar gameFont navbar-expand-lg mb-1 text-dark"
     style="height:10vh;max-height:12vh;border-bottom:solid 2px white; background-image: radial-gradient(white, white, black);"
   >
-    <router-link class="navbar-brand" style="font-size: 2.5rem;color:blue;" :to="{ name: 'home' }">MYB</router-link>
+    <router-link
+      class="navbar-brand"
+      style="font-size: 2.5rem;color:blue;"
+      :to="{ name: 'home' }"
+    >MYB</router-link>
     <button
       class="navbar-toggler btn btn-outline-info pb-1"
       type="button"
@@ -39,7 +43,11 @@
           <router-link :to="{ name: 'home' }" class="nav-link">Quit</router-link>
         </li>
       </ul>
-      <div class="navbar-text" v-if="$auth.isAuthenticated" style="margin-top: auto;margin-right: 37vw;color:blue;">
+      <div
+        class="navbar-text"
+        v-if="$auth.isAuthenticated"
+        style="margin-top: auto;margin-right: 37vw;color:blue;"
+      >
         <h4 v-if="points">Total Points: {{points}}</h4>
         <h4 v-else>Total Points: 0</h4>
       </div>
@@ -58,7 +66,7 @@
       aria-hidden="true"
     >
       <div class="modal-dialog" role="document">
-        <div class="modal-content bg-primary leaderFont">
+        <div class="modal-content bg-light leaderFont">
           <div class="modal-header">
             <h5 class="modal-title" id="leaderboardmodal"></h5>
           </div>
@@ -146,7 +154,7 @@ export default {
 </script>
 
 <style>
-.nav-link{
+.nav-link {
   color: blue;
 }
 </style>

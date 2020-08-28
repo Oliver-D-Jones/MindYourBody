@@ -1,5 +1,5 @@
 <template >
-  <div class="card bg-info text-light mr-5">
+  <div class="card bg-dark text-light mr-5">
     <div class="d-flex" style="justify-content: space-between">
       <div class="ml-3">
         <i class="fa fa-user-circle" aria-hidden="true"></i>
