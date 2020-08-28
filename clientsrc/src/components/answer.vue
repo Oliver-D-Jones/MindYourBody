@@ -19,10 +19,11 @@ export default {
   methods: {
     answer() {
       let answers = this.$store.state.trivia.incorrect_answers;
-      let answersHTML = answers.map((a) => {
-        return `<span>${a}</span>`;
+      answers.forEach((v, i, a) => {
+        let s = document.createElement("span");
+        s.innerHTML = v;
+        a[i] = s.innerText;
       });
-      console.log(answersHTML);
       let correct_answer = this.$store.state.trivia.correct_answer;
       let html_inject = document.createElement("div");
       let qIcon = utils.getGif();
@@ -37,35 +38,48 @@ export default {
         closeOnClickOutside: false,
         buttons: {
           zero: {
-            content: answersHTML[0],
+            text: answers[0],
             value: answers[0],
           },
           two: {
-            content: answersHTML[1],
+            text: answers[1],
             value: answers[1],
           },
           three: {
-            content: answersHTML[2],
+            text: answers[2],
             value: answers[2],
           },
           four: {
-            content: answersHTML[3],
+            text: answers[3],
             value: answers[3],
           },
         },
       }).then((value) => {
         if (value == correct_answer) {
+          if (window.stream.class) {
+            window.stream.sendMessage(
+              "Your Friend Answered The Question Successfully."
+            );
+          }
           swal(`${correct_answer} Is Correct!`, "", "success").then(() => {
             this.$emit("endgame", true);
             this.$store.state.answer = true;
             swal.close();
           });
         } else {
+          if (window.stream.class) {
+            window.stream.sendMessage(
+              "Your Friend Answered The Question Incorrectly."
+            );
+          }
           let html_inject = document.createElement("div");
           html_inject.className = "col-12";
           let title = document.createElement("h4");
           title.innerHTML = `${correct_answer},<br/>is the correct answer!`;
           html_inject.appendChild(title);
+          if (!this.show) {
+            return;
+          }
           swal({
             content: html_inject,
             icon:
@@ -83,6 +97,7 @@ export default {
     },
   },
   beforeDestroy() {
+    this.show = false;
     swal.close();
   },
   mounted() {

@@ -69,6 +69,13 @@ export default {
   },
   computed: {},
   methods: {
+    sendMessage(data) {
+      let dataToSend = {
+        class: "message",
+        message: data,
+      };
+      window.stream.connection.send(dataToSend);
+    },
     respondToInviter(data) {
       switch (data.class) {
         case "game":
@@ -111,6 +118,8 @@ export default {
   },
   mounted() {
     window.stream.respondToInviter = this.respondToInviter;
+    window.stream.sendMessage = this.sendMessage;
+
     (function () {
       let lastPeerId = null;
       let peer = null; // own peer object
@@ -136,8 +145,6 @@ export default {
         if (!window.stream.localPeer) {
           peer = new Peer(null, {
             secure: true,
-            // host: "mind-your-body.herokuapp.com",
-            // port: 443,
             debug: 2,
           });
         } else {
@@ -147,8 +154,6 @@ export default {
           } catch (error) {
             peer = new Peer(null, {
               secure: true,
-              // host: "mind-your-body.herokuapp.com",
-              // port: 443,
               debug: 2,
             });
           }
@@ -162,12 +167,12 @@ export default {
             console.log("receieved peer.id");
             lastPeerId = peer.id;
 
-            // peer.on("connection", function (conn) {
-            //   conn.on("open", function () {
-            //     conn.send("Received A Connection.");
-            //     console.log("received a connection");
-            //   });
-            // });
+            peer.on("connection", function (conn) {
+              conn.on("open", function () {
+                conn.send("Received A Connection.");
+                console.log("received a connection");
+              });
+            });
 
             peer.on("disconnected", function () {
               console.log("Connection lost. Please reconnect").then((res) => {
@@ -203,9 +208,10 @@ export default {
 
       function join() {
         // Close old connection
-        // if (conn) {
-        //   conn.close();
-        // }
+        console.log(stream.connection);
+        if (window.stream.connection) {
+          window.stream.connection.close();
+        }
 
         // Create connection to destination peer specified in the input field
         conn = peer.connect(peer_id, {
@@ -215,8 +221,8 @@ export default {
         conn.on("open", function () {
           console.log("Connected to: " + conn.peer);
           window.stream.connection = conn;
-          conn.send({ class: "GET DATA" });
-          conn.send({ class: "namePlease" });
+          // conn.send({ class: "GET DATA" });
+          // conn.send({ class: "namePlease" });
           // document.getElementById(
           //   "peerId"
           // ).textContent = `Connected To: ${conn.peer}`;
@@ -276,6 +282,7 @@ export default {
 
 <style>
 #msgAll {
+  height: 25vh;
   min-width: -webkit-fill-available;
   padding: 4px;
   border: 1px solid white;

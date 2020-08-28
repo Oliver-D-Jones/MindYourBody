@@ -1,6 +1,6 @@
 <template>
   <div class="game">
-    <div class="container-fluid" id="main" style="">
+    <div class="container-fluid" id="main" style="height:100vh;">
       <div class="row" style="display: flex;justify-content: space-around;">
         <div class="col-3 mt-1" v-if="invitee">
           <Invitee
@@ -146,10 +146,6 @@ export default {
     }
   },
   beforeDestroy() {
-    // if (swal.isVisible()) {
-    //   swal.close();
-    // }
-    // window.stream.localStream.stop();
   },
   components: {
     Exercise,
