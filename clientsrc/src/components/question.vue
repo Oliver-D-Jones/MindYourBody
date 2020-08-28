@@ -1,6 +1,6 @@
 <template>
-  <div class="question">
-    <div class="row" v-if="show">{{swalShow()}}</div>
+  <div class="question" v-if="show">
+    <div class="row">{{swalShow()}}</div>
   </div>
 </template>
 <script>
@@ -24,16 +24,16 @@ export default {
       html_inject.appendChild(title);
       let img = utils.getGif();
       let btns;
-      if (window.stream.class === "invitee") {
-        btns = {
-          quit: { text: "Quit Game", value: false },
-        };
-      } else {
+      // if (window.stream.class === "invitee") {
+      //   btns = {
+      //     quit: { text: "Quit Game", value: false },
+      //   };
+      // } else {
         btns = {
           quit: { text: "Quit Game", value: false },
           startEx: { text: "Start Exercise", value: true },
         };
-      }
+      // }
       swal({
         content: html_inject,
         className: "red-bg",
@@ -42,19 +42,19 @@ export default {
         buttons: btns,
       }).then((value) => {
         if (value) {
-          if (window.stream.class == "inviter") {
-            window.stream.connection.send({ class: "beginExercise" });
-          }
+          // if (window.stream.class == "inviter") {
+          //   window.stream.connection.send({ class: "beginExercise" });
+          // }
           this.show = false;
           this.$emit("workout", true);
           swal.close();
         } else {
-          if (window.stream.class == "invitee") {
-            swal.close();
-            // this.$router.push({ name: "home" });
+          // if (window.stream.class == "invitee") {
+          //   swal.close();
+          //   // this.$router.push({ name: "home" });
 
-            return;
-          }
+          //   return;
+          // }
           this.$emit("init", false);
           this.show = false;
           swal.close();
@@ -62,6 +62,9 @@ export default {
         }
       });
     },
+  },
+  beforeDestroy(){
+    swal.close();
   },
   mounted() {
     this.show = true;

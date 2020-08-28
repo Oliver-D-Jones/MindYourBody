@@ -1,5 +1,5 @@
 <template>
-  <div id="app" style="background-color:black;min-height:100vh">
+  <div id="app" style="background-color:black;">
     <navbar />
     <router-view />
   </div>
@@ -14,8 +14,6 @@ export default {
   name: "App",
 
   async beforeCreate() {
-    window.stream = new Object();
-    window.stream.class = false;
     try {
       await onAuth();
       this.$store.dispatch("setBearer", this.$auth.bearer);

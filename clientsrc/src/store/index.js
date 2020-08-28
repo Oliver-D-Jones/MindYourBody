@@ -19,19 +19,13 @@ export default new Vuex.Store({
     leaders: [],
     user: {},
     currentPlayer: {},
-    stream: { class: false, user: { id: null }, peer: { id: null } },
+    // NOTE work here too clean state up; organize
     level: null,
     subject: null,
     answer: null,
     triviaToken: "",
   },
   mutations: {
-    clearStream(state) {
-      state.stream.class = false;
-      state.stream.user.id = null;
-      state.stream.peer.id = null;
-    }
-    ,
     setProfile(state, profileObject) {
       state.profile = profileObject
     },
@@ -56,9 +50,6 @@ export default new Vuex.Store({
     setTriviaToken(state, token) {
       state.trivia.token = token;
     },
-    clearTrivaToken(state) {
-      state.triviaToken = "";
-    },
 
   },
   actions: {
@@ -79,6 +70,9 @@ export default new Vuex.Store({
       } catch (err) {
         console.error(err)
       }
+    },
+    triviaToken({commit},data){
+      commit("setTriviaToken",data)
     },
     inviteeExercise({ commit }, data) {
       commit("setExercise", data)

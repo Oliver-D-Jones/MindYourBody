@@ -1,6 +1,13 @@
 <template>
-  <div class="inviter text-light mt-2">
-    <p class="py-0 bg-info text-dark">
+  <div
+   class="inviter text-light mt-2"
+    style="border:solid 2px white;background-color:black;background-image:linear-gradient(to bottom, rgb(0, 0, 0,.5), rgba(0, 0, 255, 0.4));">
+    <p
+      class="pb-0 text-dark"
+      style="border: 1px solid black;
+      border-radius: 5%;
+    background-color: white;"
+    >
       <span>{{me}}</span>
       <br />
       <span id="myId"></span>
@@ -8,17 +15,24 @@
     <video
       autoplay="true"
       id="myVideo"
+      class="mb-1"
       muted
       controls
       poster="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fmedia.giphy.com%2Fmedia%2Fi3pHUtmHiLd28%2Fgiphy.gif&f=1&nofb=1"
     ></video>
     <div>
-      <p class="py-0 bg-warning text-dark">
+      <p
+        class="pb-0 text-dark"
+        style="border: 1px solid black;
+    border-radius: 5%;
+    background-color: lightblue;"
+      >
         <span>{{peer}}</span>
       </p>
       <video
         autoplay="true"
         id="peerVideo"
+        class="mb-1"
         poster="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fmedia.giphy.com%2Fmedia%2Fi3pHUtmHiLd28%2Fgiphy.gif&f=1&nofb=1"
         controls
       ></video>
@@ -46,7 +60,6 @@ export default {
   name: "inviter",
   data() {
     return {
-      
       messageString: "",
       lastMessage: "No Messages Yet.",
       showAllMsg: false,
@@ -97,7 +110,6 @@ export default {
   },
   components: {},
   beforeCreate() {
-    this.displayStart = true;
   },
   beforeDestroy() {
     // localStream = null;
@@ -188,11 +200,11 @@ export default {
 
           peer.on("disconnected", function () {
             console.log("Connection lost. Please reconnect");
-
+            swal("Connection Destroyed")
             // Workaround for peer.reconnect deleting previous id
-            peer.id = lastPeerId;
-            peer._lastServerId = lastPeerId;
-            peer.reconnect();
+            // peer.id = lastPeerId;
+            // peer._lastServerId = lastPeerId;
+            // peer.reconnect();
           });
 
           peer.on("close", function () {
@@ -208,7 +220,6 @@ export default {
             try {
               let myStream = window.stream.localStream;
               call.answer(myStream); // Answer the call with an A/V stream.
-              window.stream.call = call;
               call.on("stream", function (stream) {
                 // Show stream in some video/canvas element.
                 document.getElementById("peerVideo").srcObject = stream;

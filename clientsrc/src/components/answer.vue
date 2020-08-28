@@ -78,6 +78,9 @@ export default {
       });
     },
   },
+  beforeDestroy() {
+    swal.close();
+  },
   mounted() {
     this.show = true;
     this.$store.dispatch("getCurrentPlayer");

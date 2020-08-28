@@ -49,7 +49,7 @@ export default {
   name: "home",
   data() {
     return {
-      stream:window.stream.class,
+      stream: window.stream.class || false,
       level: false,
       subject: false,
     };
@@ -74,18 +74,13 @@ export default {
           t.stop();
         });
       }
-      if (window.stream.localPeer) {
-        window.stream.localPeer.active = false;
-      }
-      if (window.stream.remotePeer) {
-        window.stream.remotePeer = false;
-      }
       if (window.stream.connection) {
         window.stream.connection.destroy();
       }
+
       window.stream = {};
       window.stream.class = false;
-      this.stream =false;
+      this.stream = false;
     },
     invite() {
       let id = (Math.random().toString(36) + "0000000000000000000").substr(
@@ -111,7 +106,6 @@ export default {
       swal({
         icon:
           "https://external-content.duckduckgo.com/iu/?u=http%3A%2F%2Ficons.iconarchive.com%2Ficons%2Foxygen-icons.org%2Foxygen%2F256%2FApps-preferences-desktop-notification-icon.png&f=1&nofb=1",
-        closeOnClickOutside: false,
         content: html_inject,
         className: "home-swal",
         buttons: {
@@ -120,6 +114,7 @@ export default {
         },
       }).then((value) => {
         if (value) {
+          window.stream = new Object();
           window.stream.class = "inviter";
           window.stream.myId = id;
           console.log("home--id->", id);
@@ -148,6 +143,7 @@ export default {
         let id = document.getElementById("peerId").value;
         if (id) {
           //NOTE set peer to join ID
+          window.stream = new Object();
           window.stream.class = "invitee";
           window.stream.peerId = id;
           window.stream.myId = myId;
@@ -185,12 +181,12 @@ export default {
         this.$store.dispatch("setLevel", this.level);
       }
 
-      if (!window.stream.triviaToken) {
+      if (!this.$store.state.triviaToken) {
         const res = await fetch(
           "https://opentdb.com/api_token.php?command=request"
         );
         let token = await res.json();
-        window.stream.triviaToken = token.token;
+        this.$store.dispatch("triviaToken", token.token);
       }
       this.subject = "";
       this.level = "";
@@ -198,27 +194,10 @@ export default {
     },
   },
   beforeCreate() {
-    this.$store.commit("clearStream");
-    this.$store.commit("clearTrivaToken");
+    window.stream = {};
+    window.stream.class = false;
   },
-  created() {
-    console.log(window.stream);
-    if (window.stream.class) {
-      this.streamClass = window.stream.class;
-    }
-    if (
-      window.stream.localStream != undefined &&
-      window.stream.localStream.active
-    ) {
-      this.myStream = window.stream.localStream.active;
-    }
-    if (
-      window.stream.remoteStream != undefined &&
-      window.stream.remoteStream.active
-    ) {
-      this.peerStream = window.stream.remoteStream.active;
-    }
-  },
+  created() {},
   beforeMount() {},
   mounted() {
     this.$store.dispatch("loadLeaders");

@@ -13,7 +13,14 @@
     </h3>
     <div v-else>
       <h3>No points this round.</h3>
-      <img src="../assets/endWrong.gif" style="width: 10%;
+      <img
+        src="../assets/endWrong.gif"
+        style="width: 10%;
+      border-radius: 50%;"
+        v-if="playerClass != 'invitee'"
+        @click="startPlay()"
+      />
+      <img v-else src="../assets/endWrong.gif" style="width: 10%;
       border-radius: 50%;" />
     </div>
     <h3 v-if="this.answerStreakEarned">
@@ -37,7 +44,13 @@
           @click="startPlay()"
           class="btn btn-block btn-outline-danger bg-dark py-2"
         >PLAY AGAIN</button>
-        <span v-else>Awaiting Friend...</span>
+        <button class="btn btn-block btn-outline-danger bg-dark py-2" v-else>
+          Awaiting Friend... &nbsp;
+          <i
+            class="fa fa-spinner fa-spin"
+            style="font-size:1.3rem;color:blue"
+          ></i>
+        </button>
       </div>
       <div class="col-5">
         <button @click="quit()" class="btn btn-block btn-outline-danger bg-dark py-2">QUIT FOR NOW</button>
@@ -251,13 +264,6 @@ export default {
         this.$store.dispatch("setLevel", this.level);
       }
       this.$emit("init");
-
-      // if (window.stream.class == "inviter") {
-      //   window.stream.connection.send({
-      //     class: "replay",
-      //   });
-      // }
-
       this.subject = "";
       this.level = "";
     },
@@ -266,11 +272,9 @@ export default {
       router.push({ name: "home" });
     },
   },
-  components: {Selector},
+  components: { Selector },
 };
 </script>
 <style scoped>
-.gameFont {
-  background-image: url("../assets/end.jpg");
-}
+
 </style>

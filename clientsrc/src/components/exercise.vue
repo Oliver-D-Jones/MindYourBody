@@ -107,7 +107,7 @@ export default {
       if (window.stream.class == "inviter") {
         window.stream.connection.send({
           class: "message",
-          message: "Peer is fetched a new exercise.",
+          message: "Peer has fetched a new exercise.",
         });
         window.stream.connection.send({ class: "getNewExercise" });
       }
@@ -127,9 +127,6 @@ export default {
       }
     },
     workOutComplete() {
-      // if (window.stream.class == "inviter") {
-      //   window.stream.connection.send("workoutComplete");
-      // }
       if (window.stream.class == "inviter") {
         window.stream.connection.send({
           class: "message",

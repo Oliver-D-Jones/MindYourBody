@@ -1,22 +1,37 @@
 <template>
-  <div class="invitee text-light mt-2">
-    <p class="py-0 bg-info text-dark">
+  <div
+    class="invitee text-light mt-2"
+    style="border:solid 2px white;background-color: black;background-image:linear-gradient(to bottom, rgb(0, 0, 0,.5), rgba(0, 0, 255, 0.4));"
+  >
+    <p
+      class="pb-0 text-dark"
+      style="border: 1px solid black;
+    border-radius: 5%;
+    background-color: white;"
+    >
       <span>{{me}}</span>
     </p>
     <video
       autoplay="true"
       id="myVideo"
+      class="mb-1"
       muted
       controls
       poster="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fmedia.giphy.com%2Fmedia%2Fi3pHUtmHiLd28%2Fgiphy.gif&f=1&nofb=1"
     ></video>
     <div>
-      <p class="py-0 bg-warning text-dark">
+      <p
+        class="pb-0 text-dark"
+        style="border: 1px solid black;
+    border-radius: 5%;
+    background-color: lightblue;"
+      >
         <span>{{peer}}</span>
       </p>
       <video
         autoplay="true"
         id="peerVideo"
+        class="mb-1"
         poster="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fmedia.giphy.com%2Fmedia%2Fi3pHUtmHiLd28%2Fgiphy.gif&f=1&nofb=1"
         controls
       ></video>
@@ -68,6 +83,8 @@ export default {
           this.$emit("inviteeWorkoutComplete");
           break;
         case "replay":
+          this.$store.dispatch("inviteeExercise", data.exercise);
+          this.$store.dispatch("inviteeTrivia", data.trivia);
           this.$emit("init");
           break;
         case "message":
@@ -218,7 +235,6 @@ export default {
         call.on("stream", function (stream) {
           // `stream` is the MediaStream of the remote peer.
           // Here you'd add it to an HTML video/canvas element.
-          window.stream.call = call;
           window.stream.remoteStream = stream;
           document.getElementById("peerVideo").srcObject = stream;
         });

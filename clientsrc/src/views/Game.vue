@@ -2,25 +2,23 @@
   <div class="game">
     <div class="container-fluid" id="main" style="min-height:100vh;">
       <div class="row" style="display: flex;justify-content: space-around;">
-        <div class="col-3" v-if="invitee">
+        <div class="col-3 mt-1" v-if="invitee">
           <Invitee
             key="inviteeVideostream"
             v-on:inviteeWorkoutComplete="()=>{
-              inviteeAct = true;
           }"
             v-on:inviteeWorkout="()=>{
             showQuestion = false;
             exercise = true;
           }"
-            v-on:beginPlay="startGame()"
             v-on:init="init()"
           />
-          <button v-if="displayStart" class="btn btn-outline-warning" @click="startGame">START</button>
+          <button v-if="displayStart" class="btn btn-outline-warning mt-1" @click="startGame">START</button>
         </div>
 
-        <div class="col-3" v-if="inviter">
-          <Inviter :key="'inviterVideostream'" v-on:beginPlay="startGame()" />
-          <button v-if="displayStart" class="btn btn-outline-warning" @click="startGame">START</button>
+        <div class="col-3 mt-1" v-if="inviter">
+          <Inviter :key="'inviterVideostream'" />
+          <button v-if="displayStart" class="btn btn-outline-warning mt-1" @click="startGame">START</button>
         </div>
 
         <div :class="display" v-if="showQuestion">
@@ -32,7 +30,7 @@
         </div>
 
         <div :class="display" v-if="answer">
-          <Answer key="answer" v-on:endgame="endgame()" :inviteeAct="inviteeAct" />
+          <Answer key="answer" v-on:endgame="endgame()" />
         </div>
 
         <div :class="display" v-if="end">
@@ -55,15 +53,12 @@ export default {
   name: "game",
   data() {
     return {
-      test: null,
-      // start: false,
       answer: false,
       exercise: false,
       end: false,
       showQuestion: false,
       inviter: false,
       invitee: false,
-      inviteeAct: false,
       displayStart: true,
     };
   },
@@ -78,17 +73,12 @@ export default {
       this.answer = true;
     },
     workout(work) {
-      // this.start = false;
       this.showQuestion = false;
       this.exercise = true;
     },
     init(play) {
       if (window.stream.class != "invitee") {
         this.begin();
-        if (window.stream.class == "inviter")
-          window.stream.connection.send({
-            class: "replay",
-          });
       }
       this.displayStart = true;
       this.end = false;
@@ -104,7 +94,7 @@ export default {
       let cat = this.$store.state.subject;
       let level = this.$store.state.level;
       let answers = [];
-      let token = window.stream.triviaToken;
+      let token = this.$store.state.triviaToken;
       const res = await fetch(
         `https://opentdb.com/api.php?amount=1&category=${cat}&difficulty=${level}&type=multiple&token=${token}`
       );
@@ -131,6 +121,13 @@ export default {
       this.$store.commit("setTrivia", data);
       if (!stream.class) {
         this.showQuestion = true;
+      } else if (window.stream.connection.open) {
+        let dataToSend = {
+          class: "replay",
+          trivia: this.$store.state.trivia,
+          exercise: this.$store.state.exercise,
+        };
+        window.stream.connection.send(dataToSend);
       }
     },
   },
@@ -139,7 +136,6 @@ export default {
     if (window.stream.class == "inviter") {
       this.inviter = true;
       this.begin();
-
       this.display = "col-9";
     } else if (window.stream.class == "invitee") {
       this.invitee = true;
@@ -172,7 +168,7 @@ video {
   min-height: 150px !important;
   max-height: 150px !important;
   border: solid 2px blue;
-  box-shadow: 2px 3px 8px white;
+  box-shadow: 4px 8px 18px white;
   border-radius: 8%;
 }
 #main {
