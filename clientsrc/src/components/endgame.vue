@@ -23,10 +23,6 @@
       <img v-else src="../assets/endWrong.gif" style="width: 10%;
       border-radius: 50%;" />
     </div>
-    <h3 v-if="gotStreak">
-      You earned 20 points for a 5-day streak!
-      You have played for {{days}} days straight!
-    </h3>
     <h3 v-if="this.answerStreakEarned">
       You earned 20 points for a 5-question streak!
       <img
@@ -76,8 +72,6 @@ export default {
       level: this.$store.state.level,
       answer: this.$store.state.answer,
       profile: this.$store.state.profile,
-
-      timeStreak: 0,
       show: false,
       time: new Date(),
       answerStreakEarned: false,
@@ -94,10 +88,6 @@ export default {
     this.$store.dispatch("getTrivia");
     this.$store.dispatch("getProfile");
     this.$store.dispatch("getCurrentPlayer");
-    this.$store.dispatch("updateStreak", {
-      id: this.playerid,
-      number: this.addStreak,
-    });
     this.$store.dispatch("getPoints", {
       id: this.playerid,
       points: this.points,
@@ -147,75 +137,6 @@ export default {
       }
     },
 
-    checkStreak() {
-      let prev = parseInt(this.player.previousDate);
-      let rec = parseInt(this.player.recentDate);
-      let prevDate = new Date(prev);
-      let recDate = new Date(rec);
-      let prevYear = prevDate.getFullYear();
-      let recYear = recDate.getFullYear();
-      let prevYearNum = parseInt(prevYear);
-      let recYearNum = parseInt(recYear);
-      let prevMonth = ("0" + (prevDate.getMonth() + 1)).slice(-2);
-      let recMonth = ("0" + (recDate.getMonth() + 1)).slice(-2);
-      let prevDay = ("0" + prevDate.getDate()).slice(-2);
-      let recDay = ("0" + recDate.getDate()).slice(-2);
-      let previDom = prevMonth + prevDay;
-      let receDom = recMonth + recDay;
-      let previ = prevYear + prevMonth + prevDay;
-      let rece = recYear + recMonth + recDay;
-      let prevDom = parseInt(previDom);
-      let recDom = parseInt(receDom);
-      let previous = parseInt(previ);
-      let recent = parseInt(rece);
-      let leapYear =
-        prevYearNum == recYearNum &&
-        prevYearNum % 4 == 0 &&
-        prevDom == 229 &&
-        recDom == 301;
-      if (
-        (recYearNum == prevYearNum + 1 && prevDom == 1231 && recDom == 101) ||
-        (!leapYear && prevDom == 228 && recDom == 301) ||
-        (prevYearNum == recYearNum && recDom == prevDom + 1) ||
-        (prevDom == 131 && recDom == 201) ||
-        (prevDom == 229 && recDom == 301) ||
-        (prevDom == 331 && recDom == 401) ||
-        (prevDom == 430 && recDom == 501) ||
-        (prevDom == 630 && recDom == 701) ||
-        (prevDom == 731 && recDom == 801) ||
-        (prevDom == 831 && recDom == 901) ||
-        (prevDom == 930 && recDom == 1001) ||
-        (prevDom == 1031 && recDom == 1101) ||
-        (prevDom == 1130 && recDom == 1201)
-      ) {
-        return 1;
-      }
-      return 0;
-    },
-    addStreak() {
-      if (this.checkStreak == 1) {
-        return this.player.timeStreakCount + 1;
-      } else {
-        return 1;
-      }
-    },
-    gotStreak() {
-      if (
-        //this.player.timeStreakCount !== 0 &&
-        //this.player.timeStreakCount % 5 == 0
-        this.timeStreak !== 0 &&
-        this.timeStreak % 5 == 0
-      ) {
-        return 20;
-      }
-      return false;
-    },
-    /*player() {
-      return this.player;
-    },*/
-    days() {
-      return this.player.timeStreakCount;
-    },
     player() {
       return this.$store.state.currentPlayer;
     },
@@ -261,7 +182,7 @@ export default {
       } else {
         pts = 0;
       }
-      return pts + this.gotStreak + this.answerStreak.streakPoints;
+      return pts + this.answerStreak.streakPoints;
     },
   },
   methods: {
