@@ -18,28 +18,21 @@
               Total Points:
               <b class="text-success">{{playerStats.points}}</b>
             </h3>
-            <h5 class="p-1 text-light" v-if="playerStats.timeStreakCount === 1">
-              PlayStreak:
-              <b class="text-warning">{{playerStats.timeStreakCount}}</b> day in a row!
-            </h5>
-            <h5 class="p-1 text-light" v-if="playerStats.timeStreakCount !=1">
-              Play Streak:
-              <b class="text-warning">{{playerStats.timeStreakCount}}</b> days in a row!
-            </h5>
+
             <h5 class="p-1 text-light" v-if="playerStats.streak===1">
-              Question Streak:
+              Question Streak: &nbsp
               <b class="text-warning">{{playerStats.streak}}</b> question in a row!
             </h5>
             <h5 class="p-1 text-light" v-if="playerStats.streak!=1">
-              Question Streak:
+              Question Streak: &nbsp
               <b class="text-warning">{{playerStats.streak}}</b> questions in a row!
             </h5>
             <h5 class="p-1 text-light" v-if="playerStats.megaStreak === 1">
-              MEGA-Streak
+              MEGA-Streak: &nbsp
               <b class="text-warning">{{playerStats.megaStreak}}</b> Question Streak in a row!
             </h5>
             <h5 class="p-1 text-light" v-if="playerStats.megaStreak !=1">
-              MEGA-Streak:
+              MEGA-Streak: &nbsp
               <b class="text-warning">{{playerStats.megaStreak}}</b> Question Streaks in a row!
             </h5>
 
@@ -54,7 +47,7 @@
               </thead>
               <tbody>
                 <tr v-for="subject in playerStats.categoryStats" :key="subject.id">
-                  <td>{{subject.category}}</td>
+                  <td class="text-info">{{subject.category}}</td>
                   <td class="text-danger">{{subject.attempted}}</td>
                   <td class="text-success">{{subject.correct}}</td>
                   <td

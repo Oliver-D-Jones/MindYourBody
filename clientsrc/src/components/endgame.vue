@@ -79,20 +79,16 @@ export default {
       playerClass: window.stream.class,
     };
   },
-  watch: {
-    days: function (newStreakCount) {
-      this.timeStreak = newStreakCount;
-    },
-  },
+
   mounted() {
     this.$store.dispatch("getTrivia");
     this.$store.dispatch("getProfile");
-    this.$store.dispatch("getCurrentPlayer");
+    // this.$store.dispatch("getCurrentPlayer");
     this.$store.dispatch("getPoints", {
       id: this.playerid,
-      points: this.points,
-      streak: this.answerStreak.reg,
-      megaStreak: this.answerStreak.mega,
+      streak: this.answerStreak.streak,
+      megaStreak: this.answerStreak.megaStreak,
+      points: this.points + this.answerStreak.streakPoints,
     });
     this.$store.dispatch("updateCategoryStats", this.categoryStats);
     this.show = true;
@@ -143,31 +139,33 @@ export default {
     answerStreak() {
       let megaStreak = this.$store.state.currentPlayer.megaStreak;
       let streak = this.$store.state.currentPlayer.streak;
-      let answer = this.$store.state.answer;
-      let points = 0;
-      if (!answer) {
+      let streakPoints = 0;
+      if (!this.answer) {
         streak = 0;
         megaStreak = 0;
         console.log("answerStreak increased", streak);
-      }
-      if (answer) {
-        streak++;
+      } else {
+        streak += 1;
         console.log("answerStreak increased", streak);
       }
       if (streak === 5) {
         this.answerStreakEarned = true;
-        points += 20;
+        streakPoints += 20;
         streak = 0;
-        megaStreak++;
+        megaStreak += 1;
         console.log("Five in a row. You got a streak!", streak);
       }
       if (megaStreak === 5) {
         this.megaStreakEarned = true;
-        points += 100;
+        streakPoints += 100;
         megaStreak = 0;
         console.log("Five streaks in a row. You got a megaStreak!", megaStreak);
       }
-      return { reg: streak, mega: megaStreak, streakPoints: points };
+      return {
+        streak: streak,
+        megaStreak: megaStreak,
+        streakPoints: streakPoints,
+      };
     },
     points() {
       let pts = 0;
@@ -182,7 +180,7 @@ export default {
       } else {
         pts = 0;
       }
-      return pts + this.answerStreak.streakPoints;
+      return pts;
     },
   },
   methods: {
