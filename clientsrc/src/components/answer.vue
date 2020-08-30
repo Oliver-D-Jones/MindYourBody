@@ -103,10 +103,6 @@ export default {
   mounted() {
     this.show = true;
     this.$store.dispatch("getCurrentPlayer");
-    this.$store.dispatch("setDates", {
-      date: this.date,
-      id: this.playerid,
-    });
   },
 };
 </script>

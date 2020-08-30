@@ -115,34 +115,6 @@ export default new Vuex.Store({
       }
     },
 
-    //sets most recent play date to current date, moves previous recent play date to "previous"
-    async setDates({ commit, dispatch, state }, data) {
-      try {
-        let res = await api.put("players/" + data.id, {
-          previousDate: state.currentPlayer.recentDate,
-          recentDate: data.date
-          //for test purposes:
-          //previousDate: 1593720150000,
-          //recentDate: 1593979350000
-        })
-        dispatch("getCurrentPlayer")
-        //dispatch("checkTimeStreak", data)
-        console.log(state.currentPlayer)
-      } catch (err) {
-        console.error(err)
-      }
-    },
-
-    //checks if player already exists and, if not, passes data to new player constructor
-    async checkPlayer({ commit, dispatch, state }, data) {
-      try {
-        let res = await api.get("players/" + data.data.id)
-        dispatch('getPoints', data)
-      } catch (err) {
-        dispatch("newPlayer", data)
-        console.error(err)
-      }
-    },
 
     //creates new player in player db from combination of profile info and default settings
     async newPlayer({ commit, dispatch, state }, data) {
@@ -184,18 +156,6 @@ export default new Vuex.Store({
     async updateCategoryStats({ commit, dispatch, state }, data) {
       try {
         let res = await api.put("players/" + data.profileId, { categoryStats: data.categoryStats })
-        dispatch("getCurrentPlayer")
-      } catch (err) {
-        console.error(err)
-      }
-    },
-
-    //sets the number of days in a row player has played
-    async updateStreak({ commit, dispatch, state }, data) {
-      try {
-        let res = await api.put("players/" + data.id, {
-          timeStreakCount: data.number,
-        })
         dispatch("getCurrentPlayer")
       } catch (err) {
         console.error(err)
