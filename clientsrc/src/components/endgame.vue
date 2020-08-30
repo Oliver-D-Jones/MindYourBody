@@ -30,6 +30,14 @@
         style="width: 15rem;"
       />
     </h3>
+    <h3 v-if="this.dayStreakEarned">
+      You earned 20 points for a 5-day streak!
+      You have played {{days}} days in a row!
+      <img
+        src="../assets/coin.gif"
+        style="width: 15rem;"
+      />
+    </h3>
     <h3 v-if="this.megaStreakEarned">
       You earned 100 points for a MEGA-Streak!
       <img src="../assets/coin.gif" style="width: 15rem;" />
@@ -70,24 +78,22 @@ export default {
       subject: this.$store.state.subject,
       category: this.$store.state.trivia.category,
       level: this.$store.state.level,
+      player: this.$store.state.currentPlayer,
       answer: this.$store.state.answer,
       profile: this.$store.state.profile,
+      dayStreak: this.$store.state.currentPlayer.dayStreak,
+      dayStreakCount: this.$store.state.currentPlayer.dayStreakCount,
       show: false,
-      time: new Date(),
       answerStreakEarned: false,
       megaStreakEarned: false,
       playerClass: window.stream.class,
     };
   },
-  watch: {
-    days: function (newStreakCount) {
-      this.timeStreak = newStreakCount;
-    },
-  },
   mounted() {
     this.$store.dispatch("getTrivia");
     this.$store.dispatch("getProfile");
     this.$store.dispatch("getCurrentPlayer");
+    this.$store.dispatch("addStreak", this.dayStreakEarned);
     this.$store.dispatch("getPoints", {
       id: this.playerid,
       points: this.points,
@@ -100,6 +106,20 @@ export default {
   computed: {
     playerid() {
       return this.$store.state.currentPlayer.profileId;
+    },
+    days() {
+      return this.dayStreak + this.dayStreakCount * 5;
+    },
+    dayStreakEarned() {
+      if ((this.dayStreak + this.dayStreakCount * 5) % 5 === 0) {
+        return {
+          profileId: this.player.profileId,
+          dayStreakCount: this.player.dayStreakCount + 1,
+          dayStreak: 0,
+        };
+      } else {
+        return false;
+      }
     },
     categoryStats() {
       let y = this.player.categoryStats.findIndex(

@@ -8,6 +8,9 @@ const Player = new Schema({
     points: { type: Number, required: false },
     streak: { type: Number, required: false },
     megaStreak: { type: Number, required: false },
+    prevDate: { type: Number, required: false },
+    dayStreak: { type: Number, required: false },
+    dayStreakCount: { type: Number, required: false },
     categoryStats: { type: Object, required: false },
 }, { timestamps: true, toJSON: { virtuals: true } })
 
