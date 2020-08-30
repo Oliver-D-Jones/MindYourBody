@@ -21,19 +21,23 @@
 
             <h5 class="p-1 text-light" v-if="playerStats.streak===1">
               Question Streak: &nbsp
-              <b class="text-warning">{{playerStats.streak}}</b> question in a row!
+              <b class="text-warning">{{playerStats.streak}}</b> /
+              <span class="text-warning">5</span> Questions Correct
             </h5>
             <h5 class="p-1 text-light" v-if="playerStats.streak!=1">
               Question Streak: &nbsp
-              <b class="text-warning">{{playerStats.streak}}</b> questions in a row!
+              <b class="text-warning">{{playerStats.streak}}</b> /
+              <span class="text-warning">5</span> Questions Correct
             </h5>
             <h5 class="p-1 text-light" v-if="playerStats.megaStreak === 1">
               MEGA-Streak: &nbsp
-              <b class="text-warning">{{playerStats.megaStreak}}</b> Question Streak in a row!
+              <b class="text-warning">{{playerStats.megaStreak}}</b> /
+              <span class="text-warning">5</span> Streaks Complete
             </h5>
             <h5 class="p-1 text-light" v-if="playerStats.megaStreak !=1">
               MEGA-Streak: &nbsp
-              <b class="text-warning">{{playerStats.megaStreak}}</b> Question Streaks in a row!
+              <b class="text-warning">{{playerStats.megaStreak}}</b> /
+              <span class="text-warning">5</span> Streaks Complete
             </h5>
 
             <table class="table mt-5">
