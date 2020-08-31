@@ -12,23 +12,24 @@
           <h3>
             <ol>
               <div v-for="leader in leaders" :leader="leader" :key="leader.id">
-                <div class="card bg-secondary text-light mr-5">
-                  <div class="d-flex" style="justify-content: space-between">
-                    <div class="ml-3">
-                      <i class="fa fa-user-circle text-info" aria-hidden="true"></i>
-                    </div>
+                <div class="card bg-light text-dark mr-5">
+                  <div class="d-flex pt-2" style="justify-content: space-between">
                     <div>
-                      <span>{{leader.name}}</span>
+                      <h5>
+                        <span class="ml-2">{{leader.name}}</span>
+                      </h5>
                     </div>
                     <div class="mr-3">
-                      <span class="text-warning">{{leader.points}}</span>
+                      <h5>
+                        <span class="text-success">{{leader.points}}</span>
+                      </h5>
                     </div>
                   </div>
                 </div>
               </div>
             </ol>
           </h3>
-          <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-success mx-4 mb-2" data-dismiss="modal">Close</button>
         </div>
       </div>
     </div>
