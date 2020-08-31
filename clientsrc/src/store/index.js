@@ -19,6 +19,7 @@ export default new Vuex.Store({
     leaders: [],
     user: {},
     currentPlayer: {},
+    roundComplete: false,
     // NOTE work here too clean state up; organize
     level: null,
     subject: null,
@@ -26,6 +27,9 @@ export default new Vuex.Store({
     triviaToken: "",
   },
   mutations: {
+    setRoundComplete(state, completed) {
+      state.roundComplete = completed;
+    },
     setProfile(state, profileObject) {
       state.profile = profileObject
     },
@@ -70,6 +74,9 @@ export default new Vuex.Store({
       } catch (err) {
         console.error(err)
       }
+    },
+    roundCompleted({ commit }, data) {
+      commit("setRoundComplete", data);
     },
     triviaToken({ commit }, data) {
       commit("setTriviaToken", data)

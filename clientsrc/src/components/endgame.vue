@@ -48,12 +48,12 @@
     <div class="row mt-3" style="justify-content: space-evenly">
       <div class="col-5">
         <button
-          v-if="playerClass != 'invitee'"
+          v-if="(playerClass != 'invitee') && (inviteeCompleted)"
           @click="startPlay()"
           class="btn btn-block btn-outline-danger bg-dark py-2"
         >PLAY AGAIN</button>
         <button class="btn btn-block btn-outline-danger bg-dark py-2" v-else>
-          Awaiting Friend... &nbsp;
+          Awaiting Friend To Finish Their Round... &nbsp;
           <i
             class="fa fa-spinner fa-spin"
             style="font-size:1.3rem;color:blue"
@@ -101,9 +101,17 @@ export default {
       points: this.points + this.answerStreak.streakPoints,
     });
     this.$store.dispatch("updateCategoryStats", this.categoryStats);
+    if (window.stream.class == "invitee") {
+      setTimeout((event) => {
+        window.stream.connection.send({ class: "inviteeFinished", data: true });
+      },3000);
+    }
     this.show = true;
   },
   computed: {
+    inviteeCompleted() {
+      return this.$store.state.roundComplete;
+    },
     playerid() {
       return this.$store.state.currentPlayer.profileId;
     },
@@ -223,6 +231,9 @@ export default {
       }
       if (this.level != this.$store.state.level) {
         this.$store.dispatch("setLevel", this.level);
+      }
+      if (window.stream.class == "inviter") {
+        this.$store.dispatch("roundCompleted", false);
       }
       this.$emit("init");
       this.subject = "";

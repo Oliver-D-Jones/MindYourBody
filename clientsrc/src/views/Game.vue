@@ -2,7 +2,7 @@
   <div class="game">
     <div class="container-fluid" id="main" style="min-height:100vh;">
       <div class="row" style="display: flex;justify-content: space-around;">
-        <div class="col-4 mt-1" v-if="invitee">
+        <div class="col-sm-12 col-md-4 mt-1" v-if="invitee">
           <button
             v-if="displayStart && $auth.isAuthenticated"
             class="btn btn-outline-warning mb-1"
@@ -19,11 +19,7 @@
             v-on:init="init()"
           />
         </div>
-        <div
-          class="col-12"
-          style="margin-top: 5%;"
-          v-if="!$auth.isAuthenticated"
-        >
+        <div class="col-12" style="margin-top: 5%;" v-if="!$auth.isAuthenticated">
           <button
             style="min-height: 50vh;
             background-image: radial-gradient(white, blue, black);"
@@ -37,7 +33,7 @@
           </button>
         </div>
 
-        <div class="col-4 mt-1" v-if="inviter">
+        <div class="col-sm-12 col-md-4 mt-1" v-if="inviter">
           <button v-if="displayStart" class="btn btn-outline-warning mb-1" @click="startGame">START</button>
           <Inviter :key="'inviterVideostream'" />
         </div>
@@ -92,20 +88,19 @@ export default {
         this.$store.dispatch("getProfile");
         console.log("this.$auth.user: ");
         console.log(this.$auth.user);
-        let loc = window.location.href.split("/");
-        let player = loc[loc.length - 1];
-        if (this.$auth.isAuthenticated) {
-          window.stream = new Object();
-          window.stream.class = "invitee";
-          window.stream.peerId = loc[loc.length - 2];
-          let myId = (
-            Math.random().toString(36) + "0000000000000000000"
-          ).substr(2, 16);
-          window.stream.myId = myId;
-          this.display = "col-8";
-          this.invitee = true;
-        }
       });
+    },
+    initiateInvitee(loc) {
+      window.stream = new Object();
+      window.stream.class = "invitee";
+      window.stream.peerId = loc[loc.length - 2];
+      let myId = (Math.random().toString(36) + "0000000000000000000").substr(
+        2,
+        16
+      );
+      window.stream.myId = myId;
+      this.display = "col-8";
+      this.invitee = true;
     },
     startGame() {
       this.showQuestion = true;
@@ -119,9 +114,9 @@ export default {
       this.showQuestion = false;
       this.exercise = true;
     },
-    init(play) {
+    async init(play) {
       if (window.stream.class != "invitee") {
-        this.begin();
+        await this.begin();
       }
       this.displayStart = true;
       this.end = false;
@@ -133,7 +128,7 @@ export default {
       this.end = true;
     },
     async begin() {
-      this.$store.dispatch("getExercise");
+      await this.$store.dispatch("getExercise");
       let cat = this.$store.state.subject;
       let level = this.$store.state.level;
       let answers = [];
@@ -178,9 +173,19 @@ export default {
   async beforeMount() {
     let loc = window.location.href.split("/");
     let player = loc[loc.length - 1];
+
     if (player == "invitee") {
-      this.display = "col-8";
-      return;
+      if (this.$auth.isAuthenticated) {
+        this.initiateInvitee(loc);
+      } else {
+        await this.$auth.loginWithPopup().then(() => {
+          this.$store.dispatch("setBearer", this.$auth.bearer);
+          this.$store.dispatch("getProfile");
+          if (this.$auth.isAuthenticated) {
+            this.initiateInvitee(loc);
+          }
+        });
+      }
     } else if (player == "inviter") {
       this.inviter = true;
       this.begin();
@@ -224,7 +229,9 @@ export default {
 video {
   padding-top: 1rem;
   margin-bottom: 0px;
-  max-width: 90%;
+}
+@media screen and (max-width: 425px) {
+  video {height: 30vh;}
 }
 .controls {
   margin-top: 0px;
@@ -240,5 +247,14 @@ video {
 #main {
   background-image: url("../assets/end.jpg");
   background-position: center;
+}
+#msgAll {
+  height: 30vh;
+  min-width: -webkit-fill-available;
+  padding: 4px;
+  border: 1px solid white;
+  position: absolute;
+  left: 0px;
+  z-index: 1000;
 }
 </style>

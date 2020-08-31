@@ -1,17 +1,17 @@
 <template>
-  <div class="peerVideo mt-0">
-    <h4 class="mt-0">
+  <div class="peerVideo bg-info">
+    <h3 class="mb-0">
       <span
         id="peerName"
-        class="badge badge-primary text-truncate my-0"
+        class="badge badge-warning text-truncate my-0"
         style="width: -webkit-fill-available;">
       </span>
-    </h4>
-    <div class="my-0">
+    </h3>
+    <div class="mt-0">
       <video
         autoplay="true"
         id="peerVideo"
-        class="col-12"
+        class="col-12 mt-0"
         poster="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fmedia.giphy.com%2Fmedia%2Fi3pHUtmHiLd28%2Fgiphy.gif&f=1&nofb=1"
         controls
       ></video>

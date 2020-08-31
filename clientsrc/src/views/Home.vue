@@ -140,6 +140,7 @@ export default {
           window.stream.class = "invitee";
           window.stream.myId = myId;
           router.push("/game/" + id + "/invitee");
+          swal.close()
         } else {
           // window.stream = {};
           // window.stream.class = false;

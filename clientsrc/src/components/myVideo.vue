@@ -1,22 +1,23 @@
 <template>
-  <div class="myVideo">
+  <div class="myVideo bg-dark">
     <h4 v-if="playerClass == 'inviter'" class="my-0">
       <span
-        class="badge badge-primary text-truncate"
+        class="badge badge-dark text-light text-truncate"
         style="width: -webkit-fill-available;"
-      >My Link:<br/>{{link}}</span>
+      >
+        My Link:
+        <br />
+        {{link}}
+      </span>
     </h4>
-    <h4 class="my-0"> <span class="badge badge-primary text-truncate" style="width: -webkit-fill-available;">{{me}}</span>
+    <h4 class="my-0">
+      <span
+        class="badge badge-dark text-light text-truncate"
+        style="width: -webkit-fill-available;"
+      >{{me}}</span>
     </h4>
     <div class="mt-0">
-      <video
-        autoplay="true"
-        id="myVideo"
-        class="col-12"
-        muted
-        poster="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fmedia.giphy.com%2Fmedia%2Fi3pHUtmHiLd28%2Fgiphy.gif&f=1&nofb=1"
-      ></video>
-      <div class="controls col-12 mt-0">
+      <div class="controls col-12 mt-1 mb-0 pb-0">
         <svg
           width="1.3rem"
           height="1.3rem"
@@ -136,6 +137,13 @@
           />
         </svg>
       </div>
+      <video
+        autoplay="true"
+        id="myVideo"
+        class="col-12 mt-0 pt-0"
+        muted
+        poster="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fmedia.giphy.com%2Fmedia%2Fi3pHUtmHiLd28%2Fgiphy.gif&f=1&nofb=1"
+      ></video>
     </div>
   </div>
 </template>

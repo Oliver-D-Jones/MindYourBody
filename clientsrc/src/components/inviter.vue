@@ -1,6 +1,5 @@
 <template>
   <div class="inviter video-container">
-    <LocalVideo key="localVideo" />
     <!-- PEER VIDEO -->
     <RemoteVideo key="remoteVideo" />
     <div class="col-12 bg-dark">
@@ -16,8 +15,16 @@
       </button>
       <br />
       <p class="bg-dark text-info rounded" v-if="showLastMsg" id="msgOne">{{lastMessage}}</p>
-      <textarea v-if="showAllMsg" class="bg-dark text-info pt-2" id="msgAll" :value="messageString"></textarea>
+      <textarea
+        v-if="showAllMsg"
+        class="bg-dark text-info pt-1"
+        id="msgAll"
+        :value="messageString"
+        readonly
+      ></textarea>
     </div>
+    <!-- "MY VIDEO" -->
+    <LocalVideo key="localVideo" />
   </div>
 </template>
 <script>
@@ -60,6 +67,9 @@ export default {
       let dataToSend;
       try {
         switch (data.class) {
+          case "inviteeFinished":
+            this.$store.dispatch("roundCompleted", true);
+            break;
           case "peerName":
             document.getElementById("peerName").textContent = data.name;
             return;

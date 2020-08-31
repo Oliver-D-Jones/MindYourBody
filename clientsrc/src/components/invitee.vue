@@ -1,7 +1,5 @@
 <template>
   <div class="invitee video-container">
-    <!-- LOCAL VIDEO -->
-    <LocalVideo key="localVideo" />
     <!-- PEER VIDEO -->
     <RemoteVideo key="remoteVideo" />
     <div class="col-12 bg-dark">
@@ -17,8 +15,16 @@
       </button>
       <br />
       <p class="bg-dark text-info rounded" v-if="showLastMsg" id="msgOne">{{lastMessage}}</p>
-      <textarea v-if="showAllMsg" class="bg-dark text-info pt-2" id="msgAll" :value="messageString"></textarea>
+      <textarea
+        v-if="showAllMsg"
+        class="bg-dark text-info pt-1"
+        readonly
+        id="msgAll"
+        :value="messageString"
+      ></textarea>
     </div>
+    <!-- "MY VIDEO" -->
+    <LocalVideo key="localVideo" />
   </div>
 </template>
 <script>
@@ -248,10 +254,4 @@ export default {
 
 
 <style>
-#msgAll {
-  height: 25vh;
-  min-width: -webkit-fill-available;
-  padding: 4px;
-  border: 1px solid white;
-}
 </style>
