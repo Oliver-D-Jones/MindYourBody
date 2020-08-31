@@ -80,6 +80,7 @@ export default new Vuex.Store({
     inviteeTrivia({ commit }, data) {
       commit("setTrivia", data)
     },
+
     async getCurrentPlayer({ commit, dispatch, state }) {
       try {
         let res = await api.get("players/" + state.profile.id)
@@ -92,29 +93,6 @@ export default new Vuex.Store({
         console.error(err)
       }
     },
-
-    //retrieves points stored in profile and passes along points just earned
-    async getPoints({ commit, dispatch, state }, data) {
-      console.log("hello from getPoints")
-      try {
-        let res = await api.get("players/" + data.id)
-        dispatch("updatePoints", {
-          id: data.id,
-          oldPoints: res.data.points,
-          newPoints: data.points,
-          streak: data.streak,
-          megaStreak: data.megaStreak,
-          categoryStats: [{
-            category: data.category,
-            correct: data.correct,
-            attempted: data.attempted
-          }]
-        })
-      } catch (err) {
-        console.error(err)
-      }
-    },
-
 
     //creates new player in player db from combination of profile info and default settings
     async newPlayer({ commit, dispatch, state }, data) {
@@ -132,6 +110,23 @@ export default new Vuex.Store({
           categoryStats: []
         })
         commit("setCurrentPlayer", res.data)
+      } catch (err) {
+        console.error(err)
+      }
+    },
+
+    //retrieves points stored in profile and passes along points just earned
+    async getPoints({ commit, dispatch, state }, data) {
+      console.log("hello from getPoints")
+      try {
+        let res = await api.get("players/" + data.id)
+        dispatch("updatePoints", {
+          id: data.id,
+          oldPoints: res.data.points,
+          newPoints: data.points,
+          streak: data.streak,
+          megaStreak: data.megaStreak,
+        })
       } catch (err) {
         console.error(err)
       }
