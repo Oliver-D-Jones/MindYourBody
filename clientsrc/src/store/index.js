@@ -80,6 +80,7 @@ export default new Vuex.Store({
     inviteeTrivia({ commit }, data) {
       commit("setTrivia", data)
     },
+
     async getCurrentPlayer({ commit, dispatch, state }) {
       try {
         let res = await api.get("players/" + state.profile.id)
@@ -89,6 +90,25 @@ export default new Vuex.Store({
           id: state.profile.id,
           name: state.profile.name
         })
+        console.error(err)
+      }
+    },
+    //creates new player in player db from combination of profile info and default settings
+    async newPlayer({ commit, dispatch, state }, data) {
+      try {
+        let res = await api.post("players", {
+          name: data.name,
+          points: 0,
+          profileId: data.id,
+          prevDate: 0,
+          dayStreak: 0,
+          dayStreakCount: 0,
+          streak: 0,
+          megaStreak: 0,
+          categoryStats: []
+        })
+        commit("setCurrentPlayer", res.data)
+      } catch (err) {
         console.error(err)
       }
     },
@@ -114,7 +134,6 @@ export default new Vuex.Store({
         console.error(err)
       }
     },
-
     //updates day streak tally based on comparison of current date and previous play date
     async addStreak({ commit, dispatch, state }, data) {
       try {
@@ -124,27 +143,6 @@ export default new Vuex.Store({
         console.error(err)
       }
     },
-
-    //creates new player in player db from combination of profile info and default settings
-    async newPlayer({ commit, dispatch, state }, data) {
-      try {
-        let res = await api.post("players", {
-          name: data.name,
-          points: 0,
-          profileId: data.id,
-          prevDate: 0,
-          dayStreak: 0,
-          dayStreakCount: 0,
-          streak: 0,
-          megaStreak: 0,
-          categoryStats: []
-        })
-        commit("setCurrentPlayer", res.data)
-      } catch (err) {
-        console.error(err)
-      }
-    },
-
     //adds all points awarded for question and streak if streak earned
     async updatePoints({ commit, dispatch, state }, data) {
       console.log("hello from updatePoints")

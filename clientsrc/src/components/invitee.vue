@@ -1,45 +1,12 @@
 <template>
-  <div
-    class="invitee text-light mt-2"
-    style="border:solid 2px white;background-color: black;background-image:linear-gradient(to bottom, rgb(0, 0, 0,.5), rgba(0, 0, 255, 0.4));"
-  >
-    <p
-      class="pb-0 text-dark"
-      style="border: 1px solid black;
-    border-radius: 5%;
-    background-color: white;"
-    >
-      <span>{{me}}</span>
-    </p>
-    <video
-      autoplay="true"
-      id="myVideo"
-      class="mb-1"
-      muted
-      controls
-      poster="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fmedia.giphy.com%2Fmedia%2Fi3pHUtmHiLd28%2Fgiphy.gif&f=1&nofb=1"
-    ></video>
-    <div>
-      <p
-        class="pb-0 text-dark"
-        style="border: 1px solid black;
-    border-radius: 5%;
-    background-color: lightblue;"
-      >
-        <span>{{peer}}</span>
-      </p>
-      <video
-        autoplay="true"
-        id="peerVideo"
-        class="mb-1"
-        poster="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fmedia.giphy.com%2Fmedia%2Fi3pHUtmHiLd28%2Fgiphy.gif&f=1&nofb=1"
-        controls
-      ></video>
-    </div>
-
-    <div class="py-1">
+  <div class="invitee video-container">
+    <!-- LOCAL VIDEO -->
+    <LocalVideo key="localVideo" />
+    <!-- PEER VIDEO -->
+    <RemoteVideo key="remoteVideo" />
+    <div class="col-12 bg-dark">
       <button
-        class="btn btn-outline-info btn-sm bg-light"
+        class="btn btn-outline-info btn-sm bg-light mb-1"
         @click="()=>{
         showAllMsg = !showAllMsg;
         showLastMsg = !showLastMsg;
@@ -55,6 +22,8 @@
   </div>
 </template>
 <script>
+import LocalVideo from "./myVideo";
+import RemoteVideo from "./peerVideo";
 export default {
   name: "invitee",
   data() {
@@ -63,8 +32,6 @@ export default {
       lastMessage: "No Messages Yet.",
       showAllMsg: false,
       showLastMsg: true,
-      me: this.$store.state.currentPlayer.name,
-      peer: "",
     };
   },
   computed: {},
@@ -89,9 +56,13 @@ export default {
         case "workoutComplete":
           this.$emit("inviteeWorkoutComplete");
           break;
+        case "newExercise":
+          this.$store.dispatch("inviteeExercise", data.exercise);
+          break;
         case "replay":
           this.$store.dispatch("inviteeExercise", data.exercise);
           this.$store.dispatch("inviteeTrivia", data.trivia);
+          console.log("INSIDE REPLAY: ", data);
           this.$emit("init");
           break;
         case "message":
@@ -101,8 +72,8 @@ export default {
           this.messageString += _string + "\n";
           break;
         case "name":
-          this.peer = data.name;
-          let _me = this.me;
+          document.getElementById("peerName").textContent = data.name;
+          let _me = this.$auth.user.name;
           window.stream.connection.send({ class: "peerName", name: _me });
           break;
         default:
@@ -110,7 +81,7 @@ export default {
       }
     },
   },
-  components: {},
+  components: { LocalVideo, RemoteVideo },
   beforeDestroy() {
     // localStream = null;
     // this.conn.close();
@@ -189,7 +160,6 @@ export default {
             });
             peer.on("error", function (err) {
               console.log(err);
-              console.log("" + err);
             });
             peer.on("call", function (call) {
               try {
@@ -199,8 +169,6 @@ export default {
                 console.log("Failed to get/send stream", error);
               }
             });
-            // document.getElementById("myId").textContent = `My Id: ${peer.id}`;
-            console.log(peer.id);
             join();
           }
         });
@@ -231,7 +199,6 @@ export default {
           if (command) conn.send(command);
         });
         conn.on("data", function (data) {
-          console.log("INVITEE REC'D DATA->", data);
           window.stream.respondToInviter(data);
         });
         conn.on("close", function () {

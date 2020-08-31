@@ -28,6 +28,17 @@ const routes = [
     // beforeEnter: authGuard
   },
   {
+    path: "/game/:id/inviter",
+    name: "inviter",
+    component: Game,
+    // beforeEnter: authGuard,
+  },
+  {
+    path: "/game/:id/invitee",
+    name: "invitee",
+    component: Game,
+  },
+  {
     path: "*",
     redirect: '/'
   }
@@ -37,29 +48,30 @@ const router = new Router({
 })
 
 export default router
+
 // for all routes
-// router.beforeEach((to, from, next) => {
-  // if (to.name != "Home" && !isAuthenticated) {
-  //   next({ name: "Home" })
+router.beforeEach((to, from, next) => {
+  // if (to.name != "home") {
+  //   next({ name: "home" })
   // }
-//   if (from.name == "game" && window.stream.class) {
-//     swal({
-//       title: "Are you sure you want to leave Game...You may lose your connection to your peer!",
-//       icon: "warning",
-//       buttons: {
-//         one: { text: "Cancel", value: false },
-//         zero: { text: "Confirm", value: true },
-//       },
-//     }).then((value) => {
-//       if (value) {
-//         swal.close();
-//         next();
-//       } else {
-//         next(false)
-//         swal.close();
-//       }
-//     });
-//   } else {
-//     next()
-//   }
-// })
+  if ((from.name == "invitee" || from.name == "inviter") && window.stream.class) {
+    swal({
+      title: "Are you sure you want to leave Game...You may lose your connection to your peer!",
+      icon: "warning",
+      buttons: {
+        one: { text: "Cancel", value: false },
+        zero: { text: "Confirm", value: true },
+      },
+    }).then((value) => {
+      if (value) {
+        swal.close();
+        next();
+      } else {
+        next(false)
+        swal.close();
+      }
+    });
+  } else {
+    next()
+  }
+})

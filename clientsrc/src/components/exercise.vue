@@ -39,11 +39,7 @@
         </li>
       </ul>
       <div class="card-body">
-        <button
-          class="btn btn-block btn-outline-info"
-          @click="getExercise"
-          v-if="allowGet"
-        >Get a Different Exercise</button>
+        <button class="btn btn-block btn-outline-info" @click="getExercise">Get a Different Exercise</button>
         <button
           class="btn btn-block btn-outline-success"
           @click="workOutComplete"
@@ -61,7 +57,6 @@ export default {
   name: "exercise",
   data: function () {
     return {
-      allowGet: true,
       cheatTimer: 1,
       show: false,
       isDisabled: true,
@@ -75,16 +70,12 @@ export default {
     this.$store.state.exercise = {};
   },
   beforeMount() {
-    if (window.stream.class == "invitee") {
-      this.allowGet = false;
-    }
     this.show = true;
   },
   mounted() {
     document.getElementById(
       "question"
     ).innerHTML = this.$store.state.trivia.question;
-    console.log("IN MOUNTED");
     this.cheatInterval();
   },
   computed: {
@@ -92,8 +83,7 @@ export default {
       this.imgExer = true;
       if (window.stream.class == "inviter") {
         let dataToSend = {
-          class: "game",
-          trivia: this.$store.state.trivia,
+          class: "newExercise",
           exercise: this.$store.state.exercise,
         };
         window.stream.connection.send(dataToSend);
@@ -104,12 +94,11 @@ export default {
   methods: {
     getExercise() {
       this.imgExer = false;
-      if (window.stream.class == "inviter") {
+      if (window.stream.class) {
         window.stream.connection.send({
           class: "message",
           message: "Peer has fetched a new exercise.",
         });
-        window.stream.connection.send({ class: "getNewExercise" });
       }
 
       this.$store.dispatch("getExercise");
