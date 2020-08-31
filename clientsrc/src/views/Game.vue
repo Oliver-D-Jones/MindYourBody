@@ -1,8 +1,13 @@
 <template>
   <div class="game">
-    <div class="container-fluid" id="main" style="height:100vh;">
+    <div class="container-fluid" id="main" style="min-height:100vh;">
       <div class="row" style="display: flex;justify-content: space-around;">
-        <div class="col-3 mt-1" v-if="invitee">
+        <div class="col-4 mt-1" v-if="invitee">
+          <button
+            v-if="displayStart && $auth.isAuthenticated"
+            class="btn btn-outline-warning mb-1"
+            @click="startGame"
+          >START</button>
           <Invitee
             key="inviteeVideostream"
             v-on:inviteeWorkoutComplete="()=>{
@@ -13,12 +18,28 @@
           }"
             v-on:init="init()"
           />
-          <button v-if="displayStart" class="btn btn-outline-warning mt-1" @click="startGame">START</button>
+        </div>
+        <div
+          class="col-12"
+          style="margin-top: 5%;"
+          v-if="!$auth.isAuthenticated"
+        >
+          <button
+            style="min-height: 50vh;
+            background-image: radial-gradient(white, blue, black);"
+            class="btn btn-info btn-block"
+            @click="login"
+          >
+            <h1 class="text-dark">
+              <i class="fa fa-user-circle fa-5x" aria-hidden="true"></i>
+              <br />LOGIN
+            </h1>
+          </button>
         </div>
 
-        <div class="col-3 mt-1" v-if="inviter">
+        <div class="col-4 mt-1" v-if="inviter">
+          <button v-if="displayStart" class="btn btn-outline-warning mb-1" @click="startGame">START</button>
           <Inviter :key="'inviterVideostream'" />
-          <button v-if="displayStart" class="btn btn-outline-warning mt-1" @click="startGame">START</button>
         </div>
 
         <div :class="display" v-if="showQuestion">
@@ -48,6 +69,7 @@ import Question from "../components/question";
 import Endgame from "../components/endgame";
 import Inviter from "../components/inviter";
 import Invitee from "../components/invitee";
+import router from "../router";
 
 export default {
   name: "game",
@@ -64,6 +86,27 @@ export default {
   },
   computed: {},
   methods: {
+    async login() {
+      await this.$auth.loginWithPopup().then(() => {
+        this.$store.dispatch("setBearer", this.$auth.bearer);
+        this.$store.dispatch("getProfile");
+        console.log("this.$auth.user: ");
+        console.log(this.$auth.user);
+        let loc = window.location.href.split("/");
+        let player = loc[loc.length - 1];
+        if (this.$auth.isAuthenticated) {
+          window.stream = new Object();
+          window.stream.class = "invitee";
+          window.stream.peerId = loc[loc.length - 2];
+          let myId = (
+            Math.random().toString(36) + "0000000000000000000"
+          ).substr(2, 16);
+          window.stream.myId = myId;
+          this.display = "col-8";
+          this.invitee = true;
+        }
+      });
+    },
     startGame() {
       this.showQuestion = true;
       this.displayStart = false;
@@ -131,21 +174,41 @@ export default {
       }
     },
   },
-  beforeMount() {
-    console.log(window.stream.class);
-    if (window.stream.class == "inviter") {
+  beforeCreate() {},
+  async beforeMount() {
+    let loc = window.location.href.split("/");
+    let player = loc[loc.length - 1];
+    if (player == "invitee") {
+      this.display = "col-8";
+      return;
+    } else if (player == "inviter") {
       this.inviter = true;
       this.begin();
-      this.display = "col-9";
-    } else if (window.stream.class == "invitee") {
-      this.invitee = true;
-      this.display = "col-9";
+      this.display = "col-8";
     } else {
       this.display = "col-12";
       this.begin();
     }
   },
   beforeDestroy() {
+    if (window.stream.remoteStream) {
+      window.stream.remoteStream.getTracks().forEach((t) => {
+        t.stop();
+      });
+    }
+    if (window.stream.localStream) {
+      window.stream.localStream.getTracks().forEach((t) => {
+        console.log("IN STOP()", t);
+        t.stop();
+      });
+    }
+    if (stream.localPeer) {
+      window.stream.localPeer.destroy();
+    }
+    console.log("IN closeCOn @Home");
+    window.stream = {};
+    window.stream.class = false;
+    // this.stream = false;
   },
   components: {
     Exercise,
@@ -159,15 +222,23 @@ export default {
 </script>
 <style>
 video {
-  min-width: 200px !important;
-  max-width: 200px !important;
-  min-height: 150px !important;
-  max-height: 150px !important;
-  border: solid 2px blue;
-  box-shadow: 4px 8px 18px white;
-  border-radius: 8%;
+  padding-top: 1rem;
+  margin-bottom: 0px;
+  max-width: 90%;
+}
+.controls {
+  margin-top: 0px;
+  padding-bottom: 0.5rem;
+}
+.controls svg:hover {
+  fill: white;
+}
+.video-container {
+  border: solid 2px white;
+  background-color: rgb(0, 0, 0);
 }
 #main {
   background-image: url("../assets/end.jpg");
+  background-position: center;
 }
 </style>

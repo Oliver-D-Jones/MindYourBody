@@ -1,46 +1,11 @@
 <template>
-  <div
-    style="border:solid 2px white;background-color: black;background-image:linear-gradient(to bottom, rgb(0, 0, 0,.5), rgba(0, 0, 255, 0.4));"
-  >
-    <p
-      class="pb-0 text-dark"
-      style="border: 1px solid black;
-      border-radius: 5%;
-    background-color: white;"
-    >
-      <span>{{me}}</span>
-      <br />
-      <span id="myId"></span>
-    </p>
-    <video
-      autoplay="true"
-      id="myVideo"
-      class="mb-1"
-      muted
-      controls
-      poster="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fmedia.giphy.com%2Fmedia%2Fi3pHUtmHiLd28%2Fgiphy.gif&f=1&nofb=1"
-    ></video>
-    <div>
-      <p
-        class="pb-0 text-dark"
-        style="border: 1px solid black;
-    border-radius: 5%;
-    background-color: lightblue;"
-      >
-        <span>{{peer}}</span>
-      </p>
-      <video
-        autoplay="true"
-        id="peerVideo"
-        class="mb-1"
-        poster="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fmedia.giphy.com%2Fmedia%2Fi3pHUtmHiLd28%2Fgiphy.gif&f=1&nofb=1"
-        controls
-      ></video>
-    </div>
-
-    <div class="py-1">
+  <div class="inviter video-container">
+    <LocalVideo key="localVideo" />
+    <!-- PEER VIDEO -->
+    <RemoteVideo key="remoteVideo" />
+    <div class="col-12 bg-dark">
       <button
-        class="btn btn-outline-info btn-sm bg-light"
+        class="btn btn-outline-info btn-sm bg-light mb-1"
         @click="()=>{
         showAllMsg = !showAllMsg;
         showLastMsg = !showLastMsg;
@@ -56,6 +21,8 @@
   </div>
 </template>
 <script>
+import LocalVideo from "./myVideo";
+import RemoteVideo from "./peerVideo";
 export default {
   name: "inviter",
   data() {
@@ -64,17 +31,15 @@ export default {
       lastMessage: "No Messages Yet.",
       showAllMsg: false,
       showLastMsg: true,
-      me: this.$store.state.currentPlayer.name,
-      peer: "",
     };
   },
   computed: {},
   methods: {
     sendMessage(data) {
       let dataToSend = {
-        class:"message",
-        message:data,
-      }
+        class: "message",
+        message: data,
+      };
       window.stream.connection.send(dataToSend);
     },
     welcomeInvitee(data) {
@@ -96,7 +61,7 @@ export default {
       try {
         switch (data.class) {
           case "peerName":
-            this.peer = data.name;
+            document.getElementById("peerName").textContent = data.name;
             return;
           case "message":
             let time = new Date().toLocaleTimeString();
@@ -116,8 +81,8 @@ export default {
       }
     },
   },
-  components: {},
-  beforeCreate() {},
+  components: { LocalVideo, RemoteVideo },
+  created() {},
   beforeDestroy() {
     // localStream = null;
     // console.log(this.conn, this.localPeer);
@@ -150,7 +115,6 @@ export default {
           console.log("Failed to get stream " + err);
         }
       );
-
       /**
        * Create the Peer object for our end of the connection.
        *
@@ -188,7 +152,6 @@ export default {
           } else {
             lastPeerId = peer.id;
           }
-          document.getElementById("myId").textContent = `My ID: ${peer.id}`;
           window.stream.localPeer = peer;
 
           peer.on("connection", function (c) {
@@ -209,7 +172,6 @@ export default {
 
           peer.on("disconnected", function () {
             console.log("Connection lost. Please reconnect");
-            swal("Connection Destroyed");
             // Workaround for peer.reconnect deleting previous id
             // peer.id = lastPeerId;
             // peer._lastServerId = lastPeerId;
@@ -218,7 +180,7 @@ export default {
 
           peer.on("close", function () {
             conn = null;
-            swal("Connection destroyed");
+            console.log("Connection destroyed");
           });
           peer.on("error", function (err) {
             let error = "Error: " + err;
@@ -267,10 +229,4 @@ export default {
 </script>
 
 <style>
-#msgAll {
-  height:25vh;
-  min-width: -webkit-fill-available;
-  padding: 4px;
-  border: 1px solid white;
-}
 </style>
