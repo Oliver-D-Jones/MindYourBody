@@ -15,8 +15,6 @@ export default {
     getGif: function () {
 
         let gifSrc = this.gifs[Math.floor(Math.random() * this.gifs.length)];
-        // let img = `<img src="${gifSrc}" alt="" class="img-fluid" style="max-width:4rem;"/>`
         return gifSrc;
     },
-
 }

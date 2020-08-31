@@ -8,13 +8,6 @@
           </h5>
         </button>
       </div>
-      <div class="col-sm-4 col-md-3 text-light" v-if="stream">
-        <button type="button" class="btn btn-block btn-outline-danger" @click="closeConnection">
-          <h5 class="py-0 text-warning">
-            <i class="fa fa-times" aria-hidden="true"></i> &nbsp;Close Connection
-          </h5>
-        </button>
-      </div>
       <div class="col-sm-4 col-md-3">
         <button type="button" class="btn btn-block btn-outline-warning" @click="join">
           <h5 class="py-0">
@@ -45,44 +38,46 @@
 <script>
 import router from "../router";
 import Selector from "../components/select";
+import utils from "../assets/utils";
 export default {
   name: "home",
   data() {
     return {
-      stream: window.stream.class,
       level: false,
       subject: false,
     };
   },
   computed: {},
   methods: {
+    alertLogin() {
+      swal({
+        title: "You Must First Login.",
+        icon: "warning",
+        buttons: {
+          confirm: { text: "Okay" },
+        },
+      });
+    },
+    async login() {
+      await this.$auth.loginWithPopup().then(() => {
+        this.$store.dispatch("setBearer", this.$auth.bearer);
+        this.$store.dispatch("getProfile");
+        console.log("this.$auth.user: ");
+        console.log(this.$auth.user);
+      });
+    },
     setParams(s) {
       this.subject = s.subject;
       this.level = s.level;
       console.log(s);
     },
-    closeConnection() {
-      if (window.stream.remoteStream) {
-        window.stream.remoteStream.getTracks().forEach((t) => {
-          console.log(t);
-          t.stop();
-        });
+    async invite() {
+      if (!this.$auth.isAuthenticated) {
+        let loginSuccess = await this.login();
+        if (!this.$auth.isAuthenticated) {
+          return;
+        }
       }
-      if (window.stream.localStream) {
-        window.stream.localStream.getTracks().forEach((t) => {
-          console.log(t);
-          t.stop();
-        });
-      }
-      if (stream.localPeer) {
-        window.stream.localPeer.destroy();
-      }
-
-      window.stream = {};
-      window.stream.class = false;
-      this.stream = false;
-    },
-    invite() {
       let id = (Math.random().toString(36) + "0000000000000000000").substr(
         2,
         16
@@ -90,18 +85,11 @@ export default {
       let html_inject = document.createElement("div");
       html_inject.className = "col-12";
       let title = document.createElement("h4");
-      title.textContent = `Your Room ID Is:`;
-
-      let h_id = document.createElement("h3");
-      h_id.innerHTML = `<i class="fa fa-key" aria-hidden="true"></i> &nbsp;${id}`;
-
-      let warning = document.createElement("h5");
-      warning.innerHTML = `<i class="fa fa-user-secret" aria-hidden="true"></i> &nbsp;Make Sure To Notify Your Friend Of Your ID.`;
-      warning.className = "text-warning";
-
+      title.innerHTML = `Send Your Friend The Folowing Link To Join You:<br/><i class="fa fa-key" aria-hidden="true"></i>`;
+      let h_id = document.createElement("h5");
+      h_id.innerText = `${window.origin}/#/game/${id}/invitee`;
       html_inject.appendChild(title);
       html_inject.appendChild(h_id);
-      html_inject.appendChild(warning);
 
       swal({
         icon:
@@ -117,17 +105,22 @@ export default {
           window.stream = new Object();
           window.stream.class = "inviter";
           window.stream.myId = id;
-          console.log("home--id->", id);
           this.startPlay();
           swal.close();
         } else {
-          window.stream = {};
-          window.stream.class = false;
+          // window.stream = {};
+          // window.stream.class = false;
           swal.close();
         }
       });
     },
-    join() {
+    async join() {
+      if (!this.$auth.isAuthenticated) {
+        let loginSuccess = await this.login();
+        if (!this.$auth.isAuthenticated) {
+          return;
+        }
+      }
       let html_inject = document.createElement("input");
       html_inject.id = "peerId";
       let myId = (Math.random().toString(36) + "0000000000000000000").substr(
@@ -145,17 +138,23 @@ export default {
           //NOTE set peer to join ID
           window.stream = new Object();
           window.stream.class = "invitee";
-          window.stream.peerId = id;
           window.stream.myId = myId;
-          router.push({ name: "game" });
+          router.push("/game/" + id + "/invitee");
         } else {
-          window.stream = {};
-          window.stream.class = false;
+          // window.stream = {};
+          // window.stream.class = false;
         }
       });
     },
-
     async startPlay() {
+      if (!this.$auth.isAuthenticated) {
+        this.alertLogin();
+        return;
+      }
+      if (window.stream == undefined) {
+        window.stream = {};
+        window.stream.class = false;
+      }
       if (!this.subject) {
         this.$store.dispatch("setSubject", Math.floor(Math.random() * 23) + 9);
       } else {
@@ -190,18 +189,16 @@ export default {
       }
       this.subject = "";
       this.level = "";
-      router.push({ name: "game" });
+      if (window.stream.class) {
+        router.push("/game/" + window.stream.myId + "/inviter");
+      } else {
+        router.push({ name: "game" });
+      }
     },
   },
-  beforeCreate() {
-
-  },
+  beforeCreate() {},
   created() {},
-  beforeMount() {
-    window.stream = new Object();
-    window.stream.class = false;
-    this.stream = window.stream.class;
-  },
+  beforeMount() {},
   mounted() {
     this.$store.dispatch("loadLeaders");
   },
