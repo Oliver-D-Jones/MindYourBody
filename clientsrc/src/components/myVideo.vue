@@ -1,23 +1,43 @@
 <template>
-  <div class="myVideo bg-dark">
-    <h4 v-if="playerClass == 'inviter'" class="my-0">
-      <span
-        class="badge badge-dark text-light text-truncate"
-        style="width: -webkit-fill-available;"
-      >
-        My Link:
-        <br />
-        {{link}}
-      </span>
-    </h4>
-    <h4 class="my-0">
-      <span
-        class="badge badge-dark text-light text-truncate"
-        style="width: -webkit-fill-available;"
-      >{{me}}</span>
-    </h4>
-    <div class="mt-0">
-      <div class="controls col-12 mt-1 mb-0 pb-0">
+  <div class="myVideo bg-dark text-info">
+    <div class="container-fluid">
+      <div class="row d-flex">
+        <div class="col-12">
+          <p v-if="playerClass == 'inviter'">
+            My Link:
+            <br />
+            <textarea
+              type="text"
+              :value="link"
+              readonly
+              class="bg-dark text-info"
+              style="width: -webkit-fill-available;height: auto;
+    border: none;overflow: scroll;"
+            />
+            <br />My Room:
+            <br />
+            <input
+              type="text"
+              :value="room"
+              readonly
+              class="bg-dark text-info"
+              style="width: -webkit-fill-available;height: auto;
+    border: none;"
+            />
+          </p>
+        </div>
+        <div class="col-12">
+          <h4 class="my-0">
+            <span
+              class="badge badge-dark text-light text-truncate"
+              style="width: -webkit-fill-available;"
+            >{{me}}</span>
+          </h4>
+        </div>
+      </div>
+    </div>
+    <div class="container-fluid">
+      <div class="row d-flex controls">
         <svg
           width="1.3rem"
           height="1.3rem"
@@ -126,7 +146,7 @@
           width="1.3rem"
           height="1.3rem"
           viewBox="0 0 16 16"
-          class="bi bi-fullscreen"
+          class="col-3 bi bi-fullscreen"
           fill="blue"
           @click="toggleFullScreen('myVideo')"
           xmlns="http://www.w3.org/2000/svg"
@@ -137,13 +157,15 @@
           />
         </svg>
       </div>
-      <video
-        autoplay="true"
-        id="myVideo"
-        class="col-12 mt-0 pt-0"
-        muted
-        poster="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fmedia.giphy.com%2Fmedia%2Fi3pHUtmHiLd28%2Fgiphy.gif&f=1&nofb=1"
-      ></video>
+      <div class="row d-flex">
+        <video
+          autoplay="true"
+          id="myVideo"
+          class="col-12 mt-0 pt-0"
+          muted
+          poster="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fmedia.giphy.com%2Fmedia%2Fi3pHUtmHiLd28%2Fgiphy.gif&f=1&nofb=1"
+        ></video>
+      </div>
     </div>
   </div>
 </template>
@@ -158,7 +180,8 @@ export default {
       audioStream: true,
       PIP: false,
       me: this.$auth.user.name,
-      link: window.location.href.slice(0, location.href.length - 1) + "e",
+      link: window.stream.myLink,
+      room: window.stream.myId,
       playerClass: window.stream.class,
     };
   },

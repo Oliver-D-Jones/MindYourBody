@@ -69,7 +69,6 @@ export default {
     setParams(s) {
       this.subject = s.subject;
       this.level = s.level;
-      console.log(s);
     },
     async invite() {
       if (!this.$auth.isAuthenticated) {
@@ -105,11 +104,10 @@ export default {
           window.stream = new Object();
           window.stream.class = "inviter";
           window.stream.myId = id;
+          window.stream.myLink = `${window.origin}/#/game/${id}/invitee`;
           this.startPlay();
           swal.close();
         } else {
-          // window.stream = {};
-          // window.stream.class = false;
           swal.close();
         }
       });
@@ -140,10 +138,9 @@ export default {
           window.stream.class = "invitee";
           window.stream.myId = myId;
           router.push("/game/" + id + "/invitee");
-          swal.close()
+          swal.close();
         } else {
-          // window.stream = {};
-          // window.stream.class = false;
+          swal.close();
         }
       });
     },

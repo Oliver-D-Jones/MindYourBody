@@ -175,23 +175,19 @@ export default {
       if (!this.answer) {
         streak = 0;
         megaStreak = 0;
-        console.log("answerStreak increased", streak);
       } else {
         streak += 1;
-        console.log("answerStreak increased", streak);
       }
       if (streak === 5) {
         this.answerStreakEarned = true;
         streakPoints += 20;
         streak = 0;
         megaStreak += 1;
-        console.log("Five in a row. You got a streak!", streak);
       }
       if (megaStreak === 5) {
         this.megaStreakEarned = true;
         streakPoints += 100;
         megaStreak = 0;
-        console.log("Five streaks in a row. You got a megaStreak!", megaStreak);
       }
       return {
         streak: streak,

@@ -122,7 +122,6 @@ export default new Vuex.Store({
 
     //retrieves points stored in profile and passes along points just earned
     async getPoints({ commit, dispatch, state }, data) {
-      console.log("hello from getPoints")
       try {
         let res = await api.get("players/" + data.id)
         dispatch("updatePoints", {
@@ -152,7 +151,6 @@ export default new Vuex.Store({
     },
     //adds all points awarded for question and streak if streak earned
     async updatePoints({ commit, dispatch, state }, data) {
-      console.log("hello from updatePoints")
       try {
         let res = await api.put("players/" + data.id, {
           points: (data.oldPoints + data.newPoints),

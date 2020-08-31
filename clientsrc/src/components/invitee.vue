@@ -68,7 +68,6 @@ export default {
         case "replay":
           this.$store.dispatch("inviteeExercise", data.exercise);
           this.$store.dispatch("inviteeTrivia", data.trivia);
-          console.log("INSIDE REPLAY: ", data);
           this.$emit("init");
           break;
         case "message":

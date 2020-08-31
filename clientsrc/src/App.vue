@@ -15,13 +15,11 @@ export default {
 
   async beforeCreate() {
     try {
-      console.log("IN BC APP");
       await onAuth();
       this.$store.dispatch("setBearer", this.$auth.bearer);
       this.$store.dispatch("getProfile");
     } catch (err) {
       this.$router.push({ name: "home" });
-      console.log("IN BC APP CATCH",this.$auth.isAuthenticated);
     }
   },
   components: {

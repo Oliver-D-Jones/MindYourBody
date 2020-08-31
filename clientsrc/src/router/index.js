@@ -25,18 +25,20 @@ const routes = [
     path: '/game',
     name: 'game',
     component: Game,
-    // beforeEnter: authGuard
+    beforeEnter: authGuard
   },
   {
     path: "/game/:id/inviter",
     name: "inviter",
     component: Game,
-    // beforeEnter: authGuard,
+    beforeEnter: authGuard,
   },
   {
     path: "/game/:id/invitee",
     name: "invitee",
     component: Game,
+    beforeEnter: authGuard,
+
   },
   {
     path: "*",
@@ -54,7 +56,7 @@ router.beforeEach((to, from, next) => {
   // if (to.name != "home") {
   //   next({ name: "home" })
   // }
-  if ((from.name == "invitee" || from.name == "inviter") && window.stream.class) {
+  if ((from.name == "invitee" || from.name == "inviter")) {
     swal({
       title: "Are you sure you want to leave Game...You may lose your connection to your peer!",
       icon: "warning",

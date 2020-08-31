@@ -5,7 +5,7 @@
         <div class="col-sm-12 col-md-4 mt-1" v-if="invitee">
           <button
             v-if="displayStart && $auth.isAuthenticated"
-            class="btn btn-outline-warning mb-1"
+            class="btn btn-info btn-block mb-1"
             @click="startGame"
           >START</button>
           <Invitee
@@ -34,7 +34,7 @@
         </div>
 
         <div class="col-sm-12 col-md-4 mt-1" v-if="inviter">
-          <button v-if="displayStart" class="btn btn-outline-warning mb-1" @click="startGame">START</button>
+          <button v-if="displayStart" class="btn btn-info btn-block mb-1" @click="startGame">START</button>
           <Inviter :key="'inviterVideostream'" />
         </div>
 
@@ -86,21 +86,7 @@ export default {
       await this.$auth.loginWithPopup().then(() => {
         this.$store.dispatch("setBearer", this.$auth.bearer);
         this.$store.dispatch("getProfile");
-        console.log("this.$auth.user: ");
-        console.log(this.$auth.user);
       });
-    },
-    initiateInvitee(loc) {
-      window.stream = new Object();
-      window.stream.class = "invitee";
-      window.stream.peerId = loc[loc.length - 2];
-      let myId = (Math.random().toString(36) + "0000000000000000000").substr(
-        2,
-        16
-      );
-      window.stream.myId = myId;
-      this.display = "col-8";
-      this.invitee = true;
     },
     startGame() {
       this.showQuestion = true;
@@ -176,15 +162,16 @@ export default {
 
     if (player == "invitee") {
       if (this.$auth.isAuthenticated) {
-        this.initiateInvitee(loc);
-      } else {
-        await this.$auth.loginWithPopup().then(() => {
-          this.$store.dispatch("setBearer", this.$auth.bearer);
-          this.$store.dispatch("getProfile");
-          if (this.$auth.isAuthenticated) {
-            this.initiateInvitee(loc);
-          }
-        });
+        window.stream = new Object();
+        window.stream.class = "invitee";
+        window.stream.peerId = loc[loc.length - 2];
+        let myId = (Math.random().toString(36) + "0000000000000000000").substr(
+          2,
+          16
+        );
+        window.stream.myId = myId;
+        this.display = "col-8";
+        this.invitee = true;
       }
     } else if (player == "inviter") {
       this.inviter = true;
@@ -203,17 +190,14 @@ export default {
     }
     if (window.stream.localStream) {
       window.stream.localStream.getTracks().forEach((t) => {
-        console.log("IN STOP()", t);
         t.stop();
       });
     }
     if (stream.localPeer) {
       window.stream.localPeer.destroy();
     }
-    console.log("IN closeCOn @Home");
     window.stream = {};
     window.stream.class = false;
-    // this.stream = false;
   },
   components: {
     Exercise,
@@ -231,7 +215,9 @@ video {
   margin-bottom: 0px;
 }
 @media screen and (max-width: 425px) {
-  video {height: 30vh;}
+  video {
+    height: 30vh;
+  }
 }
 .controls {
   margin-top: 0px;
