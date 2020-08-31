@@ -93,18 +93,16 @@ export default new Vuex.Store({
         console.error(err)
       }
     },
-
     //creates new player in player db from combination of profile info and default settings
     async newPlayer({ commit, dispatch, state }, data) {
-      console.log("hello from newPlayer")
       try {
         let res = await api.post("players", {
           name: data.name,
           points: 0,
           profileId: data.id,
-          previousDate: 0,
-          recentDate: 0,
-          timeStreakCount: 1,
+          prevDate: 0,
+          dayStreak: 0,
+          dayStreakCount: 0,
           streak: 0,
           megaStreak: 0,
           categoryStats: []
@@ -126,12 +124,25 @@ export default new Vuex.Store({
           newPoints: data.points,
           streak: data.streak,
           megaStreak: data.megaStreak,
+          categoryStats: [{
+            category: data.category,
+            correct: data.correct,
+            attempted: data.attempted
+          }]
         })
       } catch (err) {
         console.error(err)
       }
     },
-
+    //updates day streak tally based on comparison of current date and previous play date
+    async addStreak({ commit, dispatch, state }, data) {
+      try {
+        let res = await api.put("players/" + data.profileId, data)
+        dispatch("getCurrentPlayer")
+      } catch (err) {
+        console.error(err)
+      }
+    },
     //adds all points awarded for question and streak if streak earned
     async updatePoints({ commit, dispatch, state }, data) {
       console.log("hello from updatePoints")

@@ -12,8 +12,7 @@ export default {
   data: function () {
     return {
       show: false,
-      date: Date.now(),
-      playerid: this.$store.state.currentPlayer.profileId,
+      player: this.$store.state.currentPlayer,
     };
   },
   methods: {
@@ -92,8 +91,37 @@ export default {
             swal.close();
           });
         }
+        this.calculateDayStreak();
         this.show = false;
       });
+    },
+    calculateDayStreak() {
+      let prevDate = this.player.prevDate;
+      let now = Date.now();
+      let now2 = new Date(now);
+      let year = now2.getFullYear();
+      let month = now2.getMonth();
+      let date = now2.getDate();
+      let dateNoon = Date.UTC(year, month, date, 12, 0);
+      if (dateNoon - prevDate === 86400000) {
+        this.$store.dispatch("addStreak", {
+          profileId: this.player.profileId,
+          dayStreak: this.player.dayStreak + 1,
+          prevDate: dateNoon,
+        });
+      } else if (dateNoon - prevDate > 86400000) {
+        this.$store.dispatch("addStreak", {
+          profileId: this.player.profileId,
+          dayStreak: 1,
+          prevDate: dateNoon,
+          dayStreakCount: 0,
+        });
+      } else if (dateNoon === prevDate) {
+        this.$store.dispatch("addStreak", {
+          profileId: this.player.profileId,
+          dayStreak: 1,
+        });
+      }
     },
   },
   beforeDestroy() {
