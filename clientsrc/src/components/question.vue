@@ -58,6 +58,7 @@ export default {
     swal.close();
   },
   mounted() {
+    // console.log("MOUNTED");
     this.show = true;
   },
 };

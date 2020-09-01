@@ -13,46 +13,63 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    trivia: {},
-    exercise: {},
-    profile: {},
-    leaders: [],
+    trivia: sessionStorage.trivia || {},
+    exercise: sessionStorage.exercise || {},
+    profile: sessionStorage.profile || {},
+    leaders: sessionStorage.leaders || [],
     user: {},
-    currentPlayer: {},
+    currentPlayer: sessionStorage.currentPlayer || {},
     roundComplete: false,
+    inviteeReady: false,
     // NOTE work here too clean state up; organize
-    level: null,
-    subject: null,
+    level: sessionStorage.level || null,
+    subject: sessionStorage.subject || null,
     answer: null,
-    triviaToken: "",
+    triviaToken: sessionStorage.triviaToken || "",
   },
   mutations: {
     setRoundComplete(state, completed) {
       state.roundComplete = completed;
+      sessionStorage.roundComplete = completed;
+    },
+    // let data = JSON.parse(window.localStorage.getItem("MYB"));
+    setInviteeReady(state, ready) {
+      state.inviteeReady = ready;
+      sessionStorage.inviteeReady = ready;
     },
     setProfile(state, profileObject) {
       state.profile = profileObject
+      sessionStorage.profile = JSON.stringify(profileObject);
     },
     setExercise(state, exerciseObject) {
       state.exercise = exerciseObject
     },
     setSubject(state, subject) {
       state.subject = subject
+      sessionStorage.subject = subject;
+
     },
     setLevel(state, level) {
       state.level = level
+      sessionStorage.level = level;
+
     },
     setTrivia(state, trivia) {
       state.trivia = trivia;
     },
     setLeaders(state, leaders) {
       state.leaders = leaders;
+      sessionStorage.leaders = JSON.stringify(leaders);
+
     },
     setCurrentPlayer(state, currentPlayer) {
       state.currentPlayer = currentPlayer;
+      sessionStorage.currentPlayer = JSON.stringify(currentPlayer);
+
     },
     setTriviaToken(state, token) {
-      state.trivia.token = token;
+      state.triviaToken = token;
+      sessionStorage.triviaToken = token;
     },
 
   },
@@ -77,6 +94,9 @@ export default new Vuex.Store({
     },
     roundCompleted({ commit }, data) {
       commit("setRoundComplete", data);
+    },
+    inviteeReady({ commit }, data) {
+      commit("setInviteeReady", data)
     },
     triviaToken({ commit }, data) {
       commit("setTriviaToken", data)

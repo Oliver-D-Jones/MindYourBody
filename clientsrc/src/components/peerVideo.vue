@@ -4,8 +4,8 @@
       <span
         id="peerName"
         class="badge badge-warning text-truncate my-0"
-        style="width: -webkit-fill-available;">
-      </span>
+        style="width: -webkit-fill-available;"
+      ></span>
     </h3>
     <div class="mt-0">
       <video
@@ -29,6 +29,9 @@ export default {
   computed: {},
   methods: {},
   components: {},
+  beforeDestroy() {
+
+  },
 };
 </script>
 

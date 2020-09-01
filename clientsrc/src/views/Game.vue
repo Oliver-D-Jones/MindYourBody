@@ -2,7 +2,7 @@
   <div class="game">
     <div class="container-fluid" id="main" style="min-height:100vh;">
       <div class="row" style="display: flex;justify-content: space-around;">
-        <div class="col-sm-12 col-md-4 mt-1" v-if="invitee">
+        <div class="col-md-4 mt-1" v-if="invitee">
           <button
             v-if="displayStart && $auth.isAuthenticated"
             class="btn btn-info btn-block mb-1"
@@ -33,9 +33,14 @@
           </button>
         </div>
 
-        <div class="col-sm-12 col-md-4 mt-1" v-if="inviter">
+        <div class="col-md-4 mt-1" v-if="inviter">
           <button v-if="displayStart" class="btn btn-info btn-block mb-1" @click="startGame">START</button>
-          <Inviter :key="'inviterVideostream'" />
+          <Inviter
+            :key="'inviterVideostream'"
+            v-on:inviteeReady="()=>{
+            displayStart=true;
+          }"
+          />
         </div>
 
         <div :class="display" v-if="showQuestion">
@@ -77,7 +82,7 @@ export default {
       showQuestion: false,
       inviter: false,
       invitee: false,
-      displayStart: true,
+      displayStart: false,
     };
   },
   computed: {},
@@ -90,28 +95,40 @@ export default {
     },
     startGame() {
       this.showQuestion = true;
+      window.sessionStorage.sequence = "showQuestion";
       this.displayStart = false;
     },
     workoutcomplete(complete) {
       this.exercise = false;
+      window.sessionStorage.sequence = "answer";
+
       this.answer = true;
     },
     workout(work) {
       this.showQuestion = false;
+      window.sessionStorage.sequence = "exercise";
+
       this.exercise = true;
-    },
-    async init(play) {
-      if (window.stream.class != "invitee") {
-        await this.begin();
-      }
-      this.displayStart = true;
-      this.end = false;
-      this.showQuestion = false;
-      this.exercise = false;
     },
     endgame(correct) {
       this.answer = false;
+      window.sessionStorage.sequence = "end";
       this.end = true;
+    },
+    async init(play) {
+      this.end = false;
+      this.showQuestion = false;
+      this.exercise = false;
+      if (!window.stream.class) {
+        this.begin();
+      } else if (window.stream.class == "invitee") {
+        setTimeout((event) => {
+          window.stream.connection.send({ class: "inviteeReady" }), 1200;
+        });
+        this.displayStart = true;
+      } else if (window.stream.class == "inviter") {
+        await this.begin();
+      }
     },
     async begin() {
       await this.$store.dispatch("getExercise");
@@ -123,6 +140,7 @@ export default {
         `https://opentdb.com/api.php?amount=1&category=${cat}&difficulty=${level}&type=multiple&token=${token}`
       );
       let data = await res.json();
+
       data = data.results[0];
       for (let property in data) {
         if (Array.isArray(data[property])) {
@@ -143,8 +161,10 @@ export default {
       });
       data.incorrect_answers = answers;
       this.$store.commit("setTrivia", data);
+      window.sessionStorage.trivia = JSON.stringify(data);
       if (!stream.class) {
         this.showQuestion = true;
+        sessionStorage.sequence = "showQuestion";
       } else if (window.stream.connection.open) {
         let dataToSend = {
           class: "replay",
@@ -155,8 +175,14 @@ export default {
       }
     },
   },
-  beforeCreate() {},
+  beforeCreate() {
+    console.log("IN BC");
+  },
   async beforeMount() {
+    console.log("IN BM");
+    if (window.sessionStorage.sequence) {
+      eval(`this.${sessionStorage.sequence} = true`);
+    }
     let loc = window.location.href.split("/");
     let player = loc[loc.length - 1];
 
@@ -170,35 +196,21 @@ export default {
           16
         );
         window.stream.myId = myId;
-        this.display = "col-8";
+        this.display = "col-md-8";
         this.invitee = true;
+        this.displayStart = true;
       }
     } else if (player == "inviter") {
       this.inviter = true;
       this.begin();
-      this.display = "col-8";
+      this.display = "col-md-8";
     } else {
+      sessionStorage.class = false;
       this.display = "col-12";
       this.begin();
     }
   },
-  beforeDestroy() {
-    if (window.stream.remoteStream) {
-      window.stream.remoteStream.getTracks().forEach((t) => {
-        t.stop();
-      });
-    }
-    if (window.stream.localStream) {
-      window.stream.localStream.getTracks().forEach((t) => {
-        t.stop();
-      });
-    }
-    if (stream.localPeer) {
-      window.stream.localPeer.destroy();
-    }
-    window.stream = {};
-    window.stream.class = false;
-  },
+  beforeDestroy() {},
   components: {
     Exercise,
     Answer,
@@ -240,6 +252,7 @@ video {
   padding: 4px;
   border: 1px solid white;
   position: absolute;
+  text-align: center;
   left: 0px;
   z-index: 1000;
 }

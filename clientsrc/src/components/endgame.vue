@@ -17,7 +17,7 @@
         src="../assets/endWrong.gif"
         style="width: 10%;
       border-radius: 50%;"
-        v-if="playerClass != 'invitee'"
+        v-if="((playerClass == 'inviter' && inviteeCompleted) || !playerClass )"
         @click="startPlay()"
       />
       <img v-else src="../assets/endWrong.gif" style="width: 10%;
@@ -48,7 +48,7 @@
     <div class="row mt-3" style="justify-content: space-evenly">
       <div class="col-5">
         <button
-          v-if="(playerClass != 'invitee') && (inviteeCompleted)"
+          v-if="((playerClass == 'inviter' && inviteeCompleted) || !playerClass )"
           @click="startPlay()"
           class="btn btn-block btn-outline-danger bg-dark py-2"
         >PLAY AGAIN</button>
@@ -104,7 +104,7 @@ export default {
     if (window.stream.class == "invitee") {
       setTimeout((event) => {
         window.stream.connection.send({ class: "inviteeFinished", data: true });
-      },3000);
+      }, 3000);
     }
     this.show = true;
   },
@@ -229,6 +229,7 @@ export default {
         this.$store.dispatch("setLevel", this.level);
       }
       if (window.stream.class == "inviter") {
+        this.$store.dispatch("inviteeReady", false);
         this.$store.dispatch("roundCompleted", false);
       }
       this.$emit("init");

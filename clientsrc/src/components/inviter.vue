@@ -18,6 +18,7 @@
       <textarea
         v-if="showAllMsg"
         class="bg-dark text-info pt-1"
+        style="text-align: center;"
         id="msgAll"
         :value="messageString"
         readonly
@@ -67,11 +68,17 @@ export default {
       let dataToSend;
       try {
         switch (data.class) {
+          case "inviteeReady":
+            console.log("IN INVITEE READY");
+            this.$store.dispatch("inviteeReady", true);
+            this.$emit("inviteeReady");
+            return;
           case "inviteeFinished":
             this.$store.dispatch("roundCompleted", true);
             break;
           case "peerName":
             document.getElementById("peerName").textContent = data.name;
+            this.$emit("inviteeReady");
             return;
           case "message":
             let time = new Date().toLocaleTimeString();
@@ -94,10 +101,34 @@ export default {
   components: { LocalVideo, RemoteVideo },
   created() {},
   beforeDestroy() {
-    // localStream = null;
-    // console.log(this.conn, this.localPeer);
-    // this.conn.close();
-    // this.localPeer.destroy();
+    //destroy local stream
+    let err = false;
+    let _stream, tracks;
+    try {
+      tracks = stream.localStream.getTracks();
+      tracks.forEach(function (track) {
+        track.stop();
+      });
+
+      if (stream.localPeer) {
+        stream.localPeer.destroy();
+      }
+    } catch (error) {
+      err = true;
+      console.log(error);
+    }
+    //destroy remote stream
+    try {
+      tracks = stream.remoteStream.getTracks();
+      tracks.forEach(function (track) {
+        track.stop();
+      });
+    } catch (error) {
+      err = error;
+      console.log(error);
+    }
+    window.stream = {};
+    window.stream.class = false;
   },
   mounted() {
     window.stream.respondToInvitee = this.respondToInvitee;

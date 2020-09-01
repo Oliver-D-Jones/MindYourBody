@@ -85,8 +85,9 @@ export default {
       html_inject.className = "col-12";
       let title = document.createElement("h4");
       title.innerHTML = `Send Your Friend The Folowing Link To Join You:<br/><i class="fa fa-key" aria-hidden="true"></i>`;
-      let h_id = document.createElement("h5");
-      h_id.innerText = `${window.origin}/#/game/${id}/invitee`;
+      let h_id = document.createElement("textarea");
+      h_id.className = "home-link";
+      h_id.value = `${window.origin}/#/game/${id}/invitee`;
       html_inject.appendChild(title);
       html_inject.appendChild(h_id);
 
@@ -259,5 +260,13 @@ export default {
   border-radius: 5%;
   border: antiquewhite solid 1px;
   background-color: rgba(39, 91, 151, 0.69);
+}
+.home-link {
+  width: -webkit-fill-available;
+  background-color: blue;
+  color: white;
+  height: 3rem;
+  text-align: center;
+  overflow: scroll;
 }
 </style>

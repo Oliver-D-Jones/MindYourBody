@@ -2,6 +2,8 @@
   <div class="invitee video-container">
     <!-- PEER VIDEO -->
     <RemoteVideo key="remoteVideo" />
+    <!-- "MY VIDEO" -->
+    <LocalVideo key="localVideo" />
     <div class="col-12 bg-dark">
       <button
         class="btn btn-outline-info btn-sm bg-light mb-1"
@@ -17,14 +19,12 @@
       <p class="bg-dark text-info rounded" v-if="showLastMsg" id="msgOne">{{lastMessage}}</p>
       <textarea
         v-if="showAllMsg"
-        class="bg-dark text-info pt-1"
+        class="bg-dark text-info pt-1 text-align: center;"
         readonly
         id="msgAll"
         :value="messageString"
       ></textarea>
     </div>
-    <!-- "MY VIDEO" -->
-    <LocalVideo key="localVideo" />
   </div>
 </template>
 <script>
@@ -88,9 +88,33 @@ export default {
   },
   components: { LocalVideo, RemoteVideo },
   beforeDestroy() {
-    // localStream = null;
-    // this.conn.close();
-    // this.peer.disconnect();
+    //destroy local stream
+    let err = false;
+    let tracks;
+    try {
+      tracks = stream.localStream.getTracks();
+      tracks.forEach(function (track) {
+        track.stop();
+      });
+      if (stream.localPeer) {
+        stream.localPeer.destroy();
+      }
+    } catch (error) {
+      err = true;
+      console.log(error);
+    }
+    //destroy remote stream
+    try {
+      tracks = stream.remoteStream.getTracks();
+      tracks.forEach(function (track) {
+        track.stop();
+      });
+    } catch (error) {
+      err = error;
+      console.log(error);
+    }
+    window.stream = {};
+    window.stream.class = false;
   },
   mounted() {
     window.stream.respondToInviter = this.respondToInviter;

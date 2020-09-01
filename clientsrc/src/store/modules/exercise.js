@@ -6,6 +6,7 @@ export default {
       try {
         let res = await api.get("/exercises/random")
         commit("setExercise", res.data[0])
+        sessionStorage.exercise = JSON.stringify(res.data[0]);
         return res.data[0];
       } catch (err) {
         console.error(err)

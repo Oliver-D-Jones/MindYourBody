@@ -13,13 +13,11 @@ import Peer from "peerjs";
 export default {
   name: "App",
 
-  async beforeCreate() {
-    try {
-      await onAuth();
+   async beforeCreate() {
+    await onAuth();
+    if (this.$auth.isAuthenticated) {
       this.$store.dispatch("setBearer", this.$auth.bearer);
       this.$store.dispatch("getProfile");
-    } catch (err) {
-      this.$router.push({ name: "home" });
     }
   },
   components: {
