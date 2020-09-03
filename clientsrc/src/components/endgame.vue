@@ -43,7 +43,7 @@
       <img src="../assets/coin.gif" style="width: 15rem;" />
     </h3>
     <div v-if="playerClass != 'invitee'">
-      <Selector key="select_home" v-on:setTopic="setParams($event)" />
+      <Selector key="select_end" v-on:setTopic="setParams($event)" />
     </div>
     <div class="row mt-3" style="justify-content: space-evenly">
       <div class="col-5">
@@ -75,10 +75,10 @@ export default {
   name: "endgame",
   data() {
     return {
-      subject: this.$store.state.subject,
-      category: this.$store.state.trivia.category,
-      level: this.$store.state.level,
-      player: this.$store.state.currentPlayer,
+      subject: false,
+      level: false,
+      category: this.$store.state.category,
+      // player: this.$store.state.currentPlayer,
       answer: this.$store.state.answer,
       profile: this.$store.state.profile,
       dayStreak: this.$store.state.currentPlayer.dayStreak,
@@ -213,15 +213,36 @@ export default {
   },
   methods: {
     setParams(s) {
-      this.subject = s.subject;
-      this.level = s.level;
+      if (s.subject) {
+        this.subject = s.subject;
+      }
+      if (s.level) {
+        this.level = s.level;
+      }
     },
     startPlay() {
       this.show = false;
-
       if (!this.subject) {
         this.subject = Math.floor(Math.random() * 23) + 9;
       }
+      if (!this.level) {
+        let x = Math.floor(Math.random() * 3);
+        switch (x) {
+          case 0:
+            this.level = "easy";
+            break;
+          case 1:
+            this.level = "medium";
+            break;
+          case 2:
+            this.level = "hard";
+            break;
+          default:
+            this.level = "medium";
+            break;
+        }
+      }
+
       if (this.subject != this.$store.state.subject) {
         this.$store.dispatch("setSubject", this.subject);
       }

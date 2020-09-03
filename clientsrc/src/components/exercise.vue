@@ -11,7 +11,7 @@
             class="card-img-top mt-1"
             :src="exercise.example"
             alt="Exercise Example"
-            style="max-width: 100%; width: auto; height: auto"
+            style="max-width: 75vw; width: auto; height: auto"
           />
         </div>
       </transition>

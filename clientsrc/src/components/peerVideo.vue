@@ -3,7 +3,7 @@
     <h3 class="mb-0">
       <span
         id="peerName"
-        class="badge badge-warning text-truncate my-0"
+        class="badge badge-dark text-truncate my-0"
         style="width: -webkit-fill-available;"
       ></span>
     </h3>

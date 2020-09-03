@@ -62,7 +62,6 @@ router.beforeEach((to, from, next) => {
   //   next({ name: "home" })
   // }
   if ((from.name == "invitee" || from.name == "inviter")) {
-    console.log("IN ROUTER");
     swal({
       title: "Are you sure you want to leave Game...You may lose your connection to your peer!",
       icon: "warning",

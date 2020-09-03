@@ -51,8 +51,8 @@
         <h4 v-else>Total Points: 0</h4>
       </div>
       <span class="navbar-text">
-        <button class="btn btn-success" @click="login" v-if="!$auth.isAuthenticated">Login</button>
-        <button class="btn btn-dark text-info" @click="logout" v-else>logout</button>
+        <button class="btn btn-success" ontouchstart="login" @click="login" v-if="!$auth.isAuthenticated">Login</button>
+        <button class="btn btn-dark text-info" ontouchstart="logout" @click="logout" v-else>logout</button>
       </span>
     </div>
   </nav>

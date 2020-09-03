@@ -209,7 +209,6 @@ export default {
       defaultsOpts.video = {
         facingMode: this.shouldFaceUser ? "user" : "environment",
       };
-      console.log(defaultsOpts);
       navigator.mediaDevices
         .getUserMedia(defaultsOpts)
         .then(function (_stream) {

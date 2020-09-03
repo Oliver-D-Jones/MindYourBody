@@ -5,7 +5,7 @@
         <div class="col-md-4 mt-1" v-if="invitee">
           <button
             v-if="displayStart && $auth.isAuthenticated"
-            class="btn btn-info btn-block mb-1"
+            class="btn btn-warning btn-block mb-1"
             @click="startGame"
           >START</button>
           <Invitee
@@ -34,7 +34,7 @@
         </div>
 
         <div class="col-md-4 mt-1" v-if="inviter">
-          <button v-if="displayStart" class="btn btn-info btn-block mb-1" @click="startGame">START</button>
+          <button v-if="displayStart" class="btn btn-warning btn-block mb-1" @click="startGame">START</button>
           <Inviter
             :key="'inviterVideostream'"
             v-on:inviteeReady="()=>{
@@ -95,24 +95,20 @@ export default {
     },
     startGame() {
       this.showQuestion = true;
-      window.sessionStorage.sequence = "showQuestion";
       this.displayStart = false;
     },
     workoutcomplete(complete) {
       this.exercise = false;
-      window.sessionStorage.sequence = "answer";
 
       this.answer = true;
     },
     workout(work) {
       this.showQuestion = false;
-      window.sessionStorage.sequence = "exercise";
 
       this.exercise = true;
     },
     endgame(correct) {
       this.answer = false;
-      window.sessionStorage.sequence = "end";
       this.end = true;
     },
     async init(play) {
@@ -127,7 +123,7 @@ export default {
         });
         this.displayStart = true;
       } else if (window.stream.class == "inviter") {
-        await this.begin();
+        this.begin();
       }
     },
     async begin() {
@@ -161,10 +157,8 @@ export default {
       });
       data.incorrect_answers = answers;
       this.$store.commit("setTrivia", data);
-      window.sessionStorage.trivia = JSON.stringify(data);
       if (!stream.class) {
         this.showQuestion = true;
-        sessionStorage.sequence = "showQuestion";
       } else if (window.stream.connection.open) {
         let dataToSend = {
           class: "replay",
@@ -175,14 +169,8 @@ export default {
       }
     },
   },
-  beforeCreate() {
-    console.log("IN BC");
-  },
+  beforeCreate() {},
   async beforeMount() {
-    console.log("IN BM");
-    if (window.sessionStorage.sequence) {
-      eval(`this.${sessionStorage.sequence} = true`);
-    }
     let loc = window.location.href.split("/");
     let player = loc[loc.length - 1];
 

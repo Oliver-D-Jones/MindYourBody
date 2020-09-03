@@ -13,26 +13,25 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    trivia: sessionStorage.trivia || {},
-    exercise: sessionStorage.exercise || {},
-    profile: sessionStorage.profile || {},
-    leaders: sessionStorage.leaders || [],
+    trivia: {},
+    exercise: {},
+    profile: {},
+    leaders: [],
     user: {},
-    currentPlayer: sessionStorage.currentPlayer || {},
+    currentPlayer: {},
     roundComplete: false,
     inviteeReady: false,
     // NOTE work here too clean state up; organize
-    level: sessionStorage.level || null,
-    subject: sessionStorage.subject || null,
+    level: null,
+    subject: null,
     answer: null,
-    triviaToken: sessionStorage.triviaToken || "",
+    triviaToken: "",
   },
   mutations: {
     setRoundComplete(state, completed) {
       state.roundComplete = completed;
       sessionStorage.roundComplete = completed;
     },
-    // let data = JSON.parse(window.localStorage.getItem("MYB"));
     setInviteeReady(state, ready) {
       state.inviteeReady = ready;
       sessionStorage.inviteeReady = ready;
