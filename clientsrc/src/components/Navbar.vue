@@ -36,20 +36,20 @@
           <Profile v-if="$auth.isAuthenticated" />
         </li>
         <li
-          class="nav-item mr-3"
+          class="nav-item"
           v-if="$route.path != '/'"
           :class="{ active: $route.name == 'home' }"
         >
           <router-link :to="{ name: 'home' }" class="nav-link">Quit</router-link>
         </li>
-      </ul>
-      <div v-if="$auth.isAuthenticated" style="margin-top: auto;margin-right: 37vw;color:blue;">
+      <li class="col-sm-12 nav-item" v-if="$auth.isAuthenticated" style="margin-top: auto;color:blue;">
         <h4 v-if="points">
           Total Points:
-          <span class="text-success">{{points}}</span>
+          <span class="text-dark">{{points}}</span>
         </h4>
         <h4 v-else>Total Points: 0</h4>
-      </div>
+      </li>
+      </ul>
       <span class="navbar-text">
         <button class="btn btn-success" ontouchstart="login" @click="login" v-if="!$auth.isAuthenticated">Login</button>
         <button class="btn btn-dark text-info" ontouchstart="logout" @click="logout" v-else>logout</button>

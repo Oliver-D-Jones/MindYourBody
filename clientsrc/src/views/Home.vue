@@ -256,7 +256,7 @@ export default {
   color: white;
 }
 .swal-icon img {
-  max-width: 10%;
+  max-width: 33vw;
   border-radius: 5%;
   border: antiquewhite solid 1px;
   background-color: rgba(39, 91, 151, 0.69);

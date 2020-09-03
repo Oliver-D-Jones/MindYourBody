@@ -5,7 +5,7 @@
       You just earned {{points}} points!
       <img
         src="../assets/spin.gif"
-        style="width: 10%;border-radius:100%"
+        style="width: 25vw;border-radius:100%"
         id="endCoin"
         class="simpleEntrance"
       />
@@ -15,12 +15,12 @@
       <h3>No points this round.</h3>
       <img
         src="../assets/endWrong.gif"
-        style="width: 10%;
+        style="width: 25vw;
       border-radius: 50%;"
         v-if="((playerClass == 'inviter' && inviteeCompleted) || !playerClass )"
         @click="startPlay()"
       />
-      <img v-else src="../assets/endWrong.gif" style="width: 10%;
+      <img v-else src="../assets/endWrong.gif" style="width: 25vw;
       border-radius: 50%;" />
     </div>
     <h3 v-if="this.answerStreakEarned">
@@ -46,7 +46,7 @@
       <Selector key="select_end" v-on:setTopic="setParams($event)" />
     </div>
     <div class="row mt-3" style="justify-content: space-evenly">
-      <div class="col-5">
+      <div class="col-6">
         <button
           v-if="((playerClass == 'inviter' && inviteeCompleted) || !playerClass )"
           @click="startPlay()"
@@ -60,7 +60,7 @@
           ></i>
         </button>
       </div>
-      <div class="col-5">
+      <div class="col-6">
         <button @click="quit()" class="btn btn-block btn-outline-danger bg-dark py-2">QUIT FOR NOW</button>
       </div>
     </div>
