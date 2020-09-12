@@ -207,12 +207,14 @@ export default {
     capture() {
       let defaultsOpts = { audio: true, video: true };
       defaultsOpts.video = {
-        facingMode: this.shouldFaceUser ? "user" : "environment",
+        facingMode: this.shouldFaceUser ? "user" : "user",
       };
       navigator.mediaDevices
         .getUserMedia(defaultsOpts)
         .then(function (_stream) {
+          console.log(_stream,"\n",stream.localStream);
           stream.localStream = _stream;
+          stream.localPeer.call(stream.connection.peer,stream.localStream)
           document.getElementById("myVideo").srcObject = stream.localStream;
           document.getElementById("myVideo").play();
         })
@@ -228,12 +230,12 @@ export default {
         swal("Your Device Doesn't Support This Feature.", { timer: 2000 });
         return;
       }
-      stream.localStream.getTracks().forEach((t) => {
-        t.stop();
-      });
+      // stream.localStream.getTracks().forEach((t) => {
+      //   t.stop();
+      // });
       // toggle / flip
       this.shouldFaceUser = !this.shouldFaceUser;
-      this.capture();
+      // this.capture();
     },
     toggleFullScreen() {
       if (!document.fullscreenElement) {

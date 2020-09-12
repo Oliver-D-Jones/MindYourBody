@@ -194,15 +194,15 @@ export default {
           peer.on("connection", function (c) {
             // Allow only a single connection for now
             // later create array and push new connetion
-            // if (conn && conn.open) {
-            //   c.on("open", function () {
-            //     c.send("Already connected to another client");
-            //     setTimeout(function () {
-            //       c.close();
-            //     }, 500);
-            //   });
-            //   return;
-            // }
+            if (conn && conn.open) {
+              c.on("open", function () {
+                c.send("Already connected to another client");
+                setTimeout(function () {
+                  c.close();
+                }, 500);
+              });
+              return;
+            }
             conn = c;
             ready();
           });
@@ -261,6 +261,8 @@ export default {
       }
       init();
     })();
+  
+  
   },
 };
 </script>

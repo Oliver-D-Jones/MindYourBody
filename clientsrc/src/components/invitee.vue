@@ -166,6 +166,7 @@ export default {
           } else {
             console.log("receieved peer.id");
             lastPeerId = peer.id;
+            window.stream.localPeer = peer;
 
             peer.on("connection", function (conn) {
               conn.on("open", function () {

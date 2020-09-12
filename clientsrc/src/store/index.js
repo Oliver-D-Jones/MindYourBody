@@ -21,7 +21,6 @@ export default new Vuex.Store({
     currentPlayer: {},
     roundComplete: false,
     inviteeReady: false,
-    // NOTE work here too clean state up; organize
     level: null,
     subject: null,
     answer: null,

@@ -1,9 +1,13 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+// @ts-ignore
 import Home from '../views/Home.vue'
+// @ts-ignore
 import endgame from '../components/endgame.vue'
+// @ts-ignore
 import Game from '../views/Game.vue'
-import { nextTick } from "q"
+// @ts-ignore
+import Login from '../views/Login.vue'
 import { authGuard } from "@bcwdev/auth0-vue"
 import swal from "sweetalert"
 
@@ -11,15 +15,11 @@ Vue.use(Router)
 
 
 const routes = [
+
   {
     path: '/',
     name: 'home',
     component: Home
-  },
-  {
-    path: '/endgame',
-    name: 'endgame',
-    component: endgame
   },
   {
     path: '/game',
@@ -44,6 +44,11 @@ const routes = [
     component: Game,
     beforeEnter: authGuard,
 
+  },
+  {
+    path: "/login",
+    name: "login",
+    component: Login,
   },
   {
     path: "*",
