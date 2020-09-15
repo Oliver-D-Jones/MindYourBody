@@ -10,6 +10,7 @@ export default {
   data: function () {
     return {
       show: false,
+      img:""
     };
   },
   methods: {
@@ -22,7 +23,7 @@ export default {
       let title = document.createElement("h4");
       title.innerHTML = `${this.$store.state.trivia.question}`;
       html_inject.appendChild(title);
-      let img = utils.getGif();
+      let img = this.img;
       let btns;
       btns = {
         quit: { text: "Quit Game", value: false },
@@ -58,6 +59,7 @@ export default {
     swal.close();
   },
   mounted() {
+    this.img = utils.getGif();
     this.show = true;
   },
 };

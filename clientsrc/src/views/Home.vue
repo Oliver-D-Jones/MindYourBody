@@ -29,7 +29,7 @@
         </button>
         <h1 class="comeInStyle my-2">MIND YOUR BODY</h1>
         <div class="fadeBox">
-          <img class="fadeIn" src="../assets/home2.gif" style="width: 30vw;border-radius:90%" />
+          <img class="fadeIn" src="../assets/home_brain.gif" style="width: 30vw;border-radius:90%" />
         </div>
       </div>
     </div>
@@ -67,8 +67,12 @@ export default {
       });
     },
     setParams(s) {
-      this.subject = s.subject;
-      this.level = s.level;
+      if (s.subject) {
+        this.subject = s.subject;
+      }
+      if (s.level) {
+        this.level = s.level;
+      }
     },
     async invite() {
       if (!this.$auth.isAuthenticated) {
@@ -77,7 +81,7 @@ export default {
           return;
         }
       }
-      let id = (Math.random().toString(36) + "0000000000000000000").substr(
+      let id = (Math.random().toString(36)).substr(
         2,
         16
       );
@@ -122,7 +126,7 @@ export default {
       }
       let html_inject = document.createElement("input");
       html_inject.id = "peerId";
-      let myId = (Math.random().toString(36) + "0000000000000000000").substr(
+      let myId = (Math.random().toString(36)).substr(
         2,
         16
       );
@@ -147,8 +151,11 @@ export default {
     },
     async startPlay() {
       if (!this.$auth.isAuthenticated) {
-        this.alertLogin();
-        return;
+        let loginSuccess = await this.login();
+        if (!this.$auth.isAuthenticated) {
+          this.alertLogin();
+          return;
+        }
       }
       if (window.stream == undefined) {
         window.stream = {};
@@ -178,6 +185,7 @@ export default {
       } else {
         this.$store.dispatch("setLevel", this.level);
       }
+      console.log(this.$store.state.subject, this.$store.state.level);
 
       if (!this.$store.state.triviaToken) {
         const res = await fetch(
@@ -186,8 +194,8 @@ export default {
         let token = await res.json();
         this.$store.dispatch("triviaToken", token.token);
       }
-      this.subject = "";
-      this.level = "";
+      // this.subject = "";
+      // this.level = "";
       if (window.stream.class) {
         router.push("/game/" + window.stream.myId + "/inviter");
       } else {
@@ -217,7 +225,7 @@ export default {
 }
 
 #home {
-  background-image: url("../assets/true.jpg");
+  background-image: url("../assets/home_screen.jpg");
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;

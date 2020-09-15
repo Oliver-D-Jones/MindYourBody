@@ -39,6 +39,7 @@
         @click="toggleVideoPlay('myVideo')"
         viewBox="0 0 16 16"
         class="col-2 bi bi-camera-video-off"
+        v-tooltip:top="'Toggle Video Stream.'"
         fill="blue"
         xmlns="http://www.w3.org/2000/svg"
         v-if="videoStream"
@@ -71,6 +72,7 @@
         @click="toggleAudioMuted('myVideo')"
         viewBox="0 0 16 16"
         class="col-2 bi bi-mic-mute"
+        v-tooltip:top="'Toggle Audio On/Off.'"
         fill="blue"
         v-if="audioStream"
         xmlns="http://www.w3.org/2000/svg"
@@ -84,6 +86,7 @@
         width="1.3rem"
         height="1.3rem"
         @click="toggleAudioMuted('myVideo')"
+        v-tooltip:top="'Toggle Audio On/Off.'"
         viewBox="0 0 16 16"
         class="col-2 bi bi-mic"
         fill="blue"
@@ -107,6 +110,7 @@
         class="col-2 bi bi-pip"
         fill="blue"
         @click="togglePIP('myVideo')"
+        v-tooltip:top="'Toggle Video Picture In Picture.'"
         v-if="!PIP"
         xmlns="http://www.w3.org/2000/svg"
       >
@@ -125,6 +129,7 @@
         class="col-2 bi bi-window"
         fill="blue"
         @click="togglePIP('myVideo')"
+        v-tooltip:top="'Toggle Video Picture In Picture.'"
         v-else
         xmlns="http://www.w3.org/2000/svg"
       >
@@ -143,6 +148,7 @@
         viewBox="0 0 16 16"
         class="col-2 bi bi-fullscreen"
         fill="blue"
+        v-tooltip:top="'Toggle Full Screen.'"
         @click="toggleFullScreen('myVideo')"
         xmlns="http://www.w3.org/2000/svg"
       >
@@ -151,7 +157,7 @@
           d="M1.5 1a.5.5 0 0 0-.5.5v4a.5.5 0 0 1-1 0v-4A1.5 1.5 0 0 1 1.5 0h4a.5.5 0 0 1 0 1h-4zM10 .5a.5.5 0 0 1 .5-.5h4A1.5 1.5 0 0 1 16 1.5v4a.5.5 0 0 1-1 0v-4a.5.5 0 0 0-.5-.5h-4a.5.5 0 0 1-.5-.5zM.5 10a.5.5 0 0 1 .5.5v4a.5.5 0 0 0 .5.5h4a.5.5 0 0 1 0 1h-4A1.5 1.5 0 0 1 0 14.5v-4a.5.5 0 0 1 .5-.5zm15 0a.5.5 0 0 1 .5.5v4a1.5 1.5 0 0 1-1.5 1.5h-4a.5.5 0 0 1 0-1h4a.5.5 0 0 0 .5-.5v-4a.5.5 0 0 1 .5-.5z"
         />
       </svg>
-      <svg
+      <!-- <svg
         width="1.3em"
         height="1.3em"
         viewBox="0 0 16 16"
@@ -172,7 +178,7 @@
           fill-rule="evenodd"
           d="M9 5a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"
         />
-      </svg>
+      </svg>-->
     </div>
     <div class style="justify-content: center;">
       <video
@@ -207,14 +213,14 @@ export default {
     capture() {
       let defaultsOpts = { audio: true, video: true };
       defaultsOpts.video = {
-        facingMode: this.shouldFaceUser ? "user" : "user",
+        facingMode: this.shouldFaceUser ? "user" : "environment",
       };
       navigator.mediaDevices
         .getUserMedia(defaultsOpts)
         .then(function (_stream) {
-          console.log(_stream,"\n",stream.localStream);
+          console.log(_stream, "\n", stream.localStream);
           stream.localStream = _stream;
-          stream.localPeer.call(stream.connection.peer,stream.localStream)
+          stream.localPeer.call(stream.connection.peer, stream.localStream);
           document.getElementById("myVideo").srcObject = stream.localStream;
           document.getElementById("myVideo").play();
         })
@@ -276,13 +282,19 @@ export default {
       }
     },
   },
-  beforeDestroy() {
-  },
+  beforeDestroy() {},
   beforeMount() {},
   components: {},
+  directives: {
+    tooltip: function (el, binding) {
+      $(el).tooltip({
+        title: binding.value,
+        placement: binding.arg,
+        trigger: "hover",
+      });
+    },
+  },
 };
 </script>
-
-
 <style scoped>
 </style>

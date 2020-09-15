@@ -4,9 +4,8 @@
     <h3 v-if="answer">
       You just earned {{points}} points!
       <img
-        src="../assets/spin.gif"
-        style="width: 25vw;border-radius:100%"
-        id="endCoin"
+        src="../assets/coin_entry.gif"
+        style="width: 16vw;border-radius:100%"
         class="simpleEntrance"
       />
       <span class="blazingStarText">X {{points}}</span>
@@ -14,20 +13,21 @@
     <div v-else>
       <h3>No points this round.</h3>
       <img
-        src="../assets/endWrong.gif"
-        style="width: 25vw;
-      border-radius: 50%;"
+        src="../assets/end_wrong.gif"
+        style="width: 16vw;
+        border-radius: 50%;cursor:pointer"
         v-if="((playerClass == 'inviter' && inviteeCompleted) || !playerClass )"
         @click="startPlay()"
       />
-      <img v-else src="../assets/endWrong.gif" style="width: 25vw;
-      border-radius: 50%;" />
+      <img v-else src="../assets/end_wrong.gif" style="width: 16vw;
+      border-radius: 50%;cursor:pointer" />
     </div>
     <h3 v-if="this.answerStreakEarned">
       You earned 20 points for a 5-question streak!
       <img
         src="../assets/coin.gif"
-        style="width: 15rem;"
+        style="width: 12rem;"
+        class="simpleEntrance"
       />
     </h3>
     <h3 v-if="this.dayStreakEarned">
@@ -35,12 +35,17 @@
       You have played {{days}} days in a row!
       <img
         src="../assets/coin.gif"
-        style="width: 15rem;"
+        style="width: 12rem;"
+        class="simpleEntrance"
       />
     </h3>
     <h3 v-if="this.megaStreakEarned">
       You earned 100 points for a MEGA-Streak!
-      <img src="../assets/coin.gif" style="width: 15rem;" />
+      <img
+        src="../assets/coin.gif"
+        style="width: 12rem;"
+        class="simpleEntrance"
+      />
     </h3>
     <div v-if="playerClass != 'invitee'">
       <Selector key="select_end" v-on:setTopic="setParams($event)" />
@@ -78,7 +83,6 @@ export default {
       subject: false,
       level: false,
       category: this.$store.state.category,
-      // player: this.$store.state.currentPlayer,
       answer: this.$store.state.answer,
       profile: this.$store.state.profile,
       dayStreak: this.$store.state.currentPlayer.dayStreak,

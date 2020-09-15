@@ -20,7 +20,11 @@
           />
         </div>
         <div class="col-md-4 mt-1" v-if="inviter">
-          <button v-if="displayStart" class="btn btn-warning btn-block mb-1" @click="startGame">START</button>
+          <button
+            v-if="displayStart"
+            class="btn btn-warning btn-block mb-1"
+            @click="startGame"
+          >START</button>
           <Inviter
             :key="'inviterVideostream'"
             v-on:inviteeReady="()=>{
@@ -165,10 +169,7 @@ export default {
         window.stream = new Object();
         window.stream.class = "invitee";
         window.stream.peerId = loc[loc.length - 2];
-        let myId = (Math.random().toString(36) + "0000000000000000000").substr(
-          2,
-          16
-        );
+        let myId = Math.random().toString(36).substr(2, 16);
         window.stream.myId = myId;
         this.display = "col-md-8";
         this.invitee = true;
@@ -217,7 +218,7 @@ video {
   background-color: rgb(0, 0, 0);
 }
 #main {
-  background-image: url("../assets/end.jpg");
+  background-image: url("../assets/game_screen.jpg");
   background-position: center;
 }
 #msgAll {
