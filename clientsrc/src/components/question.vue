@@ -66,7 +66,7 @@ export default {
 </script>
 
 <style scoped>
-.swal-overlay {
+/* .swal-overlay {
   background-color: transparent;
 }
 .swal-modal {
@@ -87,5 +87,5 @@ export default {
   border-radius: 5%;
   border: antiquewhite solid 2px;
   background-color: rgb(0, 0, 0);
-}
+} */
 </style>

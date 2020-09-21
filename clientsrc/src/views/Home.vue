@@ -185,8 +185,6 @@ export default {
       } else {
         this.$store.dispatch("setLevel", this.level);
       }
-      console.log(this.$store.state.subject, this.$store.state.level);
-
       if (!this.$store.state.triviaToken) {
         const res = await fetch(
           "https://opentdb.com/api_token.php?command=request"
@@ -264,7 +262,10 @@ export default {
   color: white;
 }
 .swal-icon img {
-  max-width: 33vw;
+  max-width: 25vw;
+  max-height: 25vh;
+  width:auto;
+  height: auto;
   border-radius: 5%;
   border: antiquewhite solid 1px;
   background-color: rgba(39, 91, 151, 0.69);

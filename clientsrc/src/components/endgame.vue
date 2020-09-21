@@ -4,8 +4,8 @@
     <h3 v-if="answer">
       You just earned {{points}} points!
       <img
-        src="../assets/coin_entry.gif"
-        style="width: 16vw;border-radius:100%"
+        src="../assets/coin.gif"
+        style="width: 8vw;border-radius:100%"
         class="simpleEntrance"
       />
       <span class="blazingStarText">X {{points}}</span>
@@ -19,33 +19,21 @@
         v-if="((playerClass == 'inviter' && inviteeCompleted) || !playerClass )"
         @click="startPlay()"
       />
-      <img v-else src="../assets/end_wrong.gif" style="width: 16vw;
-      border-radius: 50%;cursor:pointer" />
+      <img
+        v-else
+        src="../assets/end_wrong.gif"
+        style="width: 16vw;
+      border-radius: 50%;cursor:pointer"
+      />
     </div>
-    <h3 v-if="this.answerStreakEarned">
-      You earned 20 points for a 5-question streak!
-      <img
-        src="../assets/coin.gif"
-        style="width: 12rem;"
-        class="simpleEntrance"
-      />
-    </h3>
-    <h3 v-if="this.dayStreakEarned">
-      You earned 20 points for a 5-day streak!
-      You have played {{days}} days in a row!
-      <img
-        src="../assets/coin.gif"
-        style="width: 12rem;"
-        class="simpleEntrance"
-      />
-    </h3>
-    <h3 v-if="this.megaStreakEarned">
-      You earned 100 points for a MEGA-Streak!
-      <img
-        src="../assets/coin.gif"
-        style="width: 12rem;"
-        class="simpleEntrance"
-      />
+    <h3>
+      <span v-if="this.answerStreakEarned">You earned 20 points for a 5-question streak!<br/></span>
+      <span v-if="this.dayStreakEarned">
+        You earned 20 points for a 5-day streak!
+        You have played {{days}} days in a row!<br/>
+      </span>
+      <span v-if="this.megaStreakEarned">You earned 100 points for a MEGA-Streak!<br/></span>
+      <!-- <img src="../assets/coin.gif" style="width: 8rem;" class="simpleEntrance" /> -->
     </h3>
     <div v-if="playerClass != 'invitee'">
       <Selector key="select_end" v-on:setTopic="setParams($event)" />
